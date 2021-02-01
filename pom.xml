@@ -277,14 +277,14 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-UML\astah-api.jar</systemPath>
+			<systemPath>C:\Program Files\astah-UML\astah-api.jar</systemPath><!-- set the correct path here -->
 		</dependency>
 		<dependency>
 			<groupId>com.change_vision.astah</groupId>
 			<artifactId>astah-api-pro</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-UML\astah-uml.jar</systemPath>
+			<systemPath>C:\Program Files\astah-UML\astah-uml.jar</systemPath><!-- set the correct path here --> 
 		</dependency>
 		
 		<dependency>
