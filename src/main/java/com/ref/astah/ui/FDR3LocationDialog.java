@@ -34,7 +34,7 @@ public class FDR3LocationDialog extends JDialog {
 			throws IOException, ClassNotFoundException {
 		super(frame, modal);
 		initComponents();
-		this.setTitle("FDR3 Location");
+		this.setTitle("FDR Location");
 		this.setLocation(new Point(276, 182));
 		this.setSize(new Dimension(450, 150));
 		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -49,7 +49,7 @@ public class FDR3LocationDialog extends JDialog {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
-		add(new JLabel("FDR3 folder:"), gbc);
+		add(new JLabel("FDR folder:"), gbc);
 		gbc.gridx++;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 100;
