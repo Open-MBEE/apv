@@ -6,3 +6,7 @@ Activity Property Verifier (APV) is a tool to check properties on UML/SysML acti
 
 APV can be integrated in any UML/SysML environment because its semantics is tool agnostic, however, adapters from these environments must be developed according to the API provided. For now, its first version works as a plugin for the Astah modeling tool. However, an integration with OpenMBEE MMS notation is being built. 
 
+
+## Prerequisites
+
+* [FDR4 or later](https://cocotec.io/fdr/) 
