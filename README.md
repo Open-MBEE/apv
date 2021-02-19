@@ -9,4 +9,6 @@ APV can be integrated in any UML/SysML environment because its semantics is tool
 
 ## Prerequisites
 
-* [FDR4 or later](https://cocotec.io/fdr/) 
+* [FDR4](https://cocotec.io/fdr/) or later.
+* [AstahUML](https://astah.net/products/astah-uml/), for the current integrated environment.
+
