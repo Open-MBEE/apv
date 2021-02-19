@@ -7,6 +7,7 @@ A property checker for UML/SysML activity diagrams.
 
 ## Table of contents
 * [General info](#general-info)
+* [Prerequisites](#Prerequisites)
 * [Technologies](#technologies)
 * [Setup](#setup)
 
