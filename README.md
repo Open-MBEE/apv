@@ -35,7 +35,7 @@ Project is created with:
 
 2. Copy the downloaded plug-in .jar file to the <plugins> folder in the Astah installation directory
 
-3. Open AstahUML and go to "Plugin -> Installed Plugins" menu, then check if the 
+3. Open AstahUML and go to "Plugin -> Installed Plugins" menu, then check if the APV plug-in is installed.
 
 
 
