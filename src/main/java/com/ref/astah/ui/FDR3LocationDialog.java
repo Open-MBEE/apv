@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import com.ref.ActivityController;
 import com.ref.exceptions.FDRException;
-import com.ref.traceability.activityDiagram.ActivityController;
 
 public class FDR3LocationDialog extends JDialog {
 

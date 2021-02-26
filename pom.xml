@@ -277,14 +277,14 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-UML\astah-api.jar</systemPath><!-- set the correct path here -->
+			<systemPath>D:\PICHAU\astah-UML\astah-api.jar</systemPath><!-- set the correct path here -->
 		</dependency>
 		<dependency>
 			<groupId>com.change_vision.astah</groupId>
 			<artifactId>astah-api-pro</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-UML\astah-uml.jar</systemPath><!-- set the correct path here --> 
+			<systemPath>D:\PICHAU\astah-UML\astah-uml.jar</systemPath><!-- set the correct path here --> 
 		</dependency>
 		
 		<dependency>
@@ -307,5 +307,22 @@
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.13</version>
+		</dependency>
+		
+		
+		
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20201115</version>
+		</dependency>
+		
 	</dependencies>
 </project>

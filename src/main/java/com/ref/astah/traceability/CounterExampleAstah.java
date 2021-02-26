@@ -30,7 +30,7 @@ import com.change_vision.jude.api.inf.model.IPin;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.traceability.activityDiagram.ActivityController.VerificationType;
+import com.ref.ActivityController.VerificationType;
 
 public class CounterExampleAstah {
     private static HashMap<String, INodePresentation> nodeAdded;

@@ -8,11 +8,11 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+import com.ref.ActivityController;
+import com.ref.ActivityController.VerificationType;
 import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
-import com.ref.traceability.activityDiagram.ActivityController;
-import com.ref.traceability.activityDiagram.ActivityController.VerificationType;
 import com.ref.ui.CheckingProgressBar;
 
 public class TemplateDeadlockActionAD implements IPluginActionDelegate {

@@ -1,4 +1,4 @@
-package com.ref.traceability.activityDiagram;
+package com.ref;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +11,19 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
@@ -25,6 +38,7 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.ADUtils;
+import com.ref.traceability.activityDiagram.CounterExampleBuilder;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.wellformedness.WellFormedness;
 
@@ -65,6 +79,58 @@ public class ActivityController {
 		return controller;
 	}
 	
+	public void OpenMBEEInvocation(String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
+		
+		/*fazer estilo ADDefineNodesActionAndControl 
+		 * activity = communication.buildActivity(url,login,password,idActivity);
+		 * 
+		 * */
+		
+		//TODO ser ajustado(sair daqui e ir pro communication)
+		HttpClient httpClient = null;
+		CookieStore httpCookieStore = new BasicCookieStore();
+		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
+		httpClient = builder.build();
+		String username = "ufrpe";
+		String password = "thisisapassword";
+		HttpPost httpRequest = new HttpPost("http://18.188.75.184/authentication");
+		httpRequest.setHeader("Content-Type", "application/json");
+		httpRequest.setHeader("accept", "application/json");
+		StringEntity body =new StringEntity("{\"username\": \""+username+"\",\"password\": \""+password+"\"}");
+		httpRequest.setEntity(body);
+		 
+		HttpResponse response = httpClient.execute(httpRequest);
+		
+		String jsonToken = EntityUtils.toString(response.getEntity());
+		System.out.println(jsonToken);
+
+		JSONObject token = new JSONObject(jsonToken);
+		System.out.println(token.get("token"));
+
+		
+		HttpGet httpGet = new HttpGet("http://18.188.75.184/projects/tmt/refs/master/elements/_17_0_2_3_41e01aa_1386799574481_308312_64121");
+	
+		httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.get("token"));
+		
+		response = httpClient.execute(httpGet);
+		
+		JSONObject activity = new JSONObject(EntityUtils.toString(response.getEntity()));
+		System.out.println(activity.toString());
+		
+		System.out.println(activity.get("elements"));
+		//System.out.println(activity.getJSONObject("elements"));
+		
+		
+		httpGet = new HttpGet("http://18.188.75.184/projects/tmt/refs/master/elements/_18_0_2_baa02e2_1430169721070_811705_501834");
+		
+		httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.get("token"));
+		
+		response = httpClient.execute(httpGet);
+		
+		JSONObject edge = new JSONObject(EntityUtils.toString(response.getEntity()));
+		System.out.println(edge.toString());
+		
+	}
 	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
 			Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
