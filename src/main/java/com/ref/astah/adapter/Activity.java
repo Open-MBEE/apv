@@ -1,6 +1,8 @@
 package com.ref.astah.adapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.change_vision.jude.api.inf.model.IAction;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
@@ -10,6 +12,7 @@ import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IPartition;
 import com.ref.interfaces.activityDiagram.IPin;
 
 public class Activity implements IActivity{
@@ -17,11 +20,21 @@ public class Activity implements IActivity{
 	private IActivityDiagram activityDiagram;
 	private IActivityNode[] activityNodes;
 	private HashMap<String,String> owners;
+	private List<IPartition> partitions;
+	
 	
 	public Activity(com.change_vision.jude.api.inf.model.IActivity activity) throws WellFormedException {
 		super();
 		this.activity = activity;
 		owners = new HashMap<>();
+		this.partitions = new ArrayList<IPartition>();
+
+		if (activity.getPartitions() != null && activity.getPartitions().length > 0) {
+			for (com.change_vision.jude.api.inf.model.IPartition partition : activity.getPartitions()) {
+				partitions.add(new Partition(partition));
+			}
+		}
+		
 		this.activityNodes = new IActivityNode[activity.getActivityNodes().length];
 		for (int i = 0; i < activityNodes.length; i++) {
 			com.change_vision.jude.api.inf.model.IActivityNode node = activity.getActivityNodes()[i];
@@ -113,6 +126,11 @@ public class Activity implements IActivity{
 			// TODO not sure if is 100% right
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public IPartition[] getPartitions() {
+		return (IPartition[])partitions.toArray();
 	}
 	
 
