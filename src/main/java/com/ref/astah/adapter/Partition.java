@@ -1,23 +1,22 @@
 package com.ref.astah.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ref.interfaces.activityDiagram.IPartition;
 
 public class Partition implements IPartition{
 
 	private com.change_vision.jude.api.inf.model.IPartition partition;
-	private List<IPartition> subpartitions;
+	private IPartition[] subpartitions;
 	
 	public Partition(com.change_vision.jude.api.inf.model.IPartition partition) {
 		this.partition = partition;
-		subpartitions = new ArrayList<IPartition>();
+		
 		if (partition.getSubPartitions() != null && partition.getSubPartitions().length > 0) {
-			for (com.change_vision.jude.api.inf.model.IPartition p : partition.getSubPartitions()) {
-				subpartitions.add(new Partition(p));
+			subpartitions = new IPartition[partition.getSubPartitions().length];
+			for (int i=0; i < partition.getSubPartitions().length; i++)  {
+				subpartitions[i] = new Partition(partition.getSubPartitions()[i]);
 			}
 		}
+
 	}
 
 	@Override
@@ -42,6 +41,6 @@ public class Partition implements IPartition{
 
 	@Override
 	public IPartition[] getSubPartitions() {
-		return (IPartition[])subpartitions.toArray();
+		return subpartitions;
 	}
 }

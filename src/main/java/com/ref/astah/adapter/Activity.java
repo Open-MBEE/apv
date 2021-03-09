@@ -1,8 +1,6 @@
 package com.ref.astah.adapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.change_vision.jude.api.inf.model.IAction;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
@@ -20,18 +18,19 @@ public class Activity implements IActivity{
 	private IActivityDiagram activityDiagram;
 	private IActivityNode[] activityNodes;
 	private HashMap<String,String> owners;
-	private List<IPartition> partitions;
+	private IPartition[] partitions;
 	
 	
 	public Activity(com.change_vision.jude.api.inf.model.IActivity activity) throws WellFormedException {
 		super();
 		this.activity = activity;
 		owners = new HashMap<>();
-		this.partitions = new ArrayList<IPartition>();
+		
 
 		if (activity.getPartitions() != null && activity.getPartitions().length > 0) {
-			for (com.change_vision.jude.api.inf.model.IPartition partition : activity.getPartitions()) {
-				partitions.add(new Partition(partition));
+			this.partitions = new IPartition[activity.getPartitions().length];
+			for (int i=0; i < activity.getPartitions().length; i++)  {
+				partitions[i] = new Partition(activity.getPartitions()[i]);
 			}
 		}
 		
@@ -130,7 +129,7 @@ public class Activity implements IActivity{
 
 	@Override
 	public IPartition[] getPartitions() {
-		return (IPartition[])partitions.toArray();
+		return partitions;
 	}
 	
 
