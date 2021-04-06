@@ -42,7 +42,7 @@ public class ADDefineFork {
 		IFlow[] outFlows = activityNode.getOutgoings();
 		IFlow[] inFlows = activityNode.getIncomings();
 
-
+	
 		if (inFlows.length != 1) {
 			throw new ParsingException("Fork node must have exactly one incoming edge.");
 		}

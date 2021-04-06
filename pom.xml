@@ -277,14 +277,14 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>D:\PICHAU\astah-UML\astah-api.jar</systemPath><!-- set the correct path here -->
+			<systemPath>C:\Program Files\astah-UML\astah-api.jar</systemPath><!-- set the correct path here -->
 		</dependency>
 		<dependency>
 			<groupId>com.change_vision.astah</groupId>
 			<artifactId>astah-api-pro</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>D:\PICHAU\astah-UML\astah-uml.jar</systemPath><!-- set the correct path here --> 
+			<systemPath>C:\Program Files\astah-UML\astah-uml.jar</systemPath><!-- set the correct path here --> 
 		</dependency>
 		
 		<dependency>
@@ -323,6 +323,22 @@
 		    <artifactId>json</artifactId>
 		    <version>20201115</version>
 		</dependency>
+
+		 <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>2.10.0</version>
+		  </dependency>
+		  <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.10.0</version>
+		  </dependency>
+		  <dependency>
+		    <groupId>org.eclipse.xtext</groupId>
+		    <artifactId>org.eclipse.xtext</artifactId>
+		    <version>2.12.0</version>
+		  </dependency>
 		
 	</dependencies>
 </project>

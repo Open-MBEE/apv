@@ -93,7 +93,7 @@ public class ADDefineChannels {
             }
 
             for (String out : parameterNodesOutput.keySet()) {
-                String object = parameterNodesOutputObject.get(out);
+                String object = parameterNodesOutput.get(out); // fixed parameterNodesOutputObject
 
                 if (object == null) {
                     throw new ParsingException("Parameter node " + out + " is untyped.");
