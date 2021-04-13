@@ -8,20 +8,22 @@ action join2(in x : Integer) {
 	
 	flow join2::x to act2::x;
 		
-	action act1(in x : Integer, out w : Integer) {
-		doc /* w = x; */
+	action act1(in x : Integer) {
+		language "Alf"
+		/* w = x; */
 	}
 	
-	action act2(in x : Integer, out w : Integer) {
-		doc /* w = x; */
+	action act2(in x : Integer) {
+		language "Alf"
+		/* w = x; */
 	}
 	
 	join joinNode1;
 	
-	flow act1::w to joinNode1;
+	succession act1 then joinNode1;
 	
-	flow act2::w to joinNode1;
+	succession act2 then joinNode1;
 	
-	flow joinNode1 to done;
+	succession joinNode1 then done;
 		
 }

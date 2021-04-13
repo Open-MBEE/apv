@@ -49,16 +49,16 @@ public class ADParserTestJoinNode {
 			String actual = parser1.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_join1(id) = update_join1.id.1!(2-0) -> ((ce_join1.id.1 -> SKIP) ||| (ce_join1.id.2 -> SKIP))\n"
-					+ "start_join1_t(id) = start_join1(id) /\\ END_DIAGRAM_join1(id)\n"
-					+ "act1_join1(id) = ((ce_join1.id.2 -> SKIP)); event_act1_join1.id -> ((ce_join1.id.3 -> SKIP)); act1_join1(id)\n"
-					+ "act1_join1_t(id) = act1_join1(id) /\\ END_DIAGRAM_join1(id)\n"
-					+ "act2_join1(id) = ((ce_join1.id.1 -> SKIP)); event_act2_join1.id -> ((ce_join1.id.4 -> SKIP)); act2_join1(id)\n"
-					+ "act2_join1_t(id) = act2_join1(id) /\\ END_DIAGRAM_join1(id)\n"
-					+ "joinNode1_join1(id) = ((ce_join1.id.4 -> SKIP) ||| (ce_join1.id.3 -> SKIP)); update_join1.id.2!(1-2) -> ((ce_join1.id.5 -> SKIP)); joinNode1_join1(id)\n"
-					+ "joinNode1_join1_t(id) = (joinNode1_join1(id) /\\ END_DIAGRAM_join1(id))\n"
-					+ "done_join1(id) = ((ce_join1.id.5 -> SKIP)); clear_join1.id.1 -> SKIP\n"
-					+ "done_join1_t(id) = done_join1(id) /\\ END_DIAGRAM_join1(id)\n");
+			expected.append("join1_start_join1(id) = update_join1.id.1!(2-0) -> ((ce_join1.id.1 -> SKIP) ||| (ce_join1.id.2 -> SKIP))\n"
+					+ "join1_start_join1_t(id) = join1_start_join1(id) /\\ END_DIAGRAM_join1(id)\n"
+					+ "join1_act1_join1(id) = ((ce_join1.id.1 -> SKIP)); event_join1_act1_join1.id -> ((ce_join1.id.3 -> SKIP)); join1_act1_join1(id)\n"
+					+ "join1_act1_join1_t(id) = join1_act1_join1(id) /\\ END_DIAGRAM_join1(id)\n"
+					+ "join1_act2_join1(id) = ((ce_join1.id.2 -> SKIP)); event_join1_act2_join1.id -> ((ce_join1.id.4 -> SKIP)); join1_act2_join1(id)\n"
+					+ "join1_act2_join1_t(id) = join1_act2_join1(id) /\\ END_DIAGRAM_join1(id)\n"
+					+ "join1_joinNode1_join1(id) = ((ce_join1.id.3 -> SKIP) ||| (ce_join1.id.4 -> SKIP)); update_join1.id.2!(1-2) -> ((ce_join1.id.5 -> SKIP)); join1_joinNode1_join1(id)\n"
+					+ "join1_joinNode1_join1_t(id) = (join1_joinNode1_join1(id) /\\ END_DIAGRAM_join1(id))\n"
+					+ "join1_done_join1(id) = ((ce_join1.id.5 -> SKIP)); clear_join1.id.1 -> SKIP\n"
+					+ "join1_done_join1_t(id) = join1_done_join1(id) /\\ END_DIAGRAM_join1(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -76,10 +76,18 @@ public class ADParserTestJoinNode {
 			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);	
 			parser2.clearBuffer();
 			
-			String actual = parser2.parserDiagram();
+			String actual = parser2.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("");
+			expected.append("parameter_x_join2_t(id) = update_join2.id.1!(2-0) -> get_x_join2.id.1?x -> ((oe_1_join2.id!x -> SKIP) ||| (oe_2_join2.id!x -> SKIP))\n"
+					+ "join2_act1_join2(id) = ((oe_1_join2.id?x -> set_x_join2_act1_join2.id.1!x -> SKIP)); event_join2_act1_join2.id -> get_x_join2_act1_join2.id.2?x -> ((ce_join2.id.1 -> SKIP)); join2_act1_join2(id)\n"
+					+ "join2_act1_join2_t(id) = ((join2_act1_join2(id) /\\ END_DIAGRAM_join2(id)) [|{|get_x_join2_act1_join2.id,set_x_join2_act1_join2.id,endDiagram_join2.id|}|] Mem_join2_act1_join2_x_t(id,0)) \\{|get_x_join2_act1_join2.id,set_x_join2_act1_join2.id|}\n"
+					+ "join2_act2_join2(id) = ((oe_2_join2.id?x -> set_x_join2_act2_join2.id.2!x -> SKIP)); event_join2_act2_join2.id -> get_x_join2_act2_join2.id.3?x -> ((ce_join2.id.2 -> SKIP)); join2_act2_join2(id)\n"
+					+ "join2_act2_join2_t(id) = ((join2_act2_join2(id) /\\ END_DIAGRAM_join2(id)) [|{|get_x_join2_act2_join2.id,set_x_join2_act2_join2.id,endDiagram_join2.id|}|] Mem_join2_act2_join2_x_t(id,0)) \\{|get_x_join2_act2_join2.id,set_x_join2_act2_join2.id|}\n"
+					+ "join2_joinNode1_join2(id) = ((ce_join2.id.2 -> SKIP) ||| (ce_join2.id.1 -> SKIP)); update_join2.id.2!(1-2) -> ((ce_join2.id.3 -> SKIP)); join2_joinNode1_join2(id)\n"
+					+ "join2_joinNode1_join2_t(id) = (join2_joinNode1_join2(id) /\\ END_DIAGRAM_join2(id))\n"
+					+ "join2_done_join2(id) = ((ce_join2.id.3 -> SKIP)); clear_join2.id.1 -> SKIP\n"
+					+ "join2_done_join2_t(id) = join2_done_join2(id) /\\ END_DIAGRAM_join2(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -101,14 +109,14 @@ public class ADParserTestJoinNode {
 			StringBuffer expected = new StringBuffer();
 			
 			expected.append("parameter_x_join3_t(id) = update_join3.id.1!(1-0) -> get_x_join3.id.1?x -> ((oe_1_join3.id!x -> SKIP))\n"
-					+ "start_join3(id) = update_join3.id.2!(1-0) -> ((ce_join3.id.1 -> SKIP))\n"
-					+ "start_join3_t(id) = start_join3(id) /\\ END_DIAGRAM_join3(id)\n"
-					+ "joinNode1_join3(id) = ((ce_join3.id.1 -> SKIP) ||| ((oe_1_join3.id?oe1 -> set_oe1_joinNode1_join3.id.1!oe1 -> SKIP)); update_join3.id.3!(1-2) -> get_oe1_joinNode1_join3.id.2?oe1 -> ((oe_2_join3.id!oe1 -> SKIP)); joinNode1_join3(id)\n"
-					+ "joinNode1_join3_t(id) = ((joinNode1_join3(id) /\\ END_DIAGRAM_join3(id)) [|{|get_oe1_joinNode1_join3,set_oe1_joinNode1_join3,endDiagram_join3.id|}|] Mem_joinNode1_join3_oe1_t(id,0)) \\{|get_oe1_joinNode1_join3,set_oe1_joinNode1_join3|}\n"
-					+ "act1_join3(id) = ((oe_2_join3.id?x -> set_x_act1_join3.id.2!x -> SKIP)); event_act1_join3.id -> get_x_act1_join3.id.3?x -> ((ce_join3.id.2 -> SKIP)); act1_join3(id)\n"
-					+ "act1_join3_t(id) = ((act1_join3(id) /\\ END_DIAGRAM_join3(id)) [|{|get_x_act1_join3.id,set_x_act1_join3.id,endDiagram_join3.id|}|] Mem_act1_join3_x_t(id,0)) \\{|get_x_act1_join3.id,set_x_act1_join3.id|}\n"
-					+ "done_join3(id) = ((ce_join3.id.2 -> SKIP)); clear_join3.id.1 -> SKIP\n"
-					+ "done_join3_t(id) = done_join3(id) /\\ END_DIAGRAM_join3(id)\n");
+					+ "join3_start_join3(id) = update_join3.id.2!(1-0) -> ((ce_join3.id.1 -> SKIP))\n"
+					+ "join3_start_join3_t(id) = join3_start_join3(id) /\\ END_DIAGRAM_join3(id)\n"
+					+ "join3_joinNode1_join3(id) = ((ce_join3.id.1 -> SKIP) ||| ((oe_1_join3.id?oe1 -> set_oe1_join3_joinNode1_join3.id.1!oe1 -> SKIP)); update_join3.id.3!(1-2) -> get_oe1_join3_joinNode1_join3.id.2?oe1 -> ((oe_2_join3.id!oe1 -> SKIP)); join3_joinNode1_join3(id)\n"
+					+ "join3_joinNode1_join3_t(id) = ((join3_joinNode1_join3(id) /\\ END_DIAGRAM_join3(id)) [|{|get_oe1_join3_joinNode1_join3,set_oe1_join3_joinNode1_join3,endDiagram_join3.id|}|] Mem_join3_joinNode1_join3_oe1_t(id,0)) \\{|get_oe1_join3_joinNode1_join3,set_oe1_join3_joinNode1_join3|}\n"
+					+ "join3_act1_join3(id) = ((oe_2_join3.id?x -> set_x_join3_act1_join3.id.2!x -> SKIP)); event_join3_act1_join3.id -> get_x_join3_act1_join3.id.3?x -> ((ce_join3.id.2 -> SKIP)); join3_act1_join3(id)\n"
+					+ "join3_act1_join3_t(id) = ((join3_act1_join3(id) /\\ END_DIAGRAM_join3(id)) [|{|get_x_join3_act1_join3.id,set_x_join3_act1_join3.id,endDiagram_join3.id|}|] Mem_join3_act1_join3_x_t(id,0)) \\{|get_x_join3_act1_join3.id,set_x_join3_act1_join3.id|}\n"
+					+ "join3_done_join3(id) = ((ce_join3.id.2 -> SKIP)); clear_join3.id.1 -> SKIP\n"
+					+ "join3_done_join3_t(id) = join3_done_join3(id) /\\ END_DIAGRAM_join3(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			

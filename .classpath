@@ -44,6 +44,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="lib/sysml.jar"/>
+	<classpathentry kind="lib" path="C:/Users/AMAURY.JUNIOR/AndroidStudioProjects/apv/lib/sysml.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

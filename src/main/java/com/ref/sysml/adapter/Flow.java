@@ -10,6 +10,7 @@ public class Flow implements IFlow{
 	protected EObject flow;
 	protected IActivityNode target;
 	protected IActivityNode source;
+	protected String guard = "";
 	
 	public Flow(EObject flow) {
 		this.flow = flow;	
@@ -47,9 +48,13 @@ public class Flow implements IFlow{
 
 	@Override
 	public String getGuard() {
-		return ""; // Ainda não definido
+		return guard; 
 	}
-
+	
+	public void setGuard(String guard) {
+		this.guard = guard;
+	}
+	
 	@Override
 	public void setTarget(IActivityNode target) {
 		this.target = target;

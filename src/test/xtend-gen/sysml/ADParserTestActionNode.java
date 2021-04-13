@@ -51,12 +51,12 @@ public class ADParserTestActionNode {
 			String actual = parser1.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_action1(id) = update_action1.id.1!(1-0) -> ((ce_action1.id.1 -> SKIP))\n"
-					+ "start_action1_t(id) = start_action1(id) /\\ END_DIAGRAM_action1(id)\n"
-					+ "act1_action1(id) = ((ce_action1.id.1 -> SKIP)); event_act1_action1.id -> ((ce_action1.id.2 -> SKIP)); act1_action1(id)\n"
-					+ "act1_action1_t(id) = act1_action1(id) /\\ END_DIAGRAM_action1(id)\n"
-					+ "done_action1(id) = ((ce_action1.id.2 -> SKIP)); clear_action1.id.1 -> SKIP\n"
-					+ "done_action1_t(id) = done_action1(id) /\\ END_DIAGRAM_action1(id)\n");
+			expected.append("action1_start_action1(id) = update_action1.id.1!(1-0) -> ((ce_action1.id.1 -> SKIP))\n"
+					+ "action1_start_action1_t(id) = action1_start_action1(id) /\\ END_DIAGRAM_action1(id)\n"
+					+ "action1_act1_action1(id) = ((ce_action1.id.1 -> SKIP)); event_action1_act1_action1.id -> ((ce_action1.id.2 -> SKIP)); action1_act1_action1(id)\n"
+					+ "action1_act1_action1_t(id) = action1_act1_action1(id) /\\ END_DIAGRAM_action1(id)\n"
+					+ "action1_done_action1(id) = ((ce_action1.id.2 -> SKIP)); clear_action1.id.1 -> SKIP\n"
+					+ "action1_done_action1_t(id) = action1_done_action1(id) /\\ END_DIAGRAM_action1(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -77,16 +77,16 @@ public class ADParserTestActionNode {
 			String actual = parser2.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_action2(id) = update_action2.id.1!(1-0) -> ((ce_action2.id.1 -> SKIP))\n"
-					+ "start_action2_t(id) = start_action2(id) /\\ END_DIAGRAM_action2(id)\n"
-					+ "act1_action2(id) = ((ce_action2.id.1 -> SKIP)); event_act1_action2.id -> update_action2.id.2!(2-1) -> ((ce_action2.id.2 -> SKIP) ||| (ce_action2.id.3 -> SKIP)); act1_action2(id)\n"
-					+ "act1_action2_t(id) = act1_action2(id) /\\ END_DIAGRAM_action2(id)\n"
-					+ "act2_action2(id) = ((ce_action2.id.3 -> SKIP)); event_act2_action2.id -> ((ce_action2.id.4 -> SKIP)); act2_action2(id)\n"
-					+ "act2_action2_t(id) = act2_action2(id) /\\ END_DIAGRAM_action2(id)\n"
-					+ "act3_action2(id) = ((ce_action2.id.2 -> SKIP)); event_act3_action2.id -> ((ce_action2.id.5 -> SKIP)); act3_action2(id)\n"
-					+ "act3_action2_t(id) = act3_action2(id) /\\ END_DIAGRAM_action2(id)\n"
-					+ "done_action2(id) = ((ce_action2.id.5 -> SKIP) [] (ce_action2.id.4 -> SKIP)); clear_action2.id.1 -> SKIP\n"
-					+ "done_action2_t(id) = done_action2(id) /\\ END_DIAGRAM_action2(id)\n");
+			expected.append("action2_start_action2(id) = update_action2.id.1!(1-0) -> ((ce_action2.id.1 -> SKIP))\n"
+					+ "action2_start_action2_t(id) = action2_start_action2(id) /\\ END_DIAGRAM_action2(id)\n"
+					+ "action2_act1_action2(id) = ((ce_action2.id.1 -> SKIP)); event_action2_act1_action2.id -> update_action2.id.2!(2-1) -> ((ce_action2.id.2 -> SKIP) ||| (ce_action2.id.3 -> SKIP)); action2_act1_action2(id)\n"
+					+ "action2_act1_action2_t(id) = action2_act1_action2(id) /\\ END_DIAGRAM_action2(id)\n"
+					+ "action2_act2_action2(id) = ((ce_action2.id.2 -> SKIP)); event_action2_act2_action2.id -> ((ce_action2.id.4 -> SKIP)); action2_act2_action2(id)\n"
+					+ "action2_act2_action2_t(id) = action2_act2_action2(id) /\\ END_DIAGRAM_action2(id)\n"
+					+ "action2_act3_action2(id) = ((ce_action2.id.3 -> SKIP)); event_action2_act3_action2.id -> ((ce_action2.id.5 -> SKIP)); action2_act3_action2(id)\n"
+					+ "action2_act3_action2_t(id) = action2_act3_action2(id) /\\ END_DIAGRAM_action2(id)\n"
+					+ "action2_done_action2(id) = ((ce_action2.id.4 -> SKIP) [] (ce_action2.id.5 -> SKIP)); clear_action2.id.1 -> SKIP\n"
+					+ "action2_done_action2_t(id) = action2_done_action2(id) /\\ END_DIAGRAM_action2(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -109,16 +109,16 @@ public class ADParserTestActionNode {
 			StringBuffer expected = new StringBuffer();
 			
 			expected.append("parameter_x_action3_t(id) = update_action3.id.1!(1-0) -> get_x_action3.id.1?x -> ((oe_1_action3.id!x -> SKIP))\n"
-					+ "start_action3(id) = update_action3.id.2!(1-0) -> ((ce_action3.id.1 -> SKIP))\n"
-					+ "start_action3_t(id) = start_action3(id) /\\ END_DIAGRAM_action3(id)\n"
-					+ "act1_action3(id) = ((ce_action3.id.1 -> SKIP) ||| (oe_1_action3.id?x -> set_x_act1_action3.id.1!x -> SKIP)); event_act1_action3.id -> get_x_act1_action3.id.2?x -> ((((x) >= 0 and (x) <= 1) & oe_2_action3.id!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_3_action3.id!(x) -> SKIP)); act1_action3(id)\n"
-					+ "act1_action3_t(id) = ((act1_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_x_act1_action3.id,set_x_act1_action3.id,endDiagram_action3.id|}|] Mem_act1_action3_x_t(id,0)) \\{|get_x_act1_action3.id,set_x_act1_action3.id|}\n"
-					+ "act2_action3(id) = ((oe_2_action3.id?z -> set_z_act2_action3.id.2!z -> SKIP)); event_act2_action3.id -> get_z_act2_action3.id.3?z -> ((ce_action3.id.2 -> SKIP)); act2_action3(id)\n"
-					+ "act2_action3_t(id) = ((act2_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_z_act2_action3.id,set_z_act2_action3.id,endDiagram_action3.id|}|] Mem_act2_action3_z_t(id,0)) \\{|get_z_act2_action3.id,set_z_act2_action3.id|}\n"
-					+ "act3_action3(id) = ((oe_3_action3.id?w -> set_w_act3_action3.id.3!w -> SKIP)); event_act3_action3.id -> get_w_act3_action3.id.4?w -> ((ce_action3.id.3 -> SKIP)); act3_action3(id)\n"
-					+ "act3_action3_t(id) = ((act3_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_w_act3_action3.id,set_w_act3_action3.id,endDiagram_action3.id|}|] Mem_act3_action3_w_t(id,0)) \\{|get_w_act3_action3.id,set_w_act3_action3.id|}\n"
-					+ "done_action3(id) = ((ce_action3.id.3 -> SKIP) [] (ce_action3.id.2 -> SKIP)); clear_action3.id.1 -> SKIP\n"
-					+ "done_action3_t(id) = done_action3(id) /\\ END_DIAGRAM_action3(id)\n");
+					+ "action3_start_action3(id) = update_action3.id.2!(1-0) -> ((ce_action3.id.1 -> SKIP))\n"
+					+ "action3_start_action3_t(id) = action3_start_action3(id) /\\ END_DIAGRAM_action3(id)\n"
+					+ "action3_act1_action3(id) = ((ce_action3.id.1 -> SKIP) ||| (oe_1_action3.id?x -> set_x_action3_act1_action3.id.1!x -> SKIP)); event_action3_act1_action3.id -> get_x_action3_act1_action3.id.2?x -> ((((x) >= 0 and (x) <= 1) & oe_2_action3.id!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_3_action3.id!(x) -> SKIP)); action3_act1_action3(id)\n"
+					+ "action3_act1_action3_t(id) = ((action3_act1_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_x_action3_act1_action3.id,set_x_action3_act1_action3.id,endDiagram_action3.id|}|] Mem_action3_act1_action3_x_t(id,0)) \\{|get_x_action3_act1_action3.id,set_x_action3_act1_action3.id|}\n"
+					+ "action3_act2_action3(id) = ((oe_2_action3.id?z -> set_z_action3_act2_action3.id.2!z -> SKIP)); event_action3_act2_action3.id -> get_z_action3_act2_action3.id.3?z -> ((ce_action3.id.2 -> SKIP)); action3_act2_action3(id)\n"
+					+ "action3_act2_action3_t(id) = ((action3_act2_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_z_action3_act2_action3.id,set_z_action3_act2_action3.id,endDiagram_action3.id|}|] Mem_action3_act2_action3_z_t(id,0)) \\{|get_z_action3_act2_action3.id,set_z_action3_act2_action3.id|}\n"
+					+ "action3_act3_action3(id) = ((oe_3_action3.id?w -> set_w_action3_act3_action3.id.3!w -> SKIP)); event_action3_act3_action3.id -> get_w_action3_act3_action3.id.4?w -> ((ce_action3.id.3 -> SKIP)); action3_act3_action3(id)\n"
+					+ "action3_act3_action3_t(id) = ((action3_act3_action3(id) /\\ END_DIAGRAM_action3(id)) [|{|get_w_action3_act3_action3.id,set_w_action3_act3_action3.id,endDiagram_action3.id|}|] Mem_action3_act3_action3_w_t(id,0)) \\{|get_w_action3_act3_action3.id,set_w_action3_act3_action3.id|}\n"
+					+ "action3_done_action3(id) = ((ce_action3.id.3 -> SKIP) [] (ce_action3.id.2 -> SKIP)); clear_action3.id.1 -> SKIP\n"
+					+ "action3_done_action3_t(id) = action3_done_action3(id) /\\ END_DIAGRAM_action3(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -142,14 +142,14 @@ public class ADParserTestActionNode {
 			
 			expected.append("parameter_x_action4_t(id) = update_action4.id.1!(1-0) -> get_x_action4.id.1?x -> ((oe_1_action4.id!x -> SKIP))\n"
 					+ "parameter_y_action4_t(id) = update_action4.id.2!(1-0) -> get_y_action4.id.2?y -> ((oe_2_action4.id!y -> SKIP))\n"
-					+ "act1_action4(id) = ((oe_1_action4.id?x -> set_x_act1_action4.id.1!x -> SKIP) ||| (oe_2_action4.id?y -> set_y_act1_action4.id.2!y -> SKIP)); event_act1_action4.id -> get_y_act1_action4.id.3?y -> set_x_act1_action4.id.3!(y) -> get_x_act1_action4.id.4?x -> get_y_act1_action4.id.5?y -> ((((x) >= 0 and (x) <= 1) & oe_3_action4.id!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_4_action4.id!(x) -> SKIP)); act1_action4(id)\n"
-					+ "act1_action4_t(id) = (((act1_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_x_act1_action4.id,set_x_act1_action4.id,endDiagram_action4.id|}|] Mem_act1_action4_x_t(id,0)) [|{|get_y_act1_action4.id,set_y_act1_action4.id,endDiagram_action4.id|}|] Mem_act1_action4_y_t(id,0)) \\{|get_x_act1_action4.id,set_x_act1_action4.id,get_y_act1_action4.id,set_y_act1_action4.id|}\n"
-					+ "act2_action4(id) = ((oe_4_action4.id?w -> set_w_act2_action4.id.4!w -> SKIP)); event_act2_action4.id -> get_w_act2_action4.id.6?w -> ((ce_action4.id.1 -> SKIP)); act2_action4(id)\n"
-					+ "act2_action4_t(id) = ((act2_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_w_act2_action4.id,set_w_act2_action4.id,endDiagram_action4.id|}|] Mem_act2_action4_w_t(id,0)) \\{|get_w_act2_action4.id,set_w_act2_action4.id|}\n"
-					+ "act3_action4(id) = ((oe_3_action4.id?w -> set_w_act3_action4.id.5!w -> SKIP)); event_act3_action4.id -> get_w_act3_action4.id.7?w -> ((ce_action4.id.2 -> SKIP)); act3_action4(id)\n"
-					+ "act3_action4_t(id) = ((act3_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_w_act3_action4.id,set_w_act3_action4.id,endDiagram_action4.id|}|] Mem_act3_action4_w_t(id,0)) \\{|get_w_act3_action4.id,set_w_act3_action4.id|}\n"
-					+ "done_action4(id) = ((ce_action4.id.2 -> SKIP) [] (ce_action4.id.1 -> SKIP)); clear_action4.id.1 -> SKIP\n"
-					+ "done_action4_t(id) = done_action4(id) /\\ END_DIAGRAM_action4(id)\n");
+					+ "action4_act1_action4(id) = ((oe_1_action4.id?x -> set_x_action4_act1_action4.id.1!x -> SKIP) ||| (oe_2_action4.id?y -> set_y_action4_act1_action4.id.2!y -> SKIP)); event_action4_act1_action4.id -> get_y_action4_act1_action4.id.3?y -> set_x_action4_act1_action4.id.3!(y) -> get_x_action4_act1_action4.id.4?x -> get_y_action4_act1_action4.id.5?y -> ((((x) >= 0 and (x) <= 1) & oe_3_action4.id!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_4_action4.id!(x) -> SKIP)); action4_act1_action4(id)\n"
+					+ "action4_act1_action4_t(id) = (((action4_act1_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_x_action4_act1_action4.id,set_x_action4_act1_action4.id,endDiagram_action4.id|}|] Mem_action4_act1_action4_x_t(id,0)) [|{|get_y_action4_act1_action4.id,set_y_action4_act1_action4.id,endDiagram_action4.id|}|] Mem_action4_act1_action4_y_t(id,0)) \\{|get_x_action4_act1_action4.id,set_x_action4_act1_action4.id,get_y_action4_act1_action4.id,set_y_action4_act1_action4.id|}\n"
+					+ "action4_act2_action4(id) = ((oe_4_action4.id?w -> set_w_action4_act2_action4.id.4!w -> SKIP)); event_action4_act2_action4.id -> get_w_action4_act2_action4.id.6?w -> ((ce_action4.id.1 -> SKIP)); action4_act2_action4(id)\n"
+					+ "action4_act2_action4_t(id) = ((action4_act2_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_w_action4_act2_action4.id,set_w_action4_act2_action4.id,endDiagram_action4.id|}|] Mem_action4_act2_action4_w_t(id,0)) \\{|get_w_action4_act2_action4.id,set_w_action4_act2_action4.id|}\n"
+					+ "action4_act3_action4(id) = ((oe_3_action4.id?w -> set_w_action4_act3_action4.id.5!w -> SKIP)); event_action4_act3_action4.id -> get_w_action4_act3_action4.id.7?w -> ((ce_action4.id.2 -> SKIP)); action4_act3_action4(id)\n"
+					+ "action4_act3_action4_t(id) = ((action4_act3_action4(id) /\\ END_DIAGRAM_action4(id)) [|{|get_w_action4_act3_action4.id,set_w_action4_act3_action4.id,endDiagram_action4.id|}|] Mem_action4_act3_action4_w_t(id,0)) \\{|get_w_action4_act3_action4.id,set_w_action4_act3_action4.id|}\n"
+					+ "action4_done_action4(id) = ((ce_action4.id.1 -> SKIP) [] (ce_action4.id.2 -> SKIP)); clear_action4.id.1 -> SKIP\n"
+					+ "action4_done_action4_t(id) = action4_done_action4(id) /\\ END_DIAGRAM_action4(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -174,8 +174,8 @@ public class ADParserTestActionNode {
 			expected.append("parameter_x_action5_t(id) = update_action5.id.1!(1-0) -> get_x_action5.id.1?x -> ((oe_1_action5.id!x -> SKIP))\n"
 					+ "parameter_y_action5(id) = ((oe_2_action5.id?oe0 -> set_outParam_y_action5.id.1!oe0 -> SKIP)); get_outParam_y_action5.id.2?outParam -> set_y_action5.id.2!outParam -> update_action5.id.2!(0-1) -> parameter_y_action5(id)\n"
 					+ "parameter_y_action5_t(id) = ((parameter_y_action5(id) /\\ END_DIAGRAM_action5(id)) [|{|get_outParam_y_action5.id,set_outParam_y_action5.id,endDiagram_action5.id|}|] Mem_y_action5_outParam_t(id,0)) \\{|get_outParam_y_action5.id,set_outParam_y_action5.id|}\n"
-					+ "act1_action5(id) = ((oe_1_action5.id?x -> set_x_act1_action5.id.3!x -> SKIP)); event_act1_action5.id -> get_x_act1_action5.id.3?x -> ((((x) >= 0 and (x) <= 1) & oe_2_action5.id!(x) -> SKIP)); act1_action5(id)\n"
-					+ "act1_action5_t(id) = ((act1_action5(id) /\\ END_DIAGRAM_action5(id)) [|{|get_x_act1_action5.id,set_x_act1_action5.id,endDiagram_action5.id|}|] Mem_act1_action5_x_t(id,0)) \\{|get_x_act1_action5.id,set_x_act1_action5.id|}\n");
+					+ "action5_act1_action5(id) = ((oe_1_action5.id?x -> set_x_action5_act1_action5.id.3!x -> SKIP)); event_action5_act1_action5.id -> get_x_action5_act1_action5.id.3?x -> ((((x) >= 0 and (x) <= 1) & oe_2_action5.id!(x) -> SKIP)); action5_act1_action5(id)\n"
+					+ "action5_act1_action5_t(id) = ((action5_act1_action5(id) /\\ END_DIAGRAM_action5(id)) [|{|get_x_action5_act1_action5.id,set_x_action5_act1_action5.id,endDiagram_action5.id|}|] Mem_action5_act1_action5_x_t(id,0)) \\{|get_x_action5_act1_action5.id,set_x_action5_act1_action5.id|}\n");
 			
 			assertEquals(expected.toString(), actual);
 			

@@ -5,6 +5,7 @@ import org.omg.sysml.xtext.sysml.ParameterMembership;
 
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IPin;
@@ -12,8 +13,8 @@ import com.ref.interfaces.activityDiagram.IPin;
 public abstract class Pin extends ObjectNode implements IPin{
 	protected IAction owner;
 	
-	public Pin(EObject pin) throws WellFormedException {
-		super(pin);
+	public Pin(EObject pin, IActivity owner) throws WellFormedException {
+		super(pin, owner);
 		this.base = new Class(((ParameterMembership) pin).getOwnedMemberParameter_comp());
 	}
 

@@ -48,16 +48,16 @@ public class ADParserTestForkNode {
 			String actual = parser1.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_fork1(id) = update_fork1.id.1!(1-0) -> ((ce_fork1.id.1 -> SKIP))\n"
-					+ "start_fork1_t(id) = start_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
-					+ "forkNode1_fork1(id) = ce_fork1.id.1 -> update_fork1.id.2!(2-1) -> ((ce_fork1.id.2 -> SKIP) ||| (ce_fork1.id.3 -> SKIP)); forkNode1_fork1(id)\n"
-					+ "forkNode1_fork1_t(id) = forkNode1_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
-					+ "act1_fork1(id) = ((ce_fork1.id.3 -> SKIP)); event_act1_fork1.id -> ((ce_fork1.id.4 -> SKIP)); act1_fork1(id)\n"
-					+ "act1_fork1_t(id) = act1_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
-					+ "act2_fork1(id) = ((ce_fork1.id.2 -> SKIP)); event_act2_fork1.id -> ((ce_fork1.id.5 -> SKIP)); act2_fork1(id)\n"
-					+ "act2_fork1_t(id) = act2_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
-					+ "done_fork1(id) = ((ce_fork1.id.5 -> SKIP) [] (ce_fork1.id.4 -> SKIP)); clear_fork1.id.1 -> SKIP\n"
-					+ "done_fork1_t(id) = done_fork1(id) /\\ END_DIAGRAM_fork1(id)\n");
+			expected.append("fork1_start_fork1(id) = update_fork1.id.1!(1-0) -> ((ce_fork1.id.1 -> SKIP))\n"
+					+ "fork1_start_fork1_t(id) = fork1_start_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
+					+ "fork1_forkNode1_fork1(id) = ce_fork1.id.1 -> update_fork1.id.2!(2-1) -> ((ce_fork1.id.2 -> SKIP) ||| (ce_fork1.id.3 -> SKIP)); fork1_forkNode1_fork1(id)\n"
+					+ "fork1_forkNode1_fork1_t(id) = fork1_forkNode1_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
+					+ "fork1_act1_fork1(id) = ((ce_fork1.id.3 -> SKIP)); event_fork1_act1_fork1.id -> ((ce_fork1.id.4 -> SKIP)); fork1_act1_fork1(id)\n"
+					+ "fork1_act1_fork1_t(id) = fork1_act1_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
+					+ "fork1_act2_fork1(id) = ((ce_fork1.id.2 -> SKIP)); event_fork1_act2_fork1.id -> ((ce_fork1.id.5 -> SKIP)); fork1_act2_fork1(id)\n"
+					+ "fork1_act2_fork1_t(id) = fork1_act2_fork1(id) /\\ END_DIAGRAM_fork1(id)\n"
+					+ "fork1_done_fork1(id) = ((ce_fork1.id.5 -> SKIP) [] (ce_fork1.id.4 -> SKIP)); clear_fork1.id.1 -> SKIP\n"
+					+ "fork1_done_fork1_t(id) = fork1_done_fork1(id) /\\ END_DIAGRAM_fork1(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -79,14 +79,14 @@ public class ADParserTestForkNode {
 			StringBuffer expected = new StringBuffer();
 			
 			expected.append("parameter_x_fork2_t(id) = update_fork2.id.1!(1-0) -> get_x_fork2.id.1?x -> ((oe_1_fork2.id!x -> SKIP))\n"
-					+ "forkNode1_fork2(id) = oe_1_fork2.id?x -> update_fork2.id.2!(2-1) -> ((oe_2_fork2.id!x -> SKIP) ||| (oe_3_fork2.id!x -> SKIP)); forkNode1_fork2(id)\n"
-					+ "forkNode1_fork2_t(id) = forkNode1_fork2(id) /\\ END_DIAGRAM_fork2(id)\n"
-					+ "act1_fork2(id) = ((oe_3_fork2.id?x -> set_x_act1_fork2.id.1!x -> SKIP)); event_act1_fork2.id -> get_x_act1_fork2.id.2?x -> ((ce_fork2.id.1 -> SKIP)); act1_fork2(id)\n"
-					+ "act1_fork2_t(id) = ((act1_fork2(id) /\\ END_DIAGRAM_fork2(id)) [|{|get_x_act1_fork2.id,set_x_act1_fork2.id,endDiagram_fork2.id|}|] Mem_act1_fork2_x_t(id,0)) \\{|get_x_act1_fork2.id,set_x_act1_fork2.id|}\n"
-					+ "act2_fork2(id) = ((oe_2_fork2.id?x -> set_x_act2_fork2.id.2!x -> SKIP)); event_act2_fork2.id -> get_x_act2_fork2.id.3?x -> ((ce_fork2.id.2 -> SKIP)); act2_fork2(id)\n"
-					+ "act2_fork2_t(id) = ((act2_fork2(id) /\\ END_DIAGRAM_fork2(id)) [|{|get_x_act2_fork2.id,set_x_act2_fork2.id,endDiagram_fork2.id|}|] Mem_act2_fork2_x_t(id,0)) \\{|get_x_act2_fork2.id,set_x_act2_fork2.id|}\n"
-					+ "done_fork2(id) = ((ce_fork2.id.2 -> SKIP) [] (ce_fork2.id.1 -> SKIP)); clear_fork2.id.1 -> SKIP\n"
-					+ "done_fork2_t(id) = done_fork2(id) /\\ END_DIAGRAM_fork2(id)\n");
+					+ "fork2_forkNode1_fork2(id) = oe_1_fork2.id?x -> update_fork2.id.2!(2-1) -> ((oe_2_fork2.id!x -> SKIP) ||| (oe_3_fork2.id!x -> SKIP)); fork2_forkNode1_fork2(id)\n"
+					+ "fork2_forkNode1_fork2_t(id) = fork2_forkNode1_fork2(id) /\\ END_DIAGRAM_fork2(id)\n"
+					+ "fork2_act1_fork2(id) = ((oe_2_fork2.id?x -> set_x_fork2_act1_fork2.id.1!x -> SKIP)); event_fork2_act1_fork2.id -> get_x_fork2_act1_fork2.id.2?x -> ((ce_fork2.id.1 -> SKIP)); fork2_act1_fork2(id)\n"
+					+ "fork2_act1_fork2_t(id) = ((fork2_act1_fork2(id) /\\ END_DIAGRAM_fork2(id)) [|{|get_x_fork2_act1_fork2.id,set_x_fork2_act1_fork2.id,endDiagram_fork2.id|}|] Mem_fork2_act1_fork2_x_t(id,0)) \\{|get_x_fork2_act1_fork2.id,set_x_fork2_act1_fork2.id|}\n"
+					+ "fork2_act2_fork2(id) = ((oe_3_fork2.id?x -> set_x_fork2_act2_fork2.id.2!x -> SKIP)); event_fork2_act2_fork2.id -> get_x_fork2_act2_fork2.id.3?x -> ((ce_fork2.id.2 -> SKIP)); fork2_act2_fork2(id)\n"
+					+ "fork2_act2_fork2_t(id) = ((fork2_act2_fork2(id) /\\ END_DIAGRAM_fork2(id)) [|{|get_x_fork2_act2_fork2.id,set_x_fork2_act2_fork2.id,endDiagram_fork2.id|}|] Mem_fork2_act2_fork2_x_t(id,0)) \\{|get_x_fork2_act2_fork2.id,set_x_fork2_act2_fork2.id|}\n"
+					+ "fork2_done_fork2(id) = ((ce_fork2.id.2 -> SKIP) [] (ce_fork2.id.1 -> SKIP)); clear_fork2.id.1 -> SKIP\n"
+					+ "fork2_done_fork2_t(id) = fork2_done_fork2(id) /\\ END_DIAGRAM_fork2(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			

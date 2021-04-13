@@ -5,7 +5,8 @@ action action4(in x : Integer, in y : Integer) {
 	doc /* Integer={0..1} */
 		
 	action act1(in x : Integer, in y : Integer, out w : Integer) {
-		doc /* x = y;w = x; */
+		language "Alf"
+		/* x = y;w = x; */
 	}
 		
 	action act2(in w : Integer);

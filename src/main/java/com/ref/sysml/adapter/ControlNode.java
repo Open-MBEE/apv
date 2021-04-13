@@ -1,5 +1,8 @@
 package com.ref.sysml.adapter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.emf.ecore.EObject;
 import org.omg.sysml.xtext.sysml.DecisionNode;
 import org.omg.sysml.xtext.sysml.FeatureMembership;
@@ -8,17 +11,17 @@ import org.omg.sysml.xtext.sysml.JoinNode;
 import org.omg.sysml.xtext.sysml.MergeNode;
 
 import com.ref.exceptions.WellFormedException;
+import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IControlNode;
 
 public class ControlNode extends ActivityNode implements IControlNode{
 
-	public ControlNode(EObject controlNode) throws WellFormedException {
-		super(controlNode);
-		
+	public ControlNode(EObject controlNode, IActivity owner) throws WellFormedException {
+		super(controlNode, owner);
 	}
 
-	public ControlNode(String name) {
-		super(name);
+	public ControlNode(String name, IActivity owner) {
+		super(name, owner);
 	}
 	
 	@Override
@@ -48,7 +51,9 @@ public class ControlNode extends ActivityNode implements IControlNode{
 
 	@Override
 	public boolean isFinalNode() {
-		return getName().equalsIgnoreCase("done");
+		Pattern p = Pattern.compile("_done$");
+		Matcher m = p.matcher(getName());
+		return m.find();
 	}
 
 	@Override

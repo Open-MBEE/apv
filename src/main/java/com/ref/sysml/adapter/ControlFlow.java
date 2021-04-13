@@ -6,6 +6,8 @@ import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IControlFlow;
 
 public class ControlFlow extends Flow implements IControlFlow{
+	
+	
 	public ControlFlow(EObject flow) {
 		super(flow);
 	}
@@ -18,11 +20,6 @@ public class ControlFlow extends Flow implements IControlFlow{
 	@Override
 	public IActivityNode getSource() {
 		return source;
-	}
-
-	@Override
-	public String getGuard() {
-		return "";
 	}
 	
 	@Override

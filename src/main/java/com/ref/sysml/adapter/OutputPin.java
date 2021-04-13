@@ -7,6 +7,7 @@ import org.omg.sysml.xtext.sysml.Usage;
 
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IOutputPin;
@@ -18,8 +19,8 @@ public class OutputPin extends Pin implements IOutputPin{
 	protected ParameterMembership pin;
 	protected String name;
 	
-	public OutputPin(ParameterMembership pin) throws WellFormedException {
-		super(pin);
+	public OutputPin(ParameterMembership pin, IActivity owner) throws WellFormedException {
+		super(pin, owner);
 		this.pin = pin;
 		
 		Usage usage = this.pin.getOwnedMemberParameter_comp();

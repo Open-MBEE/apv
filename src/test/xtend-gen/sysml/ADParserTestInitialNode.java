@@ -47,14 +47,14 @@ public class ADParserTestInitialNode {
 			String actual = parser1.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_initial1(id) = update_initial1.id.1!(2-0) -> ((ce_initial1.id.1 -> SKIP) ||| (ce_initial1.id.2 -> SKIP))\n"
-					+ "start_initial1_t(id) = start_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
-					+ "act1_initial1(id) = ((ce_initial1.id.2 -> SKIP)); event_act1_initial1.id -> ((ce_initial1.id.3 -> SKIP)); act1_initial1(id)\n"
-					+ "act1_initial1_t(id) = act1_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
-					+ "act2_initial1(id) = ((ce_initial1.id.1 -> SKIP)); event_act2_initial1.id -> ((ce_initial1.id.4 -> SKIP)); act2_initial1(id)\n"
-					+ "act2_initial1_t(id) = act2_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
-					+ "done_initial1(id) = ((ce_initial1.id.4 -> SKIP) [] (ce_initial1.id.3 -> SKIP)); clear_initial1.id.1 -> SKIP\n"
-					+ "done_initial1_t(id) = done_initial1(id) /\\ END_DIAGRAM_initial1(id)\n");
+			expected.append("initial1_start_initial1(id) = update_initial1.id.1!(2-0) -> ((ce_initial1.id.1 -> SKIP) ||| (ce_initial1.id.2 -> SKIP))\n"
+					+ "initial1_start_initial1_t(id) = initial1_start_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
+					+ "initial1_act1_initial1(id) = ((ce_initial1.id.1 -> SKIP)); event_initial1_act1_initial1.id -> ((ce_initial1.id.3 -> SKIP)); initial1_act1_initial1(id)\n"
+					+ "initial1_act1_initial1_t(id) = initial1_act1_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
+					+ "initial1_act2_initial1(id) = ((ce_initial1.id.2 -> SKIP)); event_initial1_act2_initial1.id -> ((ce_initial1.id.4 -> SKIP)); initial1_act2_initial1(id)\n"
+					+ "initial1_act2_initial1_t(id) = initial1_act2_initial1(id) /\\ END_DIAGRAM_initial1(id)\n"
+					+ "initial1_done_initial1(id) = ((ce_initial1.id.4 -> SKIP) [] (ce_initial1.id.3 -> SKIP)); clear_initial1.id.1 -> SKIP\n"
+					+ "initial1_done_initial1_t(id) = initial1_done_initial1(id) /\\ END_DIAGRAM_initial1(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			

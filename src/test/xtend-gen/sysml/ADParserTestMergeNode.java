@@ -48,16 +48,16 @@ public class ADParserTestMergeNode {
 			String actual = parser1.defineNodesActionAndControl();
 			StringBuffer expected = new StringBuffer();
 			
-			expected.append("start_merge1(id) = update_merge1.id.1!(2-0) -> ((ce_merge1.id.1 -> SKIP) ||| (ce_merge1.id.2 -> SKIP))\n"
-					+ "start_merge1_t(id) = start_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
-					+ "act1_merge1(id) = ((ce_merge1.id.2 -> SKIP)); event_act1_merge1.id -> ((ce_merge1.id.3 -> SKIP)); act1_merge1(id)\n"
-					+ "act1_merge1_t(id) = act1_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
-					+ "act2_merge1(id) = ((ce_merge1.id.1 -> SKIP)); event_act2_merge1.id -> ((ce_merge1.id.4 -> SKIP)); act2_merge1(id)\n"
-					+ "act2_merge1_t(id) = act2_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
-					+ "mergeNode1_merge1(id) = ((ce_merge1.id.3 -> SKIP) [] (ce_merge1.id.4 -> SKIP)); ce_merge1.id.5 -> mergeNode1_merge1(id)\n"
-					+ "mergeNode1_merge1_t(id) = mergeNode1_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
-					+ "done_merge1(id) = ((ce_merge1.id.5 -> SKIP)); clear_merge1.id.1 -> SKIP\n"
-					+ "done_merge1_t(id) = done_merge1(id) /\\ END_DIAGRAM_merge1(id)\n");
+			expected.append("merge1_start_merge1(id) = update_merge1.id.1!(2-0) -> ((ce_merge1.id.1 -> SKIP) ||| (ce_merge1.id.2 -> SKIP))\n"
+					+ "merge1_start_merge1_t(id) = merge1_start_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
+					+ "merge1_act1_merge1(id) = ((ce_merge1.id.1 -> SKIP)); event_merge1_act1_merge1.id -> ((ce_merge1.id.3 -> SKIP)); merge1_act1_merge1(id)\n"
+					+ "merge1_act1_merge1_t(id) = merge1_act1_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
+					+ "merge1_act2_merge1(id) = ((ce_merge1.id.2 -> SKIP)); event_merge1_act2_merge1.id -> ((ce_merge1.id.4 -> SKIP)); merge1_act2_merge1(id)\n"
+					+ "merge1_act2_merge1_t(id) = merge1_act2_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
+					+ "merge1_mergeNode1_merge1(id) = ((ce_merge1.id.4 -> SKIP) [] (ce_merge1.id.3 -> SKIP)); ce_merge1.id.5 -> merge1_mergeNode1_merge1(id)\n"
+					+ "merge1_mergeNode1_merge1_t(id) = merge1_mergeNode1_merge1(id) /\\ END_DIAGRAM_merge1(id)\n"
+					+ "merge1_done_merge1(id) = ((ce_merge1.id.5 -> SKIP)); clear_merge1.id.1 -> SKIP\n"
+					+ "merge1_done_merge1_t(id) = merge1_done_merge1(id) /\\ END_DIAGRAM_merge1(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			
@@ -80,12 +80,12 @@ public class ADParserTestMergeNode {
 			
 			expected.append("parameter_x_merge3_t(id) = update_merge3.id.1!(1-0) -> get_x_merge3.id.1?x -> ((oe_1_merge3.id!x -> SKIP))\n"
 					+ "parameter_y_merge3_t(id) = update_merge3.id.2!(1-0) -> get_y_merge3.id.2?y -> ((oe_2_merge3.id!y -> SKIP))\n"
-					+ "mergeNode1_merge3(id) = ((oe_2_merge3.id?oe0 -> set_mergeMem_mergeNode1_merge3.id.1!oe0 -> SKIP) [] (oe_1_merge3.id?oe1 -> set_mergeMem_mergeNode1_merge3.id.2!oe1 -> SKIP)); get_mergeMem_mergeNode1_merge3.id.3?mergeMem -> oe_3_merge3.id!mergeMem -> mergeNode1_merge3(id)\n"
-					+ "mergeNode1_merge3_t(id) = ((mergeNode1_merge3(id) /\\ END_DIAGRAM_merge3(id)) [|{|get_mergeMem_mergeNode1_merge3,set_mergeMem_mergeNode1_merge3,endDiagram_merge3|}|] Mem_mergeNode1_merge3_mergeMem_t(id,0)) \\{|get_mergeMem_mergeNode1_merge3,set_mergeMem_mergeNode1_merge3|}\n"
-					+ "act1_merge3(id) = ((oe_3_merge3.id?x -> set_x_act1_merge3.id.3!x -> SKIP)); event_act1_merge3.id -> get_x_act1_merge3.id.4?x -> ((ce_merge3.id.1 -> SKIP)); act1_merge3(id)\n"
-					+ "act1_merge3_t(id) = ((act1_merge3(id) /\\ END_DIAGRAM_merge3(id)) [|{|get_x_act1_merge3.id,set_x_act1_merge3.id,endDiagram_merge3.id|}|] Mem_act1_merge3_x_t(id,0)) \\{|get_x_act1_merge3.id,set_x_act1_merge3.id|}\n"
-					+ "done_merge3(id) = ((ce_merge3.id.1 -> SKIP)); clear_merge3.id.1 -> SKIP\n"
-					+ "done_merge3_t(id) = done_merge3(id) /\\ END_DIAGRAM_merge3(id)\n");
+					+ "merge3_mergeNode1_merge3(id) = ((oe_1_merge3.id?oe0 -> set_mergeMem_merge3_mergeNode1_merge3.id.1!oe0 -> SKIP) [] (oe_2_merge3.id?oe1 -> set_mergeMem_merge3_mergeNode1_merge3.id.2!oe1 -> SKIP)); get_mergeMem_merge3_mergeNode1_merge3.id.3?mergeMem -> oe_3_merge3.id!mergeMem -> merge3_mergeNode1_merge3(id)\n"
+					+ "merge3_mergeNode1_merge3_t(id) = ((merge3_mergeNode1_merge3(id) /\\ END_DIAGRAM_merge3(id)) [|{|get_mergeMem_merge3_mergeNode1_merge3,set_mergeMem_merge3_mergeNode1_merge3,endDiagram_merge3|}|] Mem_merge3_mergeNode1_merge3_mergeMem_t(id,0)) \\{|get_mergeMem_merge3_mergeNode1_merge3,set_mergeMem_merge3_mergeNode1_merge3|}\n"
+					+ "merge3_act1_merge3(id) = ((oe_3_merge3.id?x -> set_x_merge3_act1_merge3.id.3!x -> SKIP)); event_merge3_act1_merge3.id -> get_x_merge3_act1_merge3.id.4?x -> ((ce_merge3.id.1 -> SKIP)); merge3_act1_merge3(id)\n"
+					+ "merge3_act1_merge3_t(id) = ((merge3_act1_merge3(id) /\\ END_DIAGRAM_merge3(id)) [|{|get_x_merge3_act1_merge3.id,set_x_merge3_act1_merge3.id,endDiagram_merge3.id|}|] Mem_merge3_act1_merge3_x_t(id,0)) \\{|get_x_merge3_act1_merge3.id,set_x_merge3_act1_merge3.id|}\n"
+					+ "merge3_done_merge3(id) = ((ce_merge3.id.1 -> SKIP)); clear_merge3.id.1 -> SKIP\n"
+					+ "merge3_done_merge3_t(id) = merge3_done_merge3(id) /\\ END_DIAGRAM_merge3(id)\n");
 			
 			assertEquals(expected.toString(), actual);
 			

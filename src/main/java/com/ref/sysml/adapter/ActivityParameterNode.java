@@ -4,14 +4,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.omg.sysml.xtext.sysml.ParameterMembership;
 
 import com.ref.exceptions.WellFormedException;
+import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IClass;
 
 public class ActivityParameterNode extends ObjectNode implements IActivityParameterNode{
 	private IClass base;
 
-	public ActivityParameterNode(EObject activityParameterNode) throws WellFormedException {
-		super(activityParameterNode);	
+	public ActivityParameterNode(EObject activityParameterNode, IActivity owner) throws WellFormedException {
+		super(activityParameterNode, owner);
 		this.base = new Class(((ParameterMembership) activityParameterNode).getOwnedMemberParameter_comp());
 	}
 
