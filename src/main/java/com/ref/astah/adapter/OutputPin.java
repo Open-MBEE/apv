@@ -10,7 +10,6 @@ public class OutputPin extends Pin implements IOutputPin{
 
 	public OutputPin(com.change_vision.jude.api.inf.model.IOutputPin outputPin) throws WellFormedException {
 		super(outputPin);
-		this.base = new Class(outputPin.getBase());
 	}
 
 	@Override

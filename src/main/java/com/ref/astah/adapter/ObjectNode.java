@@ -10,7 +10,9 @@ public class ObjectNode  extends ActivityNode implements IObjectNode{
 	
 	public ObjectNode(com.change_vision.jude.api.inf.model.IObjectNode objectNode) throws WellFormedException {
 		super(objectNode);
-		this.base = new Class(objectNode.getBase());
+		if(objectNode.getBase() != null) {
+			this.base = new Class(objectNode.getBase());
+		}
 	}
 
 	@Override

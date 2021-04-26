@@ -17,7 +17,7 @@ public class Action extends ActivityNode implements IAction {
 		super(action);
 		
 		this.inputs = new IInputPin[action.getInputs().length];
-		for (int i = 0; i < inputs.length; i++) {//TODO look if this part is still needed
+		for (int i = 0; i < inputs.length; i++) {
 			this.inputs[i] = new InputPin(action.getInputs()[i]);
 		}
 		

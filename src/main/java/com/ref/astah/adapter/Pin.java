@@ -11,7 +11,6 @@ public abstract class Pin extends ObjectNode implements IPin{
 	
 	public Pin(com.change_vision.jude.api.inf.model.IPin pin) throws WellFormedException {
 		super(pin);
-		this.base = new Class(pin.getBase());
 	}
 
 	@Override
