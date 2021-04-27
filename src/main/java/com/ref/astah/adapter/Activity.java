@@ -122,7 +122,6 @@ public class Activity implements IActivity{
 		try {
 			this.activity.setName(nameAD);
 		} catch (com.change_vision.jude.api.inf.exception.InvalidEditingException e) {
-			// TODO not sure if is 100% right
 			e.printStackTrace();
 		}
 	}

@@ -10,7 +10,6 @@ public class InputPin extends Pin implements IInputPin{
 	
 	public InputPin(com.change_vision.jude.api.inf.model.IInputPin pin) throws WellFormedException {
 		super(pin);
-		this.base = new Class(pin.getBase());
 	}
 
 	@Override

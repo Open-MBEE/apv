@@ -18,7 +18,7 @@ import com.change_vision.jude.api.inf.project.ProjectAccessor;
 //import com.ref.parser.activityDiagram.ADAlphabet;
 //import com.ref.parser.activityDiagram.ADCompositeAlphabet;
 import com.ref.parser.activityDiagram.ADParser;
-import com.ref.parser.activityDiagram.Pair;//TODO ver isso
+import com.ref.parser.activityDiagram.Pair;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

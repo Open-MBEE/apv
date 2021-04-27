@@ -2,14 +2,16 @@ package com.ref.openmbee.adapter;
 
 import java.util.ArrayList;
 
-public class Decision extends Element{
+import com.ref.interfaces.activityDiagram.IControlNode;
+
+public class Decision extends ControlNode implements IControlNode{
 	private String decisionInputFlow;
 	private String decisionInputFlowId;
 
 	public Decision(String id, String type, String ownerId, String activityId, ArrayList<String> outgoingsIds,
-			ArrayList<String> incomingIds, boolean isControlType, String decisionInputFlow,
-			String decisionInputFlowId) {
-		super(id, type, ownerId, activityId, outgoingsIds, incomingIds, isControlType);
+			ArrayList<String> incomingIds, String decisionInputFlow,
+			String decisionInputFlowId, String name, String[] stereotypes, String definition) {
+		super(id, type, ownerId, activityId, outgoingsIds, incomingIds, name, stereotypes, definition);
 		this.decisionInputFlow = decisionInputFlow;
 		this.decisionInputFlowId = decisionInputFlowId;
 	}
@@ -29,6 +31,5 @@ public class Decision extends Element{
 	public void setDecisionInputFlowId(String decisionInputFlowId) {
 		this.decisionInputFlowId = decisionInputFlowId;
 	}
-	
 	
 }

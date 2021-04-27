@@ -26,8 +26,7 @@ public class CounterExampleBuilder {
 	public CounterExampleBuilder(List<String> traceCounterExample, Activity activity, ADAlphabet alphabetAD, HashMap<String,Integer> IdSignals) {
 		this.alphabetAD = alphabetAD;
 		this.IdSignals = IdSignals;
-		
-		//TODO In the future, verify if this part continues working
+	
 		List<String> trace = new ArrayList<>();// necessary treatment of the trace
 		for (String objTrace : traceCounterExample) {
             String[] objTracePartition = objTrace.split("\\.");

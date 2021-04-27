@@ -10,7 +10,6 @@ public class ActivityParameterNode extends ObjectNode implements IActivityParame
 
 	public ActivityParameterNode(com.change_vision.jude.api.inf.model.IActivityParameterNode activityParameterNode) throws WellFormedException {
 		super(activityParameterNode);		
-		this.base = new Class(activityParameterNode.getBase());
 	}
 	
 	@Override

@@ -36,6 +36,7 @@ import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.openmbee.Communication;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.ADUtils;
 import com.ref.traceability.activityDiagram.CounterExampleBuilder;
@@ -79,57 +80,18 @@ public class ActivityController {
 		return controller;
 	}
 	
-	public void OpenMBEEInvocation(String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
+	public void OpenMBEEInvocation(String url, String login, String password, String idActivity, String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
 		
-		/*fazer estilo ADDefineNodesActionAndControl 
-		 * activity = communication.buildActivity(url,login,password,idActivity);
-		 * 
-		 * */
-		
-		//TODO ser ajustado(sair daqui e ir pro communication)
-		HttpClient httpClient = null;
-		CookieStore httpCookieStore = new BasicCookieStore();
-		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
-		httpClient = builder.build();
-		String username = "ufrpe";
+		//fazer estilo ADDefineNodesActionAndControl 
+		/*String url = "http://18.188.75.184/projects/tmt/refs/master/elements/";
+		String login = "ufrpe";
 		String password = "thisisapassword";
-		HttpPost httpRequest = new HttpPost("http://18.188.75.184/authentication");
-		httpRequest.setHeader("Content-Type", "application/json");
-		httpRequest.setHeader("accept", "application/json");
-		StringEntity body =new StringEntity("{\"username\": \""+username+"\",\"password\": \""+password+"\"}");
-		httpRequest.setEntity(body);
-		 
-		HttpResponse response = httpClient.execute(httpRequest);
-		
-		String jsonToken = EntityUtils.toString(response.getEntity());
-		System.out.println(jsonToken);
-
-		JSONObject token = new JSONObject(jsonToken);
-		System.out.println(token.get("token"));
-
-		
-		HttpGet httpGet = new HttpGet("http://18.188.75.184/projects/tmt/refs/master/elements/_17_0_2_3_41e01aa_1386799574481_308312_64121");
-	
-		httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.get("token"));
-		
-		response = httpClient.execute(httpGet);
-		
-		JSONObject activity = new JSONObject(EntityUtils.toString(response.getEntity()));
-		System.out.println(activity.toString());
-		
-		System.out.println(activity.get("elements"));
-		//System.out.println(activity.getJSONObject("elements"));
-		
-		
-		httpGet = new HttpGet("http://18.188.75.184/projects/tmt/refs/master/elements/_18_0_2_baa02e2_1430169721070_811705_501834");
-		
-		httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.get("token"));
-		
-		response = httpClient.execute(httpGet);
-		
-		JSONObject edge = new JSONObject(EntityUtils.toString(response.getEntity()));
-		System.out.println(edge.toString());
-		
+		String idActivity = "_17_0_2_3_41e01aa_1386574999817_391486_76808";*/
+		com.ref.openmbee.adapter.Activity activity = Communication.buildActivity(url,login,password,idActivity);
+		Communication.resetStatics();
+		System.out.println(activity); 
+		//HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
+		//TODO resolver oque fazer com o activityDiagram
 	}
 	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		

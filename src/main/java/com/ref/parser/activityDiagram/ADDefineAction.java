@@ -62,7 +62,7 @@ public class ADDefineAction {
         
         
         //defining the event of the action 
-        adUtils.event(alphabet, nameAction, action);//TODO
+        adUtils.event(alphabet, nameAction, action);
 
         //treating expressions inside opaque actions
         for (int i = 0; i < namesMemoryLocal.size(); i++) {
