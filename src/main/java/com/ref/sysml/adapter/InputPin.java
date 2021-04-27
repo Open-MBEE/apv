@@ -2,6 +2,7 @@ package com.ref.sysml.adapter;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.omg.sysml.xtext.sysml.ParameterMembership;
 import org.omg.sysml.xtext.sysml.Usage;
 
@@ -16,7 +17,7 @@ public class InputPin extends Pin implements IInputPin{
 	protected IFlow[] incomings;
 	protected IFlow[] outgoings;
 	protected IAction owner;
-	protected ParameterMembership pin;
+	protected EObject pin;
 	protected String name;
 	protected IClass base;
 	
@@ -24,10 +25,15 @@ public class InputPin extends Pin implements IInputPin{
 		super(pin, owner);
 		this.pin = pin;
 		
-		Usage usage = this.pin.getOwnedMemberParameter_comp();
+		Usage usage = ((ParameterMembership) this.pin).getOwnedMemberParameter_comp();
 		
 		name = usage.getName();
 		base = new Class(pin.getOwnedMemberParameter_comp());
+	}
+	
+	public InputPin(EObject pin, IActivity owner) throws WellFormedException {
+		super(pin, owner);
+		this.pin = pin;
 	}
 
 	@Override
@@ -78,6 +84,10 @@ public class InputPin extends Pin implements IInputPin{
 		this.owner = owner;
 	}
 
+	public void setBase(IClass base) {
+		this.base = base;
+	}
+	
 	@Override
 	public IClass getBase() {
 		return base;

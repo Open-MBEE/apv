@@ -65,6 +65,7 @@ public class ADParser {
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
+    private HashMap<String, String> parameterSignal = new HashMap<>();
     
     private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;
@@ -113,6 +114,7 @@ public class ADParser {
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
+        parameterSignal = new HashMap<>();
     }
 
     private void setFirstDiagram() {
@@ -164,6 +166,7 @@ public class ADParser {
         createdAccept = new ArrayList<>();
         resetStatic();
         allGuards = new HashMap<>();
+        parameterSignal = new HashMap<>();
         firstDiagram = ad.getId(); //set first diagram
     }
 
@@ -401,7 +404,7 @@ public class ADParser {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
-                signalChannelsLocal, this);
+                signalChannelsLocal, parameterSignal, this);
         return adUtils;
     }
 
@@ -410,7 +413,7 @@ public class ADParser {
 
         dChannels = new ADDefineChannels(allGuards, ad, parameterNodesInput, parameterNodesOutput,
                 memoryLocal, parameterNodesOutputObject, syncObjectsEdge, objectEdges,
-                eventChannel, lockChannel, firstDiagram, signalChannels, adUtils, this);
+                eventChannel, lockChannel, firstDiagram, signalChannels, parameterSignal, adUtils, this);
 
         return dChannels.defineChannels();
     }
@@ -439,7 +442,8 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
+                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal,
+                parameterSignal, adUtils, this);
 
         return dNodesActionAndControl.defineNodes();
     }

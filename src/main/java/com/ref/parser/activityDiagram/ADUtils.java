@@ -41,6 +41,7 @@ public class ADUtils {
     public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private ADParser adParser;
+    private HashMap<String, String> parameterSignal;
 
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
                    List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
@@ -48,7 +49,8 @@ public class ADUtils {
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                    HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
-                   HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges2, List<String> signalChannelsLocal, ADParser adParser) {
+                   HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges2, List<String> signalChannelsLocal,
+                   HashMap<String, String> parameterSignal, ADParser adParser) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -70,6 +72,7 @@ public class ADUtils {
         this.syncObjectsEdge = syncObjectsEdge2;
         this.signalChannelsLocal = signalChannelsLocal;
         this.objectEdges = objectEdges2;
+        this.parameterSignal = parameterSignal;
         this.adParser = adParser;
     }
 
@@ -278,7 +281,7 @@ public class ADUtils {
         return objects;
     }
 
-    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode) {
+    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode, List<String> namesMemoryLocal) {
         if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
@@ -305,7 +308,14 @@ public class ADUtils {
         }
 
         alphabet.add("signal_" + nameSignal + ".id." + idSignal);
-        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
+        
+        if (namesMemoryLocal.size() > 0) {
+        	signal.append("signal_" + nameSignal + ".id!" + idSignal + "!" + namesMemoryLocal.get(0) + " -> ");
+        	parameterSignal.put(nameSignal, namesMemoryLocal.get(0));
+        } else {
+        	signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");   
+        }
+        
 
         if (index >= 0) {
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
@@ -318,7 +328,7 @@ public class ADUtils {
 
     }
 
-    public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IActivityNode activityNode) {
+    public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IActivityNode activityNode, String nodeName, IOutputPin[] outPins) {
         if (!localSignalChannelsSync.contains("signal_" + nameAccept)) {
             localSignalChannelsSync.add("signal_" + nameAccept);
         }
@@ -341,7 +351,13 @@ public class ADUtils {
         }
 
         alphabet.add("accept_" + nameAccept + ".id." + idAccept);
-        accept.append("accept_" + nameAccept + ".id." + idAccept + "?x -> ");
+        
+        if (outPins.length > 0) {
+        	accept.append("accept_" + nameAccept + ".id." + idAccept + "?" + nodeName + "?" + nodeName + "_" + outPins[0].getName() + " -> ");
+        	
+        } else {
+        	accept.append("accept_" + nameAccept + ".id." + idAccept + "?" + nodeName + " -> ");
+        }
 
         if (index >= 0) {
             countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));
@@ -640,13 +656,11 @@ public class ADUtils {
 	        }
 	        action.append("); ");
 		}
-		
-		
-		
+
 	}
 	
 	public void outgoingEdges(StringBuilder action, ArrayList<String> alphabet, IFlow[] outFlows,
-			IOutputPin[] outPins, String[] definitionFinal) throws ParsingException {
+			IOutputPin[] outPins, String[] definitionFinal, String nodeFullName) throws ParsingException {
 		// defining outgoing edges
         if (outFlows.length > 0 || outPins.length > 0) {
             action.append("(");
@@ -679,7 +693,7 @@ public class ADUtils {
         
         for (int i = 0; i < outPins.length; i++) {    
             IFlow[] outFlowPin = outPins[i].getOutgoings();
-
+            
             for (int x = 0; x < outFlowPin.length; x++) {
             	String nameObject;
                 String type;
@@ -736,7 +750,14 @@ public class ADUtils {
                         }
                     }
                     else {
-                    	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+                    	
+                    	if (nodeFullName != null) {
+                    		if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+    	                        oe(alphabet, action, oe, "!" + nodeFullName + "_" + outPins[i].getName(), " -> SKIP) ||| ");
+    	                    } else {
+    	                        oe(alphabet, action, oe, "!" + nodeFullName + "_" + outPins[i].getName(), " -> SKIP)");
+    	                    }
+                    	} else if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
     	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP) ||| ");
     	                    } else {
     	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP)");
@@ -747,10 +768,10 @@ public class ADUtils {
 					action.append("(");
 	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
 	                    	getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
-	                        oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP) ||| ");
+	                        oe(alphabet, action, oe, "!(" + ((nodeFullName != null) ? nodeFullName : "") + outPins[i].getName() + ")", " -> SKIP) ||| ");
 	                    } else {
 	                    	getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
-	                        oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP)");
+	                        oe(alphabet, action, oe, "!(" + ((nodeFullName != null) ? nodeFullName : "") + outPins[i].getName() + ")", " -> SKIP)");
 	                    }
 				}
             	

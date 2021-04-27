@@ -1,6 +1,7 @@
 package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,13 @@ public class ADDefineProcessSync {
         String terminationAlphabet = "_" + nameDiagram + "_t_alphabet";
         StringBuilder alphabetDiagram = new StringBuilder();
         Set<Pair<IActivity, String>> keys = alphabetNode.keySet();
-        for(Pair<IActivity, String> node :keys) {
+        
+        Object[] obj = keys.toArray();
+        
+        Arrays.sort(obj); // Keeping the same generated order for the alphabet nodes
+        
+        for(Object pair : obj) {
+        	Pair<IActivity, String> node = (Pair) pair;
             ArrayList<String> alphabet = alphabetNode.get(node);
             IActivityNode Activitynode = findCBANode(node.getValue());
             if(Activitynode != null) {
@@ -73,7 +80,8 @@ public class ADDefineProcessSync {
         processSync.append(aux);
         
         
-        for(Pair<IActivity, String> node : keys) {
+        for(Object pair : obj) {
+        	Pair<IActivity, String> node = (Pair) pair;
             processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = normal(");
             processSync.append(node.getValue() + termination + "(id))\n");
         }

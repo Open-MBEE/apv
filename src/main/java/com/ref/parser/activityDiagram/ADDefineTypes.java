@@ -2,6 +2,7 @@ package com.ref.parser.activityDiagram;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -89,13 +90,17 @@ public class ADDefineTypes {
             types.append("datatype alphabet_" + nameDiagram + " = ");
             boolean first = true;
             Set<Pair<IActivity, String>> keys = alphabetNode.keySet();
+            Object[] obj = keys.toArray();
             
-            for (Pair<IActivity, String> node : keys) {
+            Arrays.sort(obj); // Keeping the same generated order for the alphabet nodes
+            
+            for (Object node : obj) {
+            	Pair<IActivity, String> pair = (Pair) node;
                 if (first) {
-                    types.append(node.getValue() + termination + " ");
+                    types.append(pair.getValue() + termination + " ");
                     first = false;
                 } else {
-                    types.append("| " + node.getValue() + termination);
+                    types.append("| " + pair.getValue() + termination);
                 }
             }
             types.append("\n");

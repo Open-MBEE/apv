@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.omg.sysml.xtext.sysml.AcceptActionUsage;
+import org.omg.sysml.xtext.sysml.ActionDefinition;
 import org.omg.sysml.xtext.sysml.ActionUsage;
+import org.omg.sysml.xtext.sysml.BindingConnector;
 import org.omg.sysml.xtext.sysml.Comment;
 import org.omg.sysml.xtext.sysml.Documentation;
 import org.omg.sysml.xtext.sysml.FeatureMembership;
 import org.omg.sysml.xtext.sysml.ParameterMembership;
+import org.omg.sysml.xtext.sysml.SendActionUsage;
 import org.omg.sysml.xtext.sysml.Succession;
 import org.omg.sysml.xtext.sysml.SuccessionItemFlow;
 import org.omg.sysml.xtext.sysml.Usage;
@@ -22,25 +26,24 @@ import com.ref.parser.activityDiagram.Pair;
 
 
 public class Activity implements IActivity{
-	private ActionUsage activity;
+	private ActionDefinition activity;
 	private IActivityDiagram activityDiagram;
 	private IActivityNode[] activityNodes;
 	private IPartition[] partitions = null;
 	List<IActivityNode> listNodes;
 	
 	
-	public Activity(ActionUsage activity) throws WellFormedException {
+	public Activity(ActionDefinition activity) throws WellFormedException {
 		super();
 		this.activity = activity;	
 		
-		List<EObject> parameterList = ((ActionUsage) this.activity).getOwnedFeatureMembership_comp();
+		List<EObject> parameterList = ((ActionDefinition) this.activity).getOwnedFeatureMembership_comp();
 		listNodes = new ArrayList<IActivityNode>();
 		
 		for (EObject x : parameterList) {
 			
 			if (x instanceof ParameterMembership) {
 				ActivityParameterNode parameter = new ActivityParameterNode(x, this);
-//				parameter.setName(this.getName() + "_" + parameter.getName());
 				
 				listNodes.add(parameter);
 				AdapterUtils.nodes.put( this.getName() + "_" + parameter.getName(), parameter);
@@ -60,6 +63,23 @@ public class Activity implements IActivity{
 				
 				listNodes.add(controlNode);
 				AdapterUtils.nodes.put(controlNode.getName(), controlNode);
+				
+			} else if (feature instanceof SendActionUsage) { 
+				
+				Action actionNode = new Action(feature, this);
+				actionNode.setName(this.getName() + "_" + actionNode.getName());
+				
+				listNodes.add(actionNode);
+				AdapterUtils.nodes.put(actionNode.getName(), actionNode);
+				
+			} else if (feature instanceof AcceptActionUsage) { 
+				
+				Action actionNode = new Action(feature, this);
+				actionNode.setName(this.getName() + "_" + actionNode.getName());
+				actionNode.setRealName(this.getName() + "_" + actionNode.getRealName());
+				
+				listNodes.add(actionNode);
+				AdapterUtils.nodes.put(actionNode.getName(), actionNode);
 				
 			} else if (feature instanceof ActionUsage) {
 				
@@ -133,10 +153,49 @@ public class Activity implements IActivity{
 				}
 				
 				AdapterUtils.edges.put(new Pair<String, String>(from, to), object);
+			} else if (feature instanceof BindingConnector) {
+			
+				BindingConnector bindingConnector = (BindingConnector) feature;
+
+				String nameNodeFrom = bindingConnector.getNameNodeFrom();
+				String nameDataFrom = bindingConnector.getNameDataFrom();
+				
+				String nameNodeTo = bindingConnector.getNameNodeTo();
+				String nameDataTo = bindingConnector.getNameDataTo();
+				
+				String from = "";
+				String to = "";
+				
+				if (nameDataFrom != null) {
+					from = nameNodeFrom + "_" + nameDataFrom;
+				} else {
+					from = this.getName() + "_" + nameNodeFrom;
+				}
+				
+				if (nameDataTo != null) {
+					to = nameNodeTo + "_" + nameDataTo;
+				} else {
+					to = this.getName() + "_" + nameNodeTo;
+				}
+				
+				Class base;
+				ObjectFlow object = new ObjectFlow(bindingConnector);
+				
+				Usage usage = AdapterUtils.nodesType.get(from);
+
+				if (usage != null) {
+					base = new Class(usage);
+					object.setBase(base);
+				} else {
+					usage = AdapterUtils.nodesType.get(to);
+					base = new Class(usage);
+					object.setBase(base);
+				}
+				
+				AdapterUtils.edges.put(new Pair<String, String>(from, to), object);
 			}
-		
 		}
-		
+			
 		this.activityNodes = listNodes.toArray(new IActivityNode[listNodes.size()]);
 		
 	}

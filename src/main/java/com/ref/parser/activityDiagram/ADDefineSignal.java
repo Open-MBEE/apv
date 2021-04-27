@@ -67,8 +67,6 @@ public class ADDefineSignal {
         
         signal.append(nameSignal + "(id) = ");
         adUtils.incomingEdges(activityNode, signal, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
-        adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode);
-        
         
         for (int i = 0; i < namesMemoryLocal.size(); i++) {
             for (int j = 0; j < definitionFinal.length; j++) {
@@ -103,7 +101,9 @@ public class ADDefineSignal {
             adUtils.getLocal(alphabet, signal, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode, namesMemoryLocal);
+        
+        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal, null);
         
         signal.append(nameSignal + "(id)\n");
 

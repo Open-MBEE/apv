@@ -3,7 +3,7 @@ package com.ref.sysml.adapter;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.omg.sysml.xtext.sysml.ActionUsage;
+import org.omg.sysml.xtext.sysml.ActionDefinition;
 import org.omg.sysml.xtext.sysml.Namespace;
 
 import com.ref.exceptions.WellFormedException;
@@ -17,18 +17,28 @@ public class ActivityDiagram implements IActivityDiagram{
 	public ActivityDiagram(Namespace ad) throws WellFormedException {
 		this.activityDiagram = ad;
 		
-		List<ActionUsage> memberships = ((Namespace) this.activityDiagram).getOwnedMembership_comp();
+		List<ActionDefinition> memberships = ((Namespace) this.activityDiagram).getOwnedMembership_comp();
 		
-		for (ActionUsage actionDef : memberships) {
-			this.activity = new Activity(actionDef);
-			this.activity.setActivityDiagram(this);
-			
-			return;
+		boolean first = true;
+		
+		for (ActionDefinition actionDef : memberships) {
+			if (first) {
+				AdapterUtils.activityDiagrams.put(actionDef.getName(), this);
+				
+				this.activity = new Activity(actionDef);
+				this.activity.setActivityDiagram(this);
+				
+				first = false;
+			} else {
+				new ActivityDiagram(actionDef);
+			}
 		}
 	}
 	
-	public ActivityDiagram(ActionUsage ad) throws WellFormedException {
+	public ActivityDiagram(ActionDefinition ad) throws WellFormedException {
 		this.activityDiagram = ad;
+		
+		AdapterUtils.activityDiagrams.put(ad.getName(), this);
 		
 		this.activity = new Activity(ad);
 		this.activity.setActivityDiagram(this);
@@ -41,7 +51,7 @@ public class ActivityDiagram implements IActivityDiagram{
 
 	@Override
 	public String getName() {
-		return activity.getName();
+		return this.activity.getName();
 	}
 
 	@Override

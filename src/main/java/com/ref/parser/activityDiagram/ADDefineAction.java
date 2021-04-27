@@ -99,7 +99,7 @@ public class ADDefineAction {
         }
 
         
-        adUtils.outgoingEdges(action, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.outgoingEdges(action, alphabet, outFlows, outPins, definitionFinal, null);
 
         // defining the recursion
         action.append(nameAction + "(id)\n");

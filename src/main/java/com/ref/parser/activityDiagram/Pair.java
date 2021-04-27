@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 
  * @since JavaFX 2.0
  */
-public class Pair<K, V> implements Serializable {
+public class Pair<K, V extends Comparable> implements Serializable, Comparable<Pair<K, V>> {
 
 	/**
 	 * 
@@ -126,5 +126,10 @@ public class Pair<K, V> implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(Pair<K, V> o) {
+		return o.getValue().compareTo(this.getValue());
 	}
 }

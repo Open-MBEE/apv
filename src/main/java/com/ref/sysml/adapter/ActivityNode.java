@@ -1,8 +1,10 @@
 package com.ref.sysml.adapter;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.omg.sysml.xtext.sysml.AcceptActionUsage;
 import org.omg.sysml.xtext.sysml.ActionUsage;
 import org.omg.sysml.xtext.sysml.DecisionNode;
 import org.omg.sysml.xtext.sysml.Expression;
@@ -11,6 +13,7 @@ import org.omg.sysml.xtext.sysml.ForkNode;
 import org.omg.sysml.xtext.sysml.JoinNode;
 import org.omg.sysml.xtext.sysml.MergeNode;
 import org.omg.sysml.xtext.sysml.ParameterMembership;
+import org.omg.sysml.xtext.sysml.SendActionUsage;
 import org.omg.sysml.xtext.sysml.TransitionUsage;
 import org.omg.sysml.xtext.sysml.Usage;
 
@@ -23,6 +26,7 @@ import com.ref.parser.activityDiagram.Pair;
 public class ActivityNode implements IActivityNode{
 	protected EObject activityNode;
 	protected String name;
+	protected String realName;
 	protected IActivity owner;
 	
 	public ActivityNode(EObject activityNode, IActivity owner) throws WellFormedException {
@@ -32,16 +36,23 @@ public class ActivityNode implements IActivityNode{
 	
 		if (activityNode instanceof FeatureMembership) {
 			name = ((FeatureMembership) this.activityNode).getFeatureName();
-
+			
+		} else if (activityNode instanceof SendActionUsage) {
+			name = ((SendActionUsage) this.activityNode).getName();
+			
+		} else if (activityNode instanceof AcceptActionUsage) {
+			name = AdapterUtils.signals.get(((AcceptActionUsage) this.activityNode).getName());
+			this.realName = ((AcceptActionUsage) this.activityNode).getName();
+			
 		} else if (activityNode instanceof MergeNode) {
 			name = ((MergeNode) this.activityNode).getName();
-
+			
 		} else if (activityNode instanceof ForkNode) {
 			name = ((ForkNode) this.activityNode).getName();
-
+			
 		} else if (activityNode instanceof JoinNode) {
 			name = ((JoinNode) this.activityNode).getName();
-
+			
 		} else if (activityNode instanceof DecisionNode) {
 			DecisionNode decision = ((DecisionNode) this.activityNode);
 			
@@ -78,7 +89,9 @@ public class ActivityNode implements IActivityNode{
 					
 					if (x.getExpression() != null) {
 						object.setGuard(createGuard(x.getExpression()));
-					}	
+					} else if(x.getType().equals("else")) {
+						object.setGuard("else");
+					}
 					
 					if (usage == null) {
 						usage = AdapterUtils.nodesType.get(paramName);
@@ -133,6 +146,7 @@ public class ActivityNode implements IActivityNode{
 		super();
 		
 		this.name = name;
+		this.realName = name;
 		this.owner = owner;
 	
 	}
@@ -160,7 +174,7 @@ public class ActivityNode implements IActivityNode{
 	@Override
 	public IFlow[] getIncomings() {
 		
-		String name = this.getName();
+		String name = this.realName;
 		
 		if (activityNode instanceof ParameterMembership) {
 			name = AdapterUtils.parameterName.get(this.getId());
@@ -173,19 +187,37 @@ public class ActivityNode implements IActivityNode{
 
 	@Override
 	public IFlow[] getOutgoings() {
-		String name = this.getName();
+		String name = this.realName;
 		
 		if (activityNode instanceof ParameterMembership) {
 			name = AdapterUtils.parameterName.get(this.getId());
 		}
 		
 		List<IFlow> flows = AdapterUtils.getOutFlows(name);
+		IFlow[] arrayFlows = flows.toArray(new IFlow[flows.size()]);
 		
-		return flows.toArray(new IFlow[flows.size()]);
+		if (this.activityNode instanceof DecisionNode && arrayFlows[0] instanceof ObjectFlow) {
+			Arrays.sort(arrayFlows);
+		} 
+		
+		return arrayFlows;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
+		
+		if (!(this.activityNode instanceof AcceptActionUsage)) { // not a Accept Event
+			this.realName = name;			
+		}
+		
+	}
+	
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	
+	public String getRealName() {
+		return this.realName;
 	}
 	
 	private String createGuard(Expression exp) {

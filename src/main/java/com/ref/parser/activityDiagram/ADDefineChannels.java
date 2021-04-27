@@ -1,6 +1,9 @@
 package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +26,12 @@ public class ADDefineChannels {
     private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
     private ADParser adParser;
+    private HashMap<String, String> parameterSignal;
 
     public ADDefineChannels(HashMap<String, Integer> allGuards, IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                             Map<Pair<String, String>, String> memoryLocal, HashMap<String, String> parameterNodesOutputObject, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
                             HashMap<String, String> objectEdges, List<String> eventChannel, List<?> lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
-                            ADUtils adUtils, ADParser adParser) {
+                            HashMap<String, String> parameterSignal, ADUtils adUtils, ADParser adParser) {
         this.allGuards = allGuards;
         this.ad = ad;
         this.parameterNodesInput = parameterNodesInput;
@@ -41,6 +45,7 @@ public class ADDefineChannels {
         this.signalChannels = signalChannels2;
         this.adUtils = adUtils;
         this.adParser = adParser;
+        this.parameterSignal = parameterSignal;
     }
 
     public String defineChannels() throws ParsingException {
@@ -94,7 +99,7 @@ public class ADDefineChannels {
 
             for (String out : parameterNodesOutput.keySet()) {
                 String object = parameterNodesOutput.get(out); // fixed parameterNodesOutputObject
-
+                
                 if (object == null) {
                     throw new ParsingException("Parameter node " + out + " is untyped.");
                 }
@@ -116,7 +121,12 @@ public class ADDefineChannels {
 
         if (syncObjectsEdge.size() > 0) {
             ArrayList<String> allObjectEdges = new ArrayList<>();
-            for (String objectEdge : syncObjectsEdge.values()) {    //get sync channel
+            
+            Collection<String> collection = syncObjectsEdge.values();
+            ArrayList<String> list = new ArrayList<>(collection);
+            Collections.sort(list);
+            
+            for (String objectEdge : list) {    //get sync channel
                          	
             	
             	String type = objectEdges.get(objectEdge);
@@ -168,8 +178,15 @@ public class ADDefineChannels {
         	}
         	
             for (String signalChannel : keySignalChannels) {
-                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
-                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
+
+            	String parameterType = "";
+            	
+            	if (parameterSignal.containsKey(signalChannel)) {
+            		parameterType = "." + parameterNodesInput.get(parameterSignal.get(signalChannel)) + "_" + nameDiagram;
+            	}
+
+                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +".countSignal_" + signalChannel + parameterType + "\n");
+                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +".countAccept_" + signalChannel + ".countSignal_" + signalChannel + parameterType +"\n");
             }
 
             channels.append("channel loop\n");

@@ -1,31 +1,39 @@
-action behavior3 {
+action def behavior3 {
 		
 	first start;
-		
-	action CB1 {
-		first start;
-		
-		action act1;
-		
-		succession start then act1;
 	
-		succession act1 then done;
-	}
+	action cb1 : CB1;
 	
-	action CB2 {
-		first start;
+	action cb2 : CB2;
+	
+	succession start then cb1;
+	
+	succession cb1 then cb2;
+	
+	succession cb2 then done;
 		
-		action act1;
+}
+
+action def CB1 {
+	
+	first start;
+			
+	action act1;
+			
+	succession start then act1;
 		
-		succession start then act1;
+	succession act1 then done;
+			
+}
+
+action def CB2 {
 	
-		succession act1 then done;
-	}
-	
-	succession start then CB1;
-	
-	succession CB1 then CB2;
-	
-	succession CB2 then done;
+	first start;
+			
+	action act1;
+			
+	succession start then act1;
 		
+	succession act1 then done;
+			
 }

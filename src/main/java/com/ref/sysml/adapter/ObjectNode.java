@@ -13,7 +13,11 @@ public class ObjectNode extends ActivityNode implements IObjectNode{
 	
 	public ObjectNode(EObject objectNode, IActivity owner) throws WellFormedException {
 		super(objectNode, owner);
-		this.base = new Class(((ParameterMembership) objectNode).getOwnedMemberParameter_comp());
+		
+		if (objectNode instanceof ParameterMembership) {
+			this.base = new Class(((ParameterMembership) objectNode).getOwnedMemberParameter_comp());		
+		}
+		
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class ADDefineAccept {
         accept.append(nameAccept + "(id) = ");
 
         adUtils.incomingEdges(activityNode, accept, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
-        adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode);
+        adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode, nameAccept, outPins);
         
         for (int i = 0; i < namesMemoryLocal.size(); i++) {
             for (int j = 0; j < definitionFinal.length; j++) {
@@ -108,7 +108,7 @@ public class ADDefineAccept {
             adUtils.getLocal(alphabet, accept, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal, nameAccept);
 
         accept.append(nameAccept + "(id)\n");
 

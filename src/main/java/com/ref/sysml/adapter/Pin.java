@@ -15,7 +15,11 @@ public abstract class Pin extends ObjectNode implements IPin{
 	
 	public Pin(EObject pin, IActivity owner) throws WellFormedException {
 		super(pin, owner);
-		this.base = new Class(((ParameterMembership) pin).getOwnedMemberParameter_comp());
+		
+		if (pin instanceof ParameterMembership) {
+			this.base = new Class(((ParameterMembership) pin).getOwnedMemberParameter_comp());			
+		}
+		
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
-public class ObjectFlow extends Flow implements IObjectFlow {
+public class ObjectFlow extends Flow implements IObjectFlow, Comparable<ObjectFlow> {
 	private IClass base;
 	
 	public ObjectFlow(EObject flow) throws WellFormedException {
@@ -29,5 +29,10 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 
 	public void setSource(IActivityNode source) {
 		this.source = source;
+	}
+
+	@Override
+	public int compareTo(ObjectFlow o) {
+		return "else".compareTo(this.getGuard());
 	}
 }

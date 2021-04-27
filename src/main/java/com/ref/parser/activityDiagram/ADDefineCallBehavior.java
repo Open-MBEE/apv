@@ -76,7 +76,7 @@ public class ADDefineCallBehavior {
         
         adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
         
-        adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null);
+        adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null, null);
         
         callBehaviour.append(nameCallBehaviour+"(id)\n");
 

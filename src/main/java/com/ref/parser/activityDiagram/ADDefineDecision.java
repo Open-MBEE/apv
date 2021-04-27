@@ -125,8 +125,21 @@ public class ADDefineDecision {
                 	decision.append(outFlows[i].getGuard() == "" ? "true & (dc -> ": (outFlows[i].getGuard() + " & (dc -> "));//if the guard is empty then it is assumed true
                 	prevGuard.add(outFlows[i].getGuard()); //saves the guard for the next else
                 }else {
-                	decision.append("not "+prevGuard.get(prevGuard.size()-1) + " & (dc -> ");
-                	prevGuard.remove(prevGuard.size()-1);
+                	
+                	boolean first = true;
+                	
+                	for (String prev : prevGuard) {
+                		if (first) {
+                			decision.append("not(" + prev + ") ");
+                			first = false;
+                		} else {
+                			decision.append("and not(" + prev + ") ");
+                		}
+                	}
+                	
+                	decision.append("& (dc -> ");
+//                	decision.append("not "+prevGuard.get(prevGuard.size()-1) + " & (dc -> ");
+//                	prevGuard.remove(prevGuard.size()-1);
                 }
                 
                 if (!alphabet.contains("dc")) {
