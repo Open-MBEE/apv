@@ -127,7 +127,7 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 			}			
 		}else if(base.isJoinNode()) {
 			List<IClass> types = new ArrayList<>();
-			com.change_vision.jude.api.inf.model.IActivityNode baseNode;
+			com.change_vision.jude.api.inf.model.IActivityNode baseNode = null;
 			for(int i = 0; i< base.getIncomings().length; i++) {//finds the types of the flows
 				if (!searched.contains(base.getIncomings()[i].getId())) {
 					searched.add(base.getIncomings()[i].getId());
@@ -147,10 +147,11 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 			}
 			
 			for(int i =0; i< types.size();i++) {//if any type is different, then something went wrong
-				if(!(types.get(0).equals(types.get(i)))) {
+				if(!(types.get(0).getName().equals(types.get(i).getName()))) {
 					throw new WellFormedException("There is more then 1 type of objectFlow in the "+base.getName() +" Node. \n");
 				}
-			}						
+			}
+			return baseNode;
 		}	
 		return null;
 	}
