@@ -9,9 +9,19 @@ import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ObjectFlow extends Flow implements IObjectFlow, Comparable<ObjectFlow> {
 	private IClass base;
+	private EObject owner;
 	
 	public ObjectFlow(EObject flow) throws WellFormedException {
 		super(flow);
+	}
+	
+	public ObjectFlow(EObject flow, EObject owner) throws WellFormedException {
+		super(flow);
+		this.owner = owner;
+	}
+	
+	public EObject getOwner() {
+		return owner;
 	}
 	
 	@Override

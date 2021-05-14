@@ -6,20 +6,19 @@ import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IControlFlow;
 
 public class ControlFlow extends Flow implements IControlFlow{
-	
+	private EObject owner;
 	
 	public ControlFlow(EObject flow) {
 		super(flow);
 	}
 	
-	@Override
-	public IActivityNode getTarget() {
-		return target;
+	public ControlFlow(EObject flow, EObject owner) {
+		super(flow);
+		this.owner = owner;
 	}
-
-	@Override
-	public IActivityNode getSource() {
-		return source;
+	
+	public EObject getOwner() {
+		return owner;
 	}
 	
 	@Override

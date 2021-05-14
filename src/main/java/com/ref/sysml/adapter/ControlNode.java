@@ -26,7 +26,9 @@ public class ControlNode extends ActivityNode implements IControlNode{
 	
 	@Override
 	public String getId() {
-		return String.valueOf(System.identityHashCode(activityNode));
+		String id = String.valueOf(System.identityHashCode(activityNode));
+		
+		return id.equals("0") ? String.valueOf(System.identityHashCode(this)) : id ;
 	}
 
 	@Override

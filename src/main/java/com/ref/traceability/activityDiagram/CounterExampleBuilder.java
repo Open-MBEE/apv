@@ -23,7 +23,7 @@ public class CounterExampleBuilder {
 	private List<String> traceCounterExample;
 	private HashMap<String,Integer> IdSignals;
 
-	public CounterExampleBuilder(List<String> traceCounterExample, Activity activity, ADAlphabet alphabetAD, HashMap<String,Integer> IdSignals) {
+	public CounterExampleBuilder(List<String> traceCounterExample, IActivity activity, ADAlphabet alphabetAD, HashMap<String,Integer> IdSignals) {
 		this.alphabetAD = alphabetAD;
 		this.IdSignals = IdSignals;
 	

@@ -24,6 +24,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.omg.sysml.xtext.sysml.Namespace;
 
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
@@ -94,6 +95,16 @@ public class ActivityController {
 		//TODO resolver oque fazer com o activityDiagram
 	}
 	
+	public void SysmlInvocation(Namespace diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
+			com.ref.sysml.adapter.ActivityDiagram activityDiagram = new com.ref.sysml.adapter.ActivityDiagram(diagram);
+			
+			HashMap<IActivity, List<String>> counterExample = checkProperty(activityDiagram.getActivity(),activityDiagram,type,progressBar);
+			System.out.println(counterExample.size());
+//			if(counterExample != null) {
+//				CounterExampleAstah.createCounterExample(counterExample, diagram, type);//"our copy", astah original, counter example type
+//			}
+	}
+	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
 			Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
 			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
@@ -105,8 +116,8 @@ public class ActivityController {
 			}
 	}
 	
-	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
-			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
+	public HashMap<IActivity, List<String>> checkProperty(IActivity activity,
+			com.ref.interfaces.activityDiagram.IActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
 		boolean wellformed = WellFormedness.WellFormed();
 
 		settingFDR();

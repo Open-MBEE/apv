@@ -60,7 +60,7 @@ public class ActivityNode implements IActivityNode{
 			
 			for (TransitionUsage x : decision.getGuards()) {
 				boolean isParam = false;
-				
+
 				List<IFlow> flows = AdapterUtils.getInFlows(this.owner.getName() + "_" + name);
 				IFlow[] inFlows = flows.toArray(new IFlow[flows.size()]);
 				
@@ -85,10 +85,14 @@ public class ActivityNode implements IActivityNode{
 						to = this.owner.getName() + "_" + x.getTarget();
 					}
 					
-					ObjectFlow object = new ObjectFlow(x);
+					ObjectFlow object = new ObjectFlow(x, decision);
 					
 					if (x.getExpression() != null) {
 						object.setGuard(createGuard(x.getExpression()));
+						object.setRealGuard(x.getExpression().getValue1() + " " + x.getExpression().getOperator() + " " + x.getExpression().getValue2());
+					} else if (x.getText() != null) {
+						object.setGuard(x.getText().replace("\"", ""));
+						object.setRealGuard(x.getText());
 					} else if(x.getType().equals("else")) {
 						object.setGuard("else");
 					}
@@ -113,14 +117,20 @@ public class ActivityNode implements IActivityNode{
 						
 						ControlNode finalNode = new ControlNode(this.owner.getName() + "_done", this.owner);
 						
-//						listNodes.add(finalNode);
+						((Activity) owner).listNodes.add(finalNode);
 						AdapterUtils.nodes.put(finalNode.getName(), finalNode);
 					}
 					
-					ControlFlow control = new ControlFlow(x);
+					ControlFlow control = new ControlFlow(x, decision);
 					
 					if (x.getExpression() != null) {
 						control.setGuard(createGuard(x.getExpression()));
+						control.setRealGuard(x.getExpression().getValue1() + " " + x.getExpression().getOperator() + " " + x.getExpression().getValue2());
+					} else if (x.getText() != null) {
+						control.setGuard(x.getText().replace("\"", ""));
+						control.setRealGuard(x.getText());
+					} else if(x.getType().equals("else")) {
+						control.setGuard("else");
 					}
 					
 					AdapterUtils.edges.put(new Pair<String, String>(from, to), control);
@@ -148,7 +158,7 @@ public class ActivityNode implements IActivityNode{
 		this.name = name;
 		this.realName = name;
 		this.owner = owner;
-	
+
 	}
 	
 	@Override

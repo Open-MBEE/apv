@@ -17,7 +17,6 @@ import com.ref.parser.activityDiagram.ADParser;
 import com.ref.sysml.adapter.ActivityDiagram;
 import com.ref.sysml.adapter.AdapterUtils;
 
-
 public class ADParserTestActionNode {
 
 	private static Injector injector;
