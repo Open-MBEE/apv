@@ -56,7 +56,6 @@ public class ADDefineJoin {
 
 		ArrayList<String> ceInitials = new ArrayList<>();
 		for (int i = 0; i < inFlows.length; i++) {
-			joinNode.append("(");
 			ceInitials.add(inFlows[i].getId());
 			Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
 			if (inFlows[i] instanceof IObjectFlow) {
