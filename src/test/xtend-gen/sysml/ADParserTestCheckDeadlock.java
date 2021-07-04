@@ -1,6 +1,8 @@
 package sysml;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +48,9 @@ public class ADParserTestCheckDeadlock {
 	private static ADParser parser1;
 	private static ADParser parser2;
 	private static ADParser parser3;
+	private static ADParser parser4;
+	private static ADParser parser5;
+	private static ADParser parser6;
 	
 	@BeforeAll
 	public static void GetDiagram() throws Exception {
@@ -128,7 +133,7 @@ public class ADParserTestCheckDeadlock {
 			}
             
             if(counterExample != null) {
-				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, ad.getActivity().getActivityNodes(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
 			}
             
             
@@ -190,7 +195,7 @@ public class ADParserTestCheckDeadlock {
 			}
             
             if(counterExample != null) {
-				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, ad.getActivity().getActivityNodes(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
 			}
             
             
@@ -251,12 +256,8 @@ public class ADParserTestCheckDeadlock {
 				 * */
 			}
             
-//            for (IActivity a : counterExample.keySet()) {
-//            	System.out.println(actual.size() + " " + counterExample.get(a).size());
-//            }
-            
             if(counterExample != null) {
-				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, ad.getActivity().getActivityNodes(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
 			}
             
             
@@ -265,6 +266,192 @@ public class ADParserTestCheckDeadlock {
         }
 
 		assertFalse(actual.isEmpty());
+		
+	  }
+	
+	@Test
+	public void TestChargeBattery() throws WellFormedException, ParsingException, IOException {
+		String path = "./src/test/resources/sysml/chargeBattery.sysml";
+		Resource resource = resourceSet.getResource(URI.createFileURI(path), true);
+		Namespace model = (Namespace) resource.getContents().get(0);
+		ActivityDiagram ad = new ActivityDiagram(model);			
+		parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);	
+		parser4.clearBuffer();
+		
+		String sysmlfile = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+
+		String diagramCSP = parser4.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempSysml");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempSysml" + fs + "chargeBattery.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        List<String> actual = new ArrayList<String>();
+        HashMap<IActivity, List<String>> counterExample = null;
+        
+        try {
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempSysml" + fs + "chargeBattery.csp", parser4, "chargeBattery", progressBar);
+            
+            if (actual !=null && !actual.isEmpty()) {//If there is a trace
+				CounterExampleBuilder cb = new CounterExampleBuilder(actual, ad.getActivity(), parser4.getAlphabetAD(), ADParser.IdSignals);
+				/* responsible for link the CSP counter example events to the ID of the diagram element of each diagram  
+				 * */
+				counterExample = cb.createCounterExample(ad.getActivity());//who should be painted in each diagram
+				/* creates a copy of the diagrams and paints the elements that is on the counter example 
+				 * */
+			}
+            
+            if(counterExample != null) {
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+			}
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+		assertFalse(actual.isEmpty());
+		
+	  }
+	
+	@Test
+	public void TestBrake() throws WellFormedException, ParsingException, IOException {
+		String path = "./src/test/resources/sysml/brake.sysml";
+		Resource resource = resourceSet.getResource(URI.createFileURI(path), true);
+		Namespace model = (Namespace) resource.getContents().get(0);
+		ActivityDiagram ad = new ActivityDiagram(model);			
+		parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);	
+		parser5.clearBuffer();
+		
+		String sysmlfile = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+
+		String diagramCSP = parser5.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempSysml");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempSysml" + fs + "brake.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        List<String> actual = new ArrayList<String>();
+        HashMap<IActivity, List<String>> counterExample = null;
+        
+        try {
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempSysml" + fs + "brake.csp", parser5, "brake", progressBar);
+            
+            if (actual !=null && !actual.isEmpty()) {//If there is a trace
+				CounterExampleBuilder cb = new CounterExampleBuilder(actual, ad.getActivity(), parser5.getAlphabetAD(), ADParser.IdSignals);
+				/* responsible for link the CSP counter example events to the ID of the diagram element of each diagram  
+				 * */
+				counterExample = cb.createCounterExample(ad.getActivity());//who should be painted in each diagram
+				/* creates a copy of the diagrams and paints the elements that is on the counter example 
+				 * */
+			}
+            
+            if(counterExample != null) {
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+			}
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertFalse(actual.isEmpty());
+		
+	  }
+	
+	@Test
+	public void TestSignalTest() throws WellFormedException, ParsingException, IOException {
+		String path = "./src/test/resources/sysml/signalTest.sysml";
+		Resource resource = resourceSet.getResource(URI.createFileURI(path), true);
+		Namespace model = (Namespace) resource.getContents().get(0);
+		ActivityDiagram ad = new ActivityDiagram(model);			
+		parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);	
+		parser6.clearBuffer();
+		
+		String sysmlfile = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+
+		String diagramCSP = parser6.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempSysml");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempSysml" + fs + "signalTest.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        List<String> actual = new ArrayList<String>();
+        HashMap<IActivity, List<String>> counterExample = null;
+        
+        try {
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempSysml" + fs + "signalTest.csp", parser6, "signalTest", progressBar);
+            
+            if (actual !=null && !actual.isEmpty()) {//If there is a trace
+				CounterExampleBuilder cb = new CounterExampleBuilder(actual, ad.getActivity(), parser6.getAlphabetAD(), ADParser.IdSignals);
+				/* responsible for link the CSP counter example events to the ID of the diagram element of each diagram  
+				 * */
+				counterExample = cb.createCounterExample(ad.getActivity());//who should be painted in each diagram
+				/* creates a copy of the diagrams and paints the elements that is on the counter example 
+				 * */
+			}
+            
+            if(counterExample != null) {
+				CounterExampleSysml.createCounterExample(sysmlfile, counterExample, AdapterUtils.nodes.values(), AdapterUtils.edges.values(), VerificationType.DEADLOCK);
+			}
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertFalse(actual.isEmpty());
 		
 	  }
 	

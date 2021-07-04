@@ -1,14 +1,14 @@
 package com.ref.sysml.adapter;
 
 import org.eclipse.emf.ecore.EObject;
+import org.omg.sysml.xtext.sysml.Usage;
 
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivityNode;
-import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ObjectFlow extends Flow implements IObjectFlow, Comparable<ObjectFlow> {
-	private IClass base;
+	private Class base;
 	private EObject owner;
 	
 	public ObjectFlow(EObject flow) throws WellFormedException {
@@ -25,11 +25,27 @@ public class ObjectFlow extends Flow implements IObjectFlow, Comparable<ObjectFl
 	}
 	
 	@Override
-	public IClass getBase() {
+	public Class getBase() {
+		if (this.base.getClasse() == null) {
+			String paramName = AdapterUtils.getSourcePinName(this);
+			Usage usage = AdapterUtils.nodesType.get(paramName);
+
+			if (usage != null) {
+				base = new Class(usage);
+				this.setBase(base);
+			} else {
+				paramName = AdapterUtils.getTargetPinName(this);
+				usage = AdapterUtils.nodesType.get(paramName);
+				
+				base = new Class(usage);
+				this.setBase(base);
+			}
+		}
+		
 		return this.base;
 	}
 	
-	public void setBase(IClass base) {
+	public void setBase(Class base) {
 		this.base = base;
 	}
 

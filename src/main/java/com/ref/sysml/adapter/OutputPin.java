@@ -83,7 +83,7 @@ public class OutputPin extends Pin implements IOutputPin{
 		return this.owner;
 	}
 
-	public void setBase(IClass base) {
+	public void setBase(Class base) {
 		this.base = base;
 	}
 	

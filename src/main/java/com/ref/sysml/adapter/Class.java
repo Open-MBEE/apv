@@ -12,6 +12,10 @@ public class Class implements IClass {
 		this.classe = classe;
 	}
 
+	public Usage getClasse() {
+		return classe;
+	}
+	
 	@Override
 	public String getId() {
 		return String.valueOf(System.identityHashCode(classe));

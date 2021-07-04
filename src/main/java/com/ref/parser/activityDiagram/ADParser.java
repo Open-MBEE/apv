@@ -65,7 +65,7 @@ public class ADParser {
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
-    private HashMap<String, String> parameterSignal = new HashMap<>();
+    private static HashMap<String, String> parameterSignal = new HashMap<>();
     
     private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;
@@ -114,7 +114,6 @@ public class ADParser {
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
-        parameterSignal = new HashMap<>();
     }
 
     private void setFirstDiagram() {

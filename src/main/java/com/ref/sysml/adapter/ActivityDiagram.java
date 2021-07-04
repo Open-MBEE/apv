@@ -21,8 +21,9 @@ public class ActivityDiagram implements IActivityDiagram{
 		
 		boolean first = true;
 		
-		for (ActionDefinition actionDef : memberships) {
-			if (first) {
+		for (EObject object : memberships) {
+			if (first && object instanceof ActionDefinition) {
+				ActionDefinition actionDef = (ActionDefinition) object;
 				AdapterUtils.activityDiagrams.put(actionDef.getName(), this);
 				
 				this.activity = new Activity(actionDef);
@@ -30,6 +31,7 @@ public class ActivityDiagram implements IActivityDiagram{
 				
 				first = false;
 			} else {
+				ActionDefinition actionDef = (ActionDefinition) object;
 				new ActivityDiagram(actionDef);
 			}
 		}

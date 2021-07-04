@@ -182,7 +182,7 @@ public class ADDefineChannels {
             	String parameterType = "";
             	
             	if (parameterSignal.containsKey(signalChannel)) {
-            		parameterType = "." + parameterNodesInput.get(parameterSignal.get(signalChannel)) + "_" + nameDiagram;
+            		parameterType = "." + parameterNodesInput.getOrDefault(parameterSignal.get(signalChannel), "Integer") + "_" + nameDiagram;
             	}
 
                 channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +".countSignal_" + signalChannel + parameterType + "\n");

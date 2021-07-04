@@ -25,6 +25,7 @@ public class ADParserTestSignalNode {
 	private static ADParser parser1;
 	private static ADParser parser2;
 	private static ADParser parser3;
+	private static ADParser parser4;
 	
 	@BeforeAll
 	public static void GetDiagram() throws Exception {
@@ -349,6 +350,27 @@ public class ADParserTestSignalNode {
 					+ "assert MAIN :[deadlock free]\n"
 					+ "assert MAIN :[divergence free]\n"
 					+ "assert MAIN :[deterministic]");
+			
+			assertEquals(expected.toString(), actual);
+			
+	    } catch (Throwable _e) {
+	      throw Exceptions.sneakyThrow(_e);
+	    }
+	  }
+	
+	@Test
+	public void TestSignalTest() {
+	    try {
+	    	Resource resource = resourceSet.getResource(URI.createFileURI("./src/test/resources/sysml/signalTest.sysml"), true);
+			Namespace model = (Namespace) resource.getContents().get(0);
+			ActivityDiagram ad = new ActivityDiagram(model);			
+			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);	
+			parser4.clearBuffer();
+			
+			String actual = parser4.parserDiagram();
+			StringBuffer expected = new StringBuffer();
+			
+			expected.append("");
 			
 			assertEquals(expected.toString(), actual);
 			

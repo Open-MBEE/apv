@@ -67,17 +67,17 @@ public class Activity implements IActivity{
 			} else if (feature instanceof SendActionUsage) { 
 				
 				Action actionNode = new Action(feature, this);
-				actionNode.setName(this.getName() + "_" + actionNode.getName());
-				
+//				actionNode.setName(this.getName() + "_" + actionNode.getName());
+//				actionNode.setRealName(this.getName() + "_" + actionNode.getRealName());
+//				System.out.println(actionNode.getName() + " " + actionNode.getRealName());
 				listNodes.add(actionNode);
-				AdapterUtils.nodes.put(actionNode.getName(), actionNode);
+				AdapterUtils.nodes.put(actionNode.getRealName(), actionNode);
 				
 			} else if (feature instanceof AcceptActionUsage) { 
 				
 				Action actionNode = new Action(feature, this);
-				actionNode.setName(this.getName() + "_" + actionNode.getName());
-				actionNode.setRealName(this.getName() + "_" + actionNode.getRealName());
-				
+//				actionNode.setName(this.getName() + "_" + actionNode.getName());
+//				System.out.println(actionNode.getName() + " " + actionNode.getRealName());
 				listNodes.add(actionNode);
 				AdapterUtils.nodes.put(actionNode.getName(), actionNode);
 				
@@ -99,10 +99,10 @@ public class Activity implements IActivity{
 				
 			} else if(feature instanceof Succession) {
 				Succession succession = (Succession) feature;
-				
-				String from = this.getName() + "_" + succession.getOwnedFeatureMembershipFrom_comp();
-				String to = this.getName() + "_" + succession.getOwnedFeatureMembershipTo_comp();
-				
+				// Work with Signal and Accept
+				String from = succession.getOwnedFeatureMembershipFrom_comp();
+				String to = succession.getOwnedFeatureMembershipTo_comp();
+
 				if (to.equalsIgnoreCase(this.getName() + "_done") 
 						&& AdapterUtils.nodes.get(this.getName() + "_done") == null) {
 					
@@ -113,6 +113,20 @@ public class Activity implements IActivity{
 				}
 				
 				AdapterUtils.edges.put(new Pair<String, String>(from, to), new ControlFlow(succession));
+				
+				String fromWithDiagram = this.getName() + "_" + succession.getOwnedFeatureMembershipFrom_comp();
+				String toWithDiagram = this.getName() + "_" + succession.getOwnedFeatureMembershipTo_comp();
+				
+				if (toWithDiagram.equalsIgnoreCase(this.getName() + "_done") 
+						&& AdapterUtils.nodes.get(this.getName() + "_done") == null) {
+					
+					ControlNode finalNode = new ControlNode(this.getName() + "_done", this);
+					
+					listNodes.add(finalNode);
+					AdapterUtils.nodes.put(finalNode.getName(), finalNode);
+				}
+				
+				AdapterUtils.edges.put(new Pair<String, String>(fromWithDiagram, toWithDiagram), new ControlFlow(succession));
 		
 			} else if (feature instanceof SuccessionItemFlow) {
 				SuccessionItemFlow successionItemFlow = (SuccessionItemFlow) feature;
@@ -128,16 +142,20 @@ public class Activity implements IActivity{
 				
 				if (nameDataFrom != null) {
 					from = nameNodeFrom + "_" + nameDataFrom;
-				} else {
+				} else if (!AdapterUtils.signals.contains(nameNodeFrom) && !AdapterUtils.accepts.contains(nameNodeFrom)) {
 					from = this.getName() + "_" + nameNodeFrom;
+				} else {
+					from = nameNodeFrom;
 				}
 				
 				if (nameDataTo != null) {
 					to = nameNodeTo + "_" + nameDataTo;
-				} else {
+				} else if (!AdapterUtils.signals.contains(nameNodeTo) && !AdapterUtils.accepts.contains(nameNodeTo)) {
 					to = this.getName() + "_" + nameNodeTo;
+				} else {
+					to = nameNodeTo;
 				}
-				
+	
 				Class base;
 				ObjectFlow object = new ObjectFlow(successionItemFlow);
 				
@@ -151,7 +169,7 @@ public class Activity implements IActivity{
 					base = new Class(usage);
 					object.setBase(base);
 				}
-				
+
 				AdapterUtils.edges.put(new Pair<String, String>(from, to), object);
 			} else if (feature instanceof BindingConnector) {
 			
@@ -168,14 +186,18 @@ public class Activity implements IActivity{
 				
 				if (nameDataFrom != null) {
 					from = nameNodeFrom + "_" + nameDataFrom;
-				} else {
+				} else if (!AdapterUtils.signals.contains(nameNodeFrom) && !AdapterUtils.accepts.contains(nameNodeFrom)) {
 					from = this.getName() + "_" + nameNodeFrom;
+				} else {
+					from = nameNodeFrom;
 				}
 				
 				if (nameDataTo != null) {
 					to = nameNodeTo + "_" + nameDataTo;
-				} else {
+				} else if (!AdapterUtils.signals.contains(nameNodeTo) && !AdapterUtils.accepts.contains(nameNodeTo)) {
 					to = this.getName() + "_" + nameNodeTo;
+				} else {
+					to = nameNodeTo;
 				}
 				
 				Class base;
