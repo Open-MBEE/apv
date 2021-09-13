@@ -21,6 +21,7 @@ import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.openmbee.adapter.SendSignal;
 import com.ref.parser.activityDiagram.Pair;
 
 public class ActivityNode implements IActivityNode{
@@ -38,11 +39,12 @@ public class ActivityNode implements IActivityNode{
 			name = ((FeatureMembership) this.activityNode).getFeatureName();
 			
 		} else if (activityNode instanceof SendActionUsage) {
-			name = ((SendActionUsage) this.activityNode).getName();
+			name = ((SendActionUsage) this.activityNode).getTarget();
+			this.realName = ((SendActionUsage) this.activityNode).getName();
 			
 		} else if (activityNode instanceof AcceptActionUsage) {
-			name = AdapterUtils.signals.get(((AcceptActionUsage) this.activityNode).getName());
-			this.realName = ((AcceptActionUsage) this.activityNode).getName();
+			name = ((AcceptActionUsage) this.activityNode).getName();
+			realName = name;
 			
 		} else if (activityNode instanceof MergeNode) {
 			name = ((MergeNode) this.activityNode).getName();
@@ -68,8 +70,13 @@ public class ActivityNode implements IActivityNode{
 				Usage usage = null;
 				
 				if (inFlows.length == 1) {
-					paramName = AdapterUtils.parameterName.get(AdapterUtils.getSource(inFlows[0]).getId());
-					usage = AdapterUtils.nodesType.get(AdapterUtils.getSource(inFlows[0]).getName());
+					System.out.println(inFlows[0].getName());
+					paramName = AdapterUtils.getSource(inFlows[0]) != null ? 
+								AdapterUtils.parameterName.get(AdapterUtils.getSource(inFlows[0]).getId()) : 
+								AdapterUtils.getSourcePinName(inFlows[0]);
+					usage = AdapterUtils.getSource(inFlows[0]) != null ? 
+							AdapterUtils.nodesType.get(AdapterUtils.getSource(inFlows[0]).getName()) :
+							AdapterUtils.nodesType.get(paramName);
 					if (paramName != null || usage != null) {
 						isParam = true;
 					}
@@ -209,14 +216,14 @@ public class ActivityNode implements IActivityNode{
 		if (this.activityNode instanceof DecisionNode && arrayFlows[0] instanceof ObjectFlow) {
 			Arrays.sort(arrayFlows);
 		} 
-		
+
 		return arrayFlows;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
 		
-		if (!(this.activityNode instanceof AcceptActionUsage)) { // not a Accept Event
+		if (!(this.activityNode instanceof SendActionUsage)) { // not a Send Signal
 			this.realName = name;			
 		}
 		

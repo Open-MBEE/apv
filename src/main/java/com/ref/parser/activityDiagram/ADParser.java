@@ -133,7 +133,6 @@ public class ADParser {
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
-        parameterSignal = new HashMap<>();
     }
 
     private void setFirstDiagram() {
