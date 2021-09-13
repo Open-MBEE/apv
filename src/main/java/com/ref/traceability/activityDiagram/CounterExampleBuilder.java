@@ -26,7 +26,6 @@ public class CounterExampleBuilder {
 	public CounterExampleBuilder(List<String> traceCounterExample, IActivity activity, ADAlphabet alphabetAD, HashMap<String,Integer> IdSignals) {
 		this.alphabetAD = alphabetAD;
 		this.IdSignals = IdSignals;
-	
 		List<String> trace = new ArrayList<>();// necessary treatment of the trace
 		for (String objTrace : traceCounterExample) {
             String[] objTracePartition = objTrace.split("\\.");
@@ -38,7 +37,7 @@ public class CounterExampleBuilder {
 	            	}
             	}
             	else {
-            		for(int i=2;i<objTracePartition.length-1;i++) {
+            		for(int i=2;i<objTracePartition.length-1;i++) {//TODO modificar isso aqui pra adaptar aos novos datatype (como?)
 	            		aux+="."+objTracePartition[i];
 	            	}
             	}
@@ -52,6 +51,7 @@ public class CounterExampleBuilder {
 
 	public HashMap<IActivity, List<String>> createCounterExample(IActivity diagram) {
 		HashMap<IActivity,List<String>> nodesCE = new HashMap<>();
+		System.out.println();
 		nodesCE.put(diagram, searchDiagram(diagram));
 		for (int i = 0; i < diagram.getActivityNodes().length ; i++) {
 			IActivityNode node = diagram.getActivityNodes()[i]; 

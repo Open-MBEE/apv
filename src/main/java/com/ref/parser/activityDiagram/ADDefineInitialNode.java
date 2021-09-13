@@ -49,8 +49,7 @@ public class ADDefineInitialNode {
         initialNode.append("(");
         for (int i = 0; i < outFlows.length; i++) { // creates the parallel output channels
 			if (outFlows[i] instanceof IObjectFlow) {
-				throw new ParsingException("If the incoming edge of fork node "+activityNode.getName()+" is a ControlFlow, then\r\n" + 
-						"all outgoing edges shall be ControlFlows");
+				throw new ParsingException("All Outgoings of the InitialNode "+ activityNode.getName()+ " must be a controlFlow.\n");
 			}
 			String ce;
             Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());

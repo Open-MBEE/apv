@@ -1,7 +1,6 @@
 package com.ref.openmbee.adapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.ref.interfaces.activityDiagram.IActivity;
@@ -17,7 +16,7 @@ public class Activity implements IActivity{
 	private ArrayList<String> nodeIds;
 	private ArrayList<String> edgeIds;
 	
-	private List<ActivityNode> nodes;//TODO tratar os nulls
+	private List<ActivityNode> nodes;
 	private List<Flow> edges;
 	private String name;
 	private IPartition[] partitions;
@@ -140,9 +139,11 @@ public class Activity implements IActivity{
 
 	@Override
 	public IActivityNode[] getActivityNodes() {
-		nodes.removeAll(Collections.singletonList(null));//TODO ver se o tratamento é aqui mesmo
-		
-		return (IActivityNode[]) nodes.toArray();
+		IActivityNode[] actNodes = new IActivityNode[nodes.size()];
+		for (int i = 0; i < nodes.size(); i++) {
+			actNodes[i] = nodes.get(i);
+		}
+		return actNodes;
 	}
 
 	@Override
@@ -155,4 +156,20 @@ public class Activity implements IActivity{
 	public IPartition[] getPartitions() {
 		return this.partitions;
 	}
+
+	public void addPartition(IPartition newPartition) {
+		IPartition[] aux = this.partitions;
+		this.partitions = new IPartition[aux.length+1];
+		
+		for (int i = 0; i < aux.length; i++) {
+			this.partitions[i] = aux[i];
+		}
+		this.partitions[aux.length] = newPartition;
+	}
+
+	public void setDefinition(String definition) {
+		this.definition = definition;
+	}
+	
+	
 }

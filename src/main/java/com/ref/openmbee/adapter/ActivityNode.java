@@ -15,7 +15,9 @@ public abstract class ActivityNode extends ActivityElement implements IActivityN
 			ArrayList<String> incomingIds, String name, String[] stereotypes, String definition) {
 		super(id, type, ownerId, activityId, name, stereotypes, definition);
 		this.outgoingsIds = outgoingIds;
+		this.outgoings = new IFlow[0];
 		this.incomingIds = incomingIds;
+		this.incomings = new IFlow[0];
 	}
 
 
@@ -47,6 +49,16 @@ public abstract class ActivityNode extends ActivityElement implements IActivityN
 	@Override
 	public IFlow[] getOutgoings() {
 		return this.outgoings;
+	}
+
+
+	public void setOutgoings(IFlow[] outgoings) {
+		this.outgoings = outgoings;
+	}
+
+
+	public void setIncomings(IFlow[] incomings) {
+		this.incomings = incomings;
 	}
 
 

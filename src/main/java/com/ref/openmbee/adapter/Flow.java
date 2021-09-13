@@ -19,13 +19,6 @@ public class Flow extends ActivityElement implements IFlow{
 		this.guard = guard;
 	}
 	
-
-
-	@Override
-	public String getId() {
-		return this.getId();
-	}
-
 	@Override
 	public IActivityNode getTarget() {
 		return this.target;

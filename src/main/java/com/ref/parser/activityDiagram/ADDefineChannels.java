@@ -26,12 +26,13 @@ public class ADDefineChannels {
     private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
     private ADParser adParser;
-    private HashMap<String, String> parameterSignal;
+    private HashMap<String, Pair<String, String>> parameterSignal;
+	private HashMap<String, List<String>> signalPins;
 
     public ADDefineChannels(HashMap<String, Integer> allGuards, IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                             Map<Pair<String, String>, String> memoryLocal, HashMap<String, String> parameterNodesOutputObject, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
                             HashMap<String, String> objectEdges, List<String> eventChannel, List<?> lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
-                            HashMap<String, String> parameterSignal, ADUtils adUtils, ADParser adParser) {
+                            HashMap<String, List<String>> signalPins, HashMap<String, Pair<String, String>> parameterSignal2, ADUtils adUtils, ADParser adParser) {
         this.allGuards = allGuards;
         this.ad = ad;
         this.parameterNodesInput = parameterNodesInput;
@@ -43,9 +44,11 @@ public class ADDefineChannels {
         this.eventChannel = eventChannel;
         this.firstDiagram = firstDiagram;
         this.signalChannels = signalChannels2;
+        this.signalPins = signalPins;
         this.adUtils = adUtils;
         this.adParser = adParser;
-        this.parameterSignal = parameterSignal;
+        this.parameterSignal = parameterSignal2;
+        
     }
 
     public String defineChannels() throws ParsingException {
@@ -68,7 +71,7 @@ public class ADDefineChannels {
             channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
 
             for (String input : parameterNodesInput.values()) {
-                channels.append("." + input + "_" + nameDiagram);
+                channels.append(".type_" + input /*+ "_" + nameDiagram*/);
             }
 
             channels.append("\n");
@@ -93,8 +96,8 @@ public class ADDefineChannels {
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || memoryLocal.size() > 0) {
 
             for (String in : parameterNodesInput.keySet()) {
-                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + ".type_" + parameterNodesInput.get(in) /*+ "_" + nameDiagram*/ + "\n");
+                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + ".type_" + parameterNodesInput.get(in) /*+ "_" + nameDiagram*/ + "\n");
             }
 
             for (String out : parameterNodesOutput.keySet()) {
@@ -104,13 +107,13 @@ public class ADDefineChannels {
                     throw new ParsingException("Parameter node " + out + " is untyped.");
                 }
 
-                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object /*+ "_" + nameDiagram*/ + "\n");//TODO futuramente ver se vai precisar do type_
+                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object /*+ "_" + nameDiagram*/ + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal.keySet()) {
-                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + ".type_" + memoryLocal.get(pair) /*+ "_" + nameDiagram*/ + "\n");
+                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + ".type_" + memoryLocal.get(pair) /*+ "_" + nameDiagram*/ + "\n");
             }
 
         }
@@ -135,7 +138,7 @@ public class ADDefineChannels {
                 if (!allObjectEdges.contains(type)) {
                     allObjectEdges.add(type);
                 }
-                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
+                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +".type_" + type /*+ "_" + nameDiagram*/ + "\n");
             }
 
         }
@@ -180,13 +183,20 @@ public class ADDefineChannels {
             for (String signalChannel : keySignalChannels) {
 
             	String parameterType = "";
-            	
-            	if (parameterSignal.containsKey(signalChannel)) {
-            		parameterType = "." + parameterNodesInput.get(parameterSignal.get(signalChannel)) + "_" + nameDiagram;
+            	String pinType = "";
+            	/*if (parameterSignal.containsKey(signalChannel)) {
+            		parameterSignal.get(signalChannel).getValue();
+            		//parameterType = "." + parameterNodesInput.get(parameterSignal.get(signalChannel).getValue()) + "_" + nameDiagram;//TODO entender essa linha de codigo
+            		parameterType = ".type_" + parameterSignal.get(signalChannel).getValue();
+            	}*/
+            	if(signalPins.containsKey(signalChannel)) {
+            		List<String> types = signalPins.get(signalChannel);
+            		for(String typeName: types) {
+            			pinType = ".type_"+typeName;
+            		}
             	}
-
-                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +".countSignal_" + signalChannel + parameterType + "\n");
-                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +".countAccept_" + signalChannel + ".countSignal_" + signalChannel + parameterType +"\n");
+                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +".countSignal_" + signalChannel + pinType + parameterType + "\n");
+                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +".countAccept_" + signalChannel + ".countSignal_" + signalChannel + pinType + parameterType +"\n");
             }
 
             channels.append("channel loop\n");

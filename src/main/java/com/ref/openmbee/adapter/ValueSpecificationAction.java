@@ -9,6 +9,8 @@ public class ValueSpecificationAction extends Action{
 	private String ValueOwnerId;
 	private String ValueInstanceId; 
 	private String ValueTypeId;
+	private ArrayList<String> Value;
+	private String ValueName;
 	
 	public ValueSpecificationAction(String id, String type, String ownerId, String activityId,
 			ArrayList<String> outgoingsIds, ArrayList<String> incomingIds, String valueType, String valueOwnerId,
@@ -18,6 +20,7 @@ public class ValueSpecificationAction extends Action{
 		ValueOwnerId = valueOwnerId;
 		ValueInstanceId = valueInstanceId;
 		ValueTypeId = valueTypeId;
+		//Value = "20";
 	}
 	
 	
@@ -48,6 +51,26 @@ public class ValueSpecificationAction extends Action{
 
 	public void setValueInstanceId(String valueInstanceId) {
 		ValueInstanceId = valueInstanceId;
+	}
+
+
+	public ArrayList<String> getValue() {
+		return Value;
+	}
+
+
+	public void setValue(ArrayList<String> value) {
+		Value = value;
+	}
+
+
+	public String getValueName() {
+		return ValueName;
+	}
+
+
+	public void setValueName(String valueName) {
+		ValueName = valueName;
 	}
 
 

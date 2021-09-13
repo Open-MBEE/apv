@@ -11,9 +11,7 @@ public abstract class ActivityElement implements INamedElement{
 	private String name;
 	private String[] stereotypes;
 	private String definition;
-	/*
-	 * TODO definition = concatenar todas as strings de definition
-	 * */
+
 	public ActivityElement(String id, String type, String ownerId, String activityId, 
 			String name, String[] stereotypes, String definition) {
 		super();
@@ -71,6 +69,10 @@ public abstract class ActivityElement implements INamedElement{
 	@Override
 	public String[] getStereotypes() {
 		return this.stereotypes;
+	}
+
+	public void setDefinition(String definition) {
+		this.definition = definition;
 	}
 
 }

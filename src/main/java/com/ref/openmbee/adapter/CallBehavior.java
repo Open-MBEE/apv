@@ -6,10 +6,6 @@ public class CallBehavior extends Action{
 	private String behaviorId;
 	private Activity callBehavior;
 	
-	private String name;
-	private String[] stereotypes;
-	private String definition;
-	
 	public CallBehavior(String id, String type, String ownerId, String activityId, ArrayList<String> outgoingsIds,
 			ArrayList<String> incomingIds, String behaviorId, String name, String[] stereotypes, String definition) {
 		super(id, type, ownerId, activityId, outgoingsIds, incomingIds, name, stereotypes, definition);
@@ -30,21 +26,5 @@ public class CallBehavior extends Action{
 	public void setCallBehavior(Activity callBehavior) {
 		this.callBehavior = callBehavior;
 	}
-
-	@Override
-	public String getName() {
-		return this.name;
-	}
-
-	@Override
-	public String getDefinition() {
-		return this.definition;
-	}
-
-	@Override
-	public String[] getStereotypes() {
-		return this.stereotypes;
-	}
-	
 	
 }

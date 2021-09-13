@@ -29,7 +29,7 @@ public class ActionBuilder implements ActivityElementBuilder{
 		ArrayList<String> incomingIds = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("incomingIds"));
 		
 		ArrayList<String> triggerIds = new ArrayList<>();
-		ArrayList<String> body = new ArrayList<>();
+		String body = "";
 		ArrayList<String> inputValueIds = new ArrayList<>();
 		ArrayList<String> localPostconditionIds = new ArrayList<>();
 		ArrayList<String> localPreconditionIds = new ArrayList<>();
@@ -42,14 +42,15 @@ public class ActionBuilder implements ActivityElementBuilder{
 		String structuralFeatureId;
 		String objectId;
 		
-		String name = (jsonObject.isNull("name")?"":jsonObject.getString("name"));
+		String name = jsonObject.getString("name"); 
+		if(name.length() == 0) {
+			name = type+"_"+id;
+		}
 		
-		String[] stereotypes = null;
+		String[] stereotypes = new String[0];
 		if(!jsonObject.isNull("stereotypes")) {//TODO não testei 100% ainda
 			stereotypes = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("stereotypes")).toArray(new String[0]);
 		}
-		//ArrayList<String> stereotypesAux = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("stereotypes"));
-		//String[] stereotypes = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("stereotypes")).toArray(new String[0]);
 		String definition = (jsonObject.isNull("definition")?"":jsonObject.getString("definition"));
 		
 		/*if(outgoingIds.size() > 0 || incomingIds.size() > 0 ||
@@ -81,25 +82,41 @@ public class ActionBuilder implements ActivityElementBuilder{
 			break;
 			
 		case "OpaqueAction":
-			body = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("body"));
+			body = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("body")).toString();
 			inputValueIds = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("inputValueIds"));
 			localPostconditionIds = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("localPostconditionIds"));
 			localPreconditionIds = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("localPreconditionIds"));
-			newAction = new OpaqueAction(id, type, ownerId, activityId, outgoingIds, incomingIds, body, inputValueIds, localPostconditionIds, localPreconditionIds,
-					name, stereotypes, definition);
+			newAction = new OpaqueAction(id, type, ownerId, activityId, outgoingIds, incomingIds, inputValueIds, localPostconditionIds, localPreconditionIds,
+					name, stereotypes, body);
 			break;
 			
 		case "ValueSpecificationAction":
 			JSONObject value = jsonObject.getJSONObject("value");
-			if (!value.isNull("type") && !value.isNull("ownerId") && !value.isNull("instanceId") && !value.isNull("typeId")) {
-				valueType = value.getString("type");
-				valueOwnerId = value.getString("ownerId");
-				valueInstanceId = value.getString("instanceId");
-				valueTypeId = value.getString("typeId");
-				
-				newAction = new ValueSpecificationAction(id, type, ownerId, activityId, outgoingIds,
-						incomingIds, valueType, valueOwnerId, valueInstanceId, valueTypeId,
-						name, stereotypes, definition);
+			boolean primitive = AdapterUtils.primitives.containsKey(value.get("id")) || value.getString("type").equals("LiteralBoolean");//não ta 100%
+			
+			//TODO ajeitar
+			if (!value.isNull("type") && !value.isNull("ownerId")) { 
+				if(!value.isNull("instanceId") || !value.isNull("typeId") || primitive) {
+					valueType = value.getString("type");
+					valueOwnerId = value.getString("ownerId");
+					valueInstanceId = (value.isNull("instanceId")?"":value.getString("instanceId"));
+					valueTypeId = (value.isNull("typeId")?"":value.getString("typeId"));
+					newAction = new ValueSpecificationAction(id, type, ownerId, activityId, outgoingIds,
+							incomingIds, valueType, valueOwnerId, valueInstanceId, valueTypeId,
+							name, stereotypes, definition);
+					if(primitive) {
+						ArrayList<String> valueAux = new ArrayList<>();
+						valueAux.add(value.get("value").toString());
+						((ValueSpecificationAction)newAction).setValue(valueAux);
+						((ValueSpecificationAction)newAction).setValueTypeId(value.getString("id"));
+						if(AdapterUtils.primitives.containsKey(((ValueSpecificationAction)newAction).getValueTypeId())) {
+							((ValueSpecificationAction)newAction).setValueName(AdapterUtils.primitives.get(((ValueSpecificationAction)newAction).getValueTypeId()));	
+						}else if(value.getString("type").equals("LiteralBoolean")) {
+							((ValueSpecificationAction)newAction).setValueName("LiteralBoolean");
+						}
+						
+					}
+				}
 			}
 			break;
 			

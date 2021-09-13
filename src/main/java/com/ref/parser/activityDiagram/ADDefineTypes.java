@@ -105,47 +105,113 @@ public class ADDefineTypes {
             }
             types.append("\n");
         }
-
-        if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || adDiagram.getDefinition().replace(" ", "").length() > 0) {
-            HashMap<String, String> typesParameter = new HashMap<>();
-            String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
-
-            for (String def : definition) {
-                String[] keyValue = def.split("=");
-
-                if (keyValue.length == 1) {
-                    typesParameter.put(keyValue[0], keyValue[0]);
-                } else {
-                    typesParameter.put(keyValue[0], keyValue[1]);
-                }
-
-            }
-            
-            List<String> buffer = new ArrayList<>();
-
-            for (ArrayList<String> union : unionList) {
-                String objectUnion = "";
-                String nameLast = "";
-                for (int i = 0; i < union.size(); i++) {
-                    objectUnion += union.get(i);
-                    nameLast = union.get(i);
-                }
-
-                if (!buffer.contains(objectUnion)) {
-                    types.append(objectUnion + "_" + nameDiagram + " = ");
-                    types.append(typesParameter.get(parameterNodesInput.get(nameLast)) + "\n");
-                    buffer.add(objectUnion);
-                }
-
-            }
-
-            for (String definitionName : typesParameter.keySet()) {
-                types.append(definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
-            }
-
-
-        }
-
+        if(firstDiagram.equals(ad.getId())) {
+	        if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || adDiagram.getDefinition().replace(" ", "").length() > 0) {
+	            HashMap<String, String> typesParameter = new HashMap<>();
+	            //String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
+	            //String[] definition = ADParser.GlobalDefinition.replace("\n", "").replace(" ", "").split(";");
+	            String[] definition = ADParser.getDefinitionReplaced();
+	            
+	            
+	            String typeName = null;
+	            for (String def : definition) {
+	                
+	                boolean enumeration = false;
+	                boolean datatype = false;
+	                //teste pra enum e datatype
+	            	String[] definitionAux = null;
+	                if (def.startsWith("enum")) {
+	                	enumeration = true;
+	                	definitionAux= def.split("enum");
+	    			}
+	                if (def.startsWith("datatype")) {
+	                	datatype = true;
+	    				definitionAux = def.split("datatype");
+	    			}
+	                String[] aux = definitionAux[1].split("=");
+	                typeName = aux[0];
+	                if(definitionAux != null) {
+	                	if(enumeration) {
+	                		def = "enum "; 
+	                	}
+	                	if(datatype) {
+	                		def = "datatype ";
+	                	}
+	                	
+	                	def += definitionAux[1];
+	                }
+	                String[] keyValue = def.split("=");
+	                if (keyValue.length == 1) {
+	                    typesParameter.put(keyValue[0], keyValue[0]);
+	                } else {
+	                    typesParameter.put(keyValue[0], keyValue[1]);
+	                }
+	                
+	
+	            }
+	            
+	            List<String> buffer = new ArrayList<>();
+	
+	            for (ArrayList<String> union : unionList) {
+	                String objectUnion = "";
+	                String nameLast = "";
+	                for (int i = 0; i < union.size(); i++) {
+	                    objectUnion += union.get(i);
+	                    nameLast = union.get(i);
+	                }
+	
+	                if (!buffer.contains(objectUnion)) {
+	                    types.append(objectUnion + "_" + nameDiagram + " = ");
+	                    types.append(typesParameter.get(parameterNodesInput.get(nameLast)) + "\n");
+	                    buffer.add(objectUnion);
+	                }
+	
+	            }
+	
+	            for (String definitionName : typesParameter.keySet()) {
+	            	if(!(definitionName.startsWith("enum") || definitionName.startsWith("datatype"))) {
+	            		types.append(definitionName + /*"_" + nameDiagram +*/ " = " + typesParameter.get(definitionName) + "\n");
+	            	}
+	                String typesParameterAux = typesParameter.get(definitionName);
+	                if(definitionName.startsWith("enum ")) {
+	                	String[] name = definitionName.split("enum");
+	                	String atributes = typesParameterAux.replace(",",/*"."+typeName+*/" | ");
+	                    atributes = atributes.replace("{", "");
+	                    atributes = atributes.replace("}", /*"."+typeName*/"");
+	                    //types.append("datatype type_"+ typeName + " = " + atributes+"\n");
+	                    types.append("datatype type_"+ name[1].replace(" ", "") + " = " + atributes+"\n");
+	                    
+	                    /*String[] dtOfEachEnum = typesParameterAux.replace("{", "").replace("}","").replace(" ","").split(",");
+	                    for(String EnumValue: dtOfEachEnum) {              
+	                    	types.append(EnumValue+" = {1..1}\n");
+	                    }*/
+	                }else if(definitionName.startsWith("datatype")) {
+	                	List<String> atributeNames = new ArrayList<>();
+	                    String datatypeAtributes = typesParameter.get(definitionName);
+	                    datatypeAtributes = datatypeAtributes.replace("{", "");
+	                    datatypeAtributes = datatypeAtributes.replace("}", "");
+	                    String[] datatypeAtributesAux = datatypeAtributes.split(";");
+	                    for(String dtAtribute: datatypeAtributesAux) {
+	                    	String[] atributeSplited = dtAtribute.split(":");
+	                    	types.append(atributeSplited[0]+" = "+atributeSplited[1]+"\n");
+	                    	atributeNames.add(atributeSplited[0]);
+	                    	if(ADParser.primitives.contains(ADUtils.nameResolver(atributeSplited[1]))) {
+	                    		adParser.primitivesUsed.add(atributeSplited[1]);
+	                    	}
+	                    }
+	                    String[] dtName = definitionName.split(" ");
+	                    types.append(dtName[0]+" type_"+dtName[1]+" = " +dtName[1]);
+	                    for(String atributeName: atributeNames) {
+	                    	types.append("."+atributeName);
+	                    }
+	                    types.append("\n");
+	                }
+	                
+	            }
+	
+	
+	        }
+    	}
         if (adParser.countGet_ad > 1 || adParser.countSet_ad > 1) {
             if (adParser.countGet_ad == 1) {
                 types.append("countGet_" + nameDiagram + " = {1.." + adParser.countGet_ad + "}\n");

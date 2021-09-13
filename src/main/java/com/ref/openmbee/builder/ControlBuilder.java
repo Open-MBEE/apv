@@ -31,8 +31,12 @@ public class ControlBuilder implements ActivityElementBuilder{
 		String decisionInputId;
 		String decisionInputFlowId;
 		
-		String name = (jsonObject.isNull("name")?"":jsonObject.getString("name"));
-		String[] stereotypes = null;
+		
+		String name = jsonObject.getString("name"); 
+		if(name.length() == 0) {
+			name = type+"_"+id;
+		}
+		String[] stereotypes = new String[0];
 		if(!jsonObject.isNull("stereotypes")) {//TODO não testei 100% ainda
 			stereotypes = AdapterUtils.JSONArrayToArrayList(jsonObject.getJSONArray("stereotypes")).toArray(new String[0]);
 		}

@@ -64,7 +64,8 @@ public class ADDefineNodesActionAndControl {
     private ADDefineObjectNode dObjectNode;
     private ADDefineSignal dSignal;
     private ADDefineAccept dAccept;
-    private HashMap<String, String> parameterSignal;
+    private HashMap<String, Pair<String, String>> parameterSignal;
+	private HashMap<String, List<String>> signalPins;
 
     public ADDefineNodesActionAndControl(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
                                          HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
@@ -74,8 +75,8 @@ public class ADDefineNodesActionAndControl {
                                          HashMap<String, String> parameterNodesOutput, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
                                          Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
-                                         List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
-                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, HashMap<String, String> parameterSignal, ADUtils adUtils, ADParser adParser) {
+                                         List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, HashMap<String, List<String>> signalPins, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
+                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, HashMap<String, Pair<String, String>> parameterSignal2, ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
@@ -102,11 +103,12 @@ public class ADDefineNodesActionAndControl {
         this.countSignal = countSignal;
         this.countAccept = countAccept;
         this.signalChannels = signalChannels;
+        this.signalPins = signalPins;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.createdSignal = createdSignal;
         this.createdAccept = createdAccept;
         this.allGuards = allGuards;
-        this.parameterSignal = parameterSignal;
+        this.parameterSignal = parameterSignal2;
         this.signalChannelsLocal = signalChannelsLocal;
         this.adParser = adParser;
     }
@@ -282,7 +284,7 @@ public class ADDefineNodesActionAndControl {
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
-                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
+                signalChannels, signalPins, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
                 signalChannelsLocal, parameterSignal, adParser);
         return adUtils;
     }

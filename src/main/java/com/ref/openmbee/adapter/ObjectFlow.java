@@ -4,19 +4,31 @@ import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ObjectFlow extends Flow implements IObjectFlow{
-	public Type type;
-	public String typeId;
+	public Type baseType;
+	public String baseTypeId;
 	
 	public ObjectFlow(String id, String type, String ownerId, String activityId, String sourceId,
-			String targetId, Type type2, String typeId, String name, String[] stereotypes, String definition, String guard) {
+			String targetId, Type baseType, String baseTypeId, String name, String[] stereotypes, String definition, String guard) {
 		super(id, type, ownerId, activityId, sourceId, targetId, name, stereotypes, definition, guard);
-		this.type = type2;
-		this.typeId = typeId;
+		this.baseType = baseType;
+		this.baseTypeId = baseTypeId;
 	}
 
 	@Override
 	public IClass getBase() {
-		return this.type;
+		return this.baseType;
+	}
+
+	public void setBaseType(Type baseType) {
+		this.baseType = baseType;
+	}
+
+	public String getBaseTypeId() {
+		return baseTypeId;
+	}
+
+	public void setBaseTypeId(String typeId) {
+		this.baseTypeId = typeId;
 	}
 	
 	

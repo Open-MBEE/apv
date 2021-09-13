@@ -16,7 +16,8 @@ public abstract class Action extends ActivityNode implements IAction{
 	public Action(String id, String type, String ownerId, String activityId, ArrayList<String> outgoingsIds,
 			ArrayList<String> incomingIds, String name, String[] stereotypes, String definition) {
 		super(id, type, ownerId, activityId, outgoingsIds, incomingIds, name, stereotypes, definition);
-		
+		inputs = new InputPin[0];
+		outputs = new OutputPin[0];
 	}
 
 	@Override

@@ -34,6 +34,7 @@ public class ADUtils {
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private HashMap<String, List<IActivity>> signalChannels;
+    private HashMap<String, List<String>> signalPins;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private HashMap<String,Integer> allGuards;
@@ -41,16 +42,16 @@ public class ADUtils {
     public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private ADParser adParser;
-    private HashMap<String, String> parameterSignal;
+    private HashMap<String, Pair<String,String>> parameterSignal;
 
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
                    List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
                    Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
-                   HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
+                   HashMap<String, List<IActivity>> signalChannels2, HashMap<String, List<String>> signalPins2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                    HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges2, List<String> signalChannelsLocal,
-                   HashMap<String, String> parameterSignal, ADParser adParser) {
+                   HashMap<String, Pair<String, String>> parameterSignal, ADParser adParser) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -66,6 +67,7 @@ public class ADUtils {
         this.countSignal = countSignal;
         this.countAccept = countAccept;
         this.signalChannels = signalChannels2;
+        this.signalPins = signalPins2;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.allGuards = allGuards;
         this.syncChannelsEdge = syncChannelsEdge2;
@@ -281,7 +283,7 @@ public class ADUtils {
         return objects;
     }
 
-    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode, List<String> namesMemoryLocal) {
+    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode, List<String> namesMemoryLocal, HashMap<String, String> typeMemoryLocal) {
         if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
@@ -290,6 +292,14 @@ public class ADUtils {
         	List<IActivity> list = new ArrayList<>();
         	list.add(ad);
             signalChannels.put(nameSignal,list );
+            if(((IAction)activityNode).getInputs().length>0) {
+            	List<String> types = new ArrayList<>();
+            	for(IInputPin inputPin :((IAction)activityNode).getInputs()) {
+            		types.add(inputPin.getBase().getName());
+            	}
+            	signalPins.put(nameSignal, types);
+            }
+            
         }
         
         if (!signalChannelsLocal.contains(nameSignal)) {
@@ -311,7 +321,10 @@ public class ADUtils {
         
         if (namesMemoryLocal.size() > 0) {
         	signal.append("signal_" + nameSignal + ".id!" + idSignal + "!" + namesMemoryLocal.get(0) + " -> ");
-        	parameterSignal.put(nameSignal, namesMemoryLocal.get(0));
+        	Pair<String, String> newPair = new Pair<String, String>(namesMemoryLocal.get(0), typeMemoryLocal.get(namesMemoryLocal.get(0)));
+        	//parameterSignal.put(nameSignal, namesMemoryLocal.get(0));
+        	parameterSignal.put(nameSignal, newPair);
+        	
         } else {
         	signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");   
         }
@@ -337,6 +350,13 @@ public class ADUtils {
         	List<IActivity> list = new ArrayList<>();
         	list.add(ad);
             signalChannels.put(nameAccept,list );
+            if(((IAction)activityNode).getOutputs().length>0) {
+            	List<String> types = new ArrayList<>();
+            	for(IOutputPin outputPin :((IAction)activityNode).getOutputs()) {
+            		types.add(outputPin.getBase().getName());
+            	}
+            	signalPins.put(nameAccept, types);
+            }
         }
 
         int idAccept = 1;
@@ -419,11 +439,44 @@ public class ADUtils {
         String defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
                 .replace(")", "").split(",")[0];
         String defaultValueFinal = defaultValue.split("\\.\\.")[0];
-
+        /*if(defaultValueFinal.contains(":")) {//se for datatype
+        	String[] dtValues = defaultValueFinal.split(":");
+        	defaultValueFinal = dtValues[0];
+        }*/
+        if(defaultValueFinal.contains(":")) {
+    		String defaultValueDT = type;
+        	if(defaultValueFinal.contains(";")) {//se tem mais de 1 atributo
+        		String[] atributes = defaultValueFinal.split(";");
+        		for(String atribute :atributes) {
+        			String[] nameAndType = atribute.split(":");
+        			if(ADParser.primitives.contains(nameAndType[1])) {
+        				defaultValueDT +="."+primitiveDefaultValue(nameAndType[1]);
+        			}else {
+        				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
+        			}
+        		}
+        	}else {
+        		String[] nameAndType = defaultValueFinal.split(":");
+    			if(ADParser.primitives.contains(nameAndType[1])) {
+    				defaultValueDT +="."+primitiveDefaultValue(nameAndType[1]);
+    			}else {
+    				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
+    			}
+        	}
+        	defaultValueFinal = defaultValueDT;
+        }
         return defaultValueFinal;
     }
 
-    public Pair<String, String> getInitialAndFinalParameterValue(String type) {
+    private String primitiveDefaultValue(String primitive) {//TODO ver se é pra ser assim mesmo
+    	if(primitive.equals("Bool")) {
+    		return "true";
+    	}else {
+    		return "1";
+    	}
+	}
+
+	public Pair<String, String> getInitialAndFinalParameterValue(String type) {
         Pair<String, String> initialAndFinalParameterValue;
         String[] allValues;
         String firstValue;
@@ -450,11 +503,28 @@ public class ADUtils {
 
     public HashMap<String, String> getParameterValueDiagram(String type) {
         HashMap<String, String> typesParameter = new HashMap<>();
-        String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
-
+        //String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
+        //String[] definition = ADParser.GlobalDefinition.replace("\n", "").replace(" ", "").split(";");
+        String[] definition = ADParser.getDefinitionReplaced();
+        //TODO ajeitar para os casos de datatype pois tem ; na definição
+        
         for (String def : definition) {
-            String[] keyValue = def.split("=");
+        	String[] definitionAux = null;
+        	
+        	//teste pra enum e datatype
+            if (def.startsWith("enum")) {
+            	definitionAux= def.split("enum");
+			}
+            if (def.startsWith("datatype")) {
+				definitionAux = def.split("datatype");
+			}
+            
+            if(definitionAux != null) {
+            	def = definitionAux[1];
+            }
+			String[] keyValue = def.split("=");
 
+            
             if (keyValue.length == 1) {
                 typesParameter.put(keyValue[0], keyValue[0]);
             } else {
@@ -463,7 +533,7 @@ public class ADUtils {
 
 
         }
-
+        
         return typesParameter;
     }
 
@@ -610,6 +680,7 @@ public class ADUtils {
 	            for (int x = 0; x < inFlowPin.length; x++) {
 	            	String type = ((IObjectFlow)inFlowPin[x]).getBase().getName();
 	            	
+	            	String aux = inPins[i].getBase().getName();
 	            	if (!type.equals(inPins[i].getBase().getName())) {
 	            		throw new ParsingException("Pin "+ inPins[i].getName() + " and object flow have incompatible types!");
 					}

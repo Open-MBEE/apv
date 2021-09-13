@@ -101,7 +101,7 @@ public class ADDefineSignal {
             adUtils.getLocal(alphabet, signal, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode, namesMemoryLocal);
+        adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode, namesMemoryLocal,typeMemoryLocal);
         
         adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal, null);
         

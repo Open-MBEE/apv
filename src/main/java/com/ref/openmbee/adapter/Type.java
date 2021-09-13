@@ -2,31 +2,53 @@ package com.ref.openmbee.adapter;
 
 import com.ref.interfaces.activityDiagram.IClass;
 
-public class Type extends ActivityElement implements IClass{
-	private String name;
-	private String[] stereotypes;
-	private String definition;
+public class Type implements IClass{
 	
-	public Type(String id, String type, String ownerId, String activityId, String name, String[] stereotypes, String definition) {
-		super(id, type, ownerId, activityId, name, stereotypes, definition);
+	private String id;
+	private String name;
+	private String definition;
+	private String[] stereotypes;
+	private String typeId;
+
+	public Type(String id, String name, String definition, String[] stereotypes, String typeId) {
+		super();
+		this.id = id;
 		this.name = name;
-		this.stereotypes = stereotypes;
 		this.definition = definition;
+		this.stereotypes = stereotypes;
+		this.typeId = typeId;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	@Override
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	@Override
 	public String getDefinition() {
-		return this.definition;
+		return definition;
 	}
 
 	@Override
 	public String[] getStereotypes() {
-		return this.stereotypes;
+		return stereotypes;
+	}
+
+	public String getTypeId() {
+		return typeId;
+	}
+
+	public void setDefinition(String definition) {
+		this.definition = definition;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 

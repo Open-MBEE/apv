@@ -6,30 +6,19 @@ import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IObjectNode;
 
 public class ObjectNode extends ActivityNode implements IObjectNode{
-	private Type type;
+	private Type baseType;
 	private String typeId;
-	
-	private String name;
-	private String[] stereotypes;
-	private String definition;
-	
-	
 
 	public ObjectNode(String id, String type, String ownerId, String activityId, ArrayList<String> outgoingIds,
-			ArrayList<String> incomingIds, Type type2, String typeId, String name, String[] stereotypes, String definition) {
+			ArrayList<String> incomingIds, Type baseType, String typeId, String name, String[] stereotypes, String definition) {
 		super(id, type, ownerId, activityId, outgoingIds, incomingIds, name, stereotypes, definition);
-		this.type = type2;
+		this.baseType = baseType;
 		this.typeId = typeId;
-		
-		this.name = name;
-		this.stereotypes = stereotypes;
-		this.definition = definition;
 	}
-
 
 	@Override
 	public IClass getBase() {
-		return this.type;
+		return this.baseType;
 	}
 
 
@@ -42,24 +31,13 @@ public class ObjectNode extends ActivityNode implements IObjectNode{
 		this.typeId = typeId;
 	}
 
-
-	@Override
-	public String getName() {
-		return this.name;
+	public void setBaseType(Type type) {
+		this.baseType = type;
 	}
 
-
-	@Override
-	public String getDefinition() {
-		return this.definition;
+	public Type getBaseType() {
+		return baseType;
 	}
-
-
-	@Override
-	public String[] getStereotypes() {
-		return this.stereotypes;
-	}
-
 	
-
+	
 }

@@ -12,31 +12,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
+import org.json.JSONException;
 import org.omg.sysml.xtext.sysml.Namespace;
 
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
 import com.ref.astah.adapter.Activity;
 import com.ref.astah.adapter.ActivityDiagram;
 import com.ref.astah.adapter.AdapterUtils;
 import com.ref.astah.traceability.CounterExampleAstah;
 import com.ref.exceptions.FDRException;
+import com.ref.exceptions.HttpException;
 import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.openmbee.Communication;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.ADUtils;
@@ -81,19 +72,15 @@ public class ActivityController {
 		return controller;
 	}
 	
-	public void OpenMBEEInvocation(String url, String login, String password, String idActivity, String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
-		
-		//fazer estilo ADDefineNodesActionAndControl 
-		/*String url = "http://18.188.75.184/projects/tmt/refs/master/elements/";
-		String login = "ufrpe";
-		String password = "thisisapassword";
-		String idActivity = "_17_0_2_3_41e01aa_1386574999817_391486_76808";*/
+	public void OpenMBEEInvocation(String url, String login, String password, String idActivity, VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException, FDRException, ParsingException, WellFormedException, JSONException, HttpException{
+	
 		com.ref.openmbee.adapter.Activity activity = Communication.buildActivity(url,login,password,idActivity);
 		Communication.resetStatics();
 		System.out.println(activity); 
-		//HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
-		//TODO resolver oque fazer com o activityDiagram
+		HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activity.getActivityDiagram(),type,progressBar);
 	}
+
+	
 	
 	public void SysmlInvocation(Namespace diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
 			com.ref.sysml.adapter.ActivityDiagram activityDiagram = new com.ref.sysml.adapter.ActivityDiagram(diagram);
@@ -106,8 +93,8 @@ public class ActivityController {
 	}
 	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
-			Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
-			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
+			Activity activity = new Activity((com.change_vision.jude.api.inf.model.IActivity) ((IActivityDiagram) diagram).getActivity());
+			ActivityDiagram activityDiagram = new ActivityDiagram( (com.change_vision.jude.api.inf.model.IActivityDiagram) diagram);
 			activity.setActivityDiagram(activityDiagram);
 			
 			HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
@@ -116,8 +103,7 @@ public class ActivityController {
 			}
 	}
 	
-	public HashMap<IActivity, List<String>> checkProperty(IActivity activity,
-			com.ref.interfaces.activityDiagram.IActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
+	public HashMap<IActivity, List<String>> checkProperty(IActivity activity,IActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
 		boolean wellformed = WellFormedness.WellFormed();
 
 		settingFDR();
@@ -158,7 +144,7 @@ public class ActivityController {
 			
 			
 			if (traceCounterExample!=null && !traceCounterExample.isEmpty()) {//If there is a trace
-				CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, activity,parser.getAlphabetAD(),ADParser.IdSignals);
+				CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, (IActivity) activity,parser.getAlphabetAD(),ADParser.IdSignals);
 				/* responsible for link the CSP counter example events to the ID of the diagram element of each diagram  
 				 * */
 				return cb.createCounterExample(activity);//who should be painted in each diagram
