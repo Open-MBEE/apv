@@ -1,6 +1,6 @@
 package com.ref.astah.adapter;
 
-import com.ref.interfaces.activityDiagram.INamedElement;
+import com.ref.interfaces.INamedElement;
 
 public class NamedElement implements INamedElement{
 

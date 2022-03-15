@@ -1,6 +1,6 @@
 package com.ref.openmbee.adapter;
 
-import com.ref.interfaces.activityDiagram.INamedElement;
+import com.ref.interfaces.INamedElement;
 
 public abstract class ActivityElement implements INamedElement{
 	private String id;

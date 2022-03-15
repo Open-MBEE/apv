@@ -1,4 +1,4 @@
-package com.ref.interfaces.activityDiagram;
+package com.ref.interfaces;
 
 public interface INamedElement {
 
