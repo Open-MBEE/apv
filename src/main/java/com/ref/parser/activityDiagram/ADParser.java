@@ -81,21 +81,7 @@ public class ADParser {
 
     public static HashMap<String,String> Definitions = new HashMap<>();
     public static String GlobalDefinition = "";
-    public List<String> primitivesUsed = new ArrayList<>();
-    public static final List<String> primitives = Collections.unmodifiableList(
-    		new ArrayList<String>() {{
-    			add("Bool");
-    			add("Complex");
-    			add("Int");
-    			add("Real");
-    			add("String");
-    			add("Number");
-    			add("UnlimitedNatural");
-    			add("Float");
-    			add("Rational");
-    		}}
-    		);
-    
+
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -202,7 +188,6 @@ public class ADParser {
         signalChannels = new HashMap<>();
         signalPins = new HashMap<>();
         alphabetPool = new HashSet<String>();
-        primitivesUsed = new ArrayList<>();
         Definitions = new HashMap<>();
         GlobalDefinition = "";
     }
@@ -274,7 +259,7 @@ public class ADParser {
         //reset the static values
         if (reset) {
         	//generate primitives used
-        	parser += generatePrimitives();
+        	//parser += generatePrimitives();
         	
             resetStatic();
         }
@@ -287,8 +272,8 @@ public class ADParser {
         alphabetAD.setSyncChannelsEdge(syncChannelsEdge);
         alphabetAD.setSyncObjectsEdge(syncObjectsEdge);
         alphabetAD.setParameterAlphabetNode(parameterAlphabetNode);
-        
-        return parser;
+        String replacedParser = parser.replaceAll("type_type_", "type_");
+        return replacedParser;
     }
 
 
@@ -297,10 +282,12 @@ public class ADParser {
 		if(!adDefinition.equals("")) {
 			String[] defSplit = adDefinition.split("\n");
 			for(String lineSplit : defSplit) {
-				String[] lineSplited = lineSplit.split("=");
-				if(!ADParser.Definitions.containsKey(lineSplited[0])) {
-					ADParser.Definitions.put(lineSplited[0], lineSplited[1]);
-					ADParser.GlobalDefinition += lineSplited[0] +"="+ lineSplited[1] +"\n";
+				if(lineSplit.length() > 0) {
+					String[] lineSplited = lineSplit.split("=");
+					if(!ADParser.Definitions.containsKey(lineSplited[0])) {
+						ADParser.Definitions.put(lineSplited[0], lineSplited[1]);
+						ADParser.GlobalDefinition += lineSplited[0] +"="+ lineSplited[1] +"\n";
+					}
 				}
 			}
 		}
@@ -312,73 +299,29 @@ public class ADParser {
 		String[] globalDefLines = globalDef.split("\n");
 		String[] globalDefReplaced = new String [0];
 		ArrayList<String> lines = new ArrayList<>();
+		//StringBuilder lines = new StringBuilder("");
 		for(String globalDefLine : globalDefLines) {
 			if(!globalDefLine.startsWith("datatype")) {
 				//.replace("\n", "").replace(" ", "").split(";");
+				
 				lines.add(globalDefLine.replace("\n", "").replace(" ", "").replace(";",""));
 			}else {
-				int index = globalDefLine.lastIndexOf(";");
 				StringBuilder line = new StringBuilder(globalDefLine);
+				//int index = globalDefLine.lastIndexOf(";");
+				//line.replace(0, 9, "datatype type_");
+				int index = line.lastIndexOf(";");
 				if(line.length()-1 == index) {
 					line.deleteCharAt(index);
 					lines.add(line.toString().replace("\n", "").replace(" ", ""));
 				}else {
 					lines.add(line.toString().replace("\n", "").replace(" ", ""));
 				}
-			
+				
 			}
 		}
 		globalDefReplaced = lines.toArray(new String[0]);
+		//globalDefReplaced = lines.toString().split("");
 		return globalDefReplaced;
-	}
-	private String generatePrimitives() {
-		String primitivesDefinition = "\n";
-		Set<String> set = new HashSet<>(primitivesUsed);
-		primitivesUsed.clear();
-		primitivesUsed.addAll(set);
-		
-		for(String primitive: primitivesUsed) {
-			switch(primitive) {
-			case "Bool":
-				primitivesDefinition +="Bool = true | false\n";
-				break;
-				
-			case "Complex":
-				primitivesDefinition +="Complex = {1..1}\n";
-				break;
-				
-			case "Int":
-				primitivesDefinition +="Int = {1..1}\n";
-				break;
-				
-			case "Real":
-				primitivesDefinition +="Real = {1..1}\n";
-				break;
-				
-			case "String":
-				primitivesDefinition +="String = {1..1}\n";
-				break;
-				
-			case "Number":
-				primitivesDefinition +="Number = {1..1}\n";
-				break;
-				
-			case "UnlimitedNatural":
-				primitivesDefinition +="UnlimitedNatural = {1..1}\n";
-				break;
-				
-			case "Float":
-				primitivesDefinition +="Float = {1..1}\n";
-				break;
-				
-			case "Rational":
-				primitivesDefinition +="Rational = {1..1}\n";
-				break;
-				
-					
-			}
-		}
-		return primitivesDefinition;
 	}
 
 	public ADAlphabet getAlphabetAD() {

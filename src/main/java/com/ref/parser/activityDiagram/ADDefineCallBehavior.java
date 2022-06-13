@@ -124,51 +124,74 @@ public class ADDefineCallBehavior {
     	alphabetNode.add(startAct);
     	alphabetNode.add(endAct);
     	adUtils.getCallBehaviourNumber().add(new Pair<>(adUtils.nameDiagramResolver(nameAD), count));
-    	
-    	List<String> outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
+        
+    	/*List<String> outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
         if (outputPinsUsed == null) {
             outputPinsUsed = inputPins;
             HashMap<String,List<String>> aux = adUtils.getCallBehaviourInputs();
             aux.put(nameAD, inputPins);
             adUtils.setCallBehaviourInputs(aux);
+        }*/
+        List<String> inputPinsUsed = adUtils.getCallBehaviourInputs().get(adUtils.nameDiagramResolver(nameAD));
+        if (inputPinsUsed == null) {
+        	inputPinsUsed = inputPins;
+            HashMap<String,List<String>> aux = adUtils.getCallBehaviourInputs();
+            aux.put(nameAD, inputPins);
+            adUtils.setCallBehaviourInputs(aux);
+        }
+        List<String> outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
+        if (outputPinsUsed == null) {
+            outputPinsUsed = outputPins;
+            HashMap<String,List<String>> aux = adUtils.getCallBehaviourOutputs();
+            aux.put(nameAD, outputPins);
+            adUtils.setCallBehaviourOutputs(aux);
         }
         boolean pinsUsed = false;
-        if(!outputPinsUsed.isEmpty()) {
-        	for (String pin : outputPinsUsed) {
+        /*if(!outputPinsUsed.isEmpty()) {
+        	for (String pin : outputPinsUsed) {*/
+		if(!inputPinsUsed.isEmpty() || !outputPinsUsed.isEmpty()) {
+			action.append("(");
+            action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
+        	for (String pin : inputPinsUsed) {
                 Activity += "!" + pin;
                 pinsUsed = true;   
             }
-        	action.append("(");
-            action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
+        	/*action.append("(");
+            action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");*/
+        	action.append((Activity != ""?startAct+Activity + " -> ":""));
         }else {
         	action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+"))");
         }
 
+		//action.append((Activity != ""?startAct+Activity + " -> ":""));
         
-        action.append((Activity != ""?startAct+Activity + " -> ":""));
         
         Activity = "";	
         
-        outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
+        /*outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
         if (outputPinsUsed == null) {
             outputPinsUsed = outputPins;
         	HashMap<String,List<String>> aux =	adUtils.getCallBehaviourOutputs();
             aux.put(nameAD, outputPins);
             adUtils.setCallBehaviourOutputs(aux);
-        }
+        }*/
         
+        String setMemPins = "";
         for (String pin : outputPinsUsed) {
             Activity += "?" + pin;
-            setMem += "!" + pin;
+            //setMem += "!" + pin;
+            setMemPins += "!" + pin;
+            pinsUsed = true;  
         }
         
        
-        action.append((Activity != "" || pinsUsed?endAct+Activity + " -> SKIP))":""));
+        //action.append((Activity != "" || pinsUsed?endAct+Activity + " -> SKIP));":""));
+        action.append(pinsUsed?endAct+Activity + " -> SKIP));":"");
         
-        for(IOutputPin pin : ((IAction)activityNode).getOutputs()) {
+        /*for(IOutputPin pin : ((IAction)activityNode).getOutputs()) {
         	adUtils.setLocal(alphabetNode,action,pin.getName(),adUtils.nameDiagramResolver(activityNode.getName()),pin.getName(),pin.getBase().getName()); //TODO adicionar um setLocal que pegue aqui	
-        }
-        action.append(!setMem.equals("setMemOutParam"+adUtils.nameDiagramResolver(nameAD))?"SKIP));":";");
-        
+        }*/
+        //action.append(!setMem.equals("setMemOutParam"+adUtils.nameDiagramResolver(nameAD))?"SKIP));":";");
+        action.append(pinsUsed?"SKIP;":";");
     }
 }

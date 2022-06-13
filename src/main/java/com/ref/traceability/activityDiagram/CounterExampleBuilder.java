@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.ref.astah.adapter.Activity;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
@@ -50,9 +49,10 @@ public class CounterExampleBuilder {
 	}
 
 	public HashMap<IActivity, List<String>> createCounterExample(IActivity diagram) {
-		HashMap<IActivity,List<String>> nodesCE = new HashMap<>();
+		HashMap<IActivity, List<String>> nodesCE = new HashMap<>();
 		System.out.println();
-		nodesCE.put(diagram, searchDiagram(diagram));
+		List<String> searchDiagram = searchDiagram(diagram);
+		nodesCE.put(diagram, searchDiagram);
 		for (int i = 0; i < diagram.getActivityNodes().length ; i++) {
 			IActivityNode node = diagram.getActivityNodes()[i]; 
 			if(node instanceof IAction && ((IAction)node).isCallBehaviorAction()) {

@@ -57,8 +57,9 @@ public class Communication {
 	private static HashMap<String,Flow> doneFlows = new HashMap<>();
 	private static HashMap<String,ActivityNode> doneNodes = new HashMap<>();
 	private static HashMap<String,ObjectNode> doneParameters = new HashMap<>();
-	private static HashMap<String,String> createdTypes = new HashMap<>();//TODO verificar se é pra ser assim mesmo
-	private static HashMap<String,HashMap<String,String>> activityDiagramTypes = new HashMap<>();
+	public static HashMap<String,String> createdTypes = new HashMap<>();//TODO verificar se é pra ser assim mesmo
+	public static HashMap<String,HashMap<String,String>> activityDiagramTypes = new HashMap<>();
+	
 	
 	//public static HashMap<String,String> primitives = new HashMap<>(); 
 
@@ -80,8 +81,12 @@ public class Communication {
 			CookieStore httpCookieStore = new BasicCookieStore();
 			HttpClientBuilder builder = HttpClientBuilder.create().setDefaultCookieStore(httpCookieStore);
 			httpClient = builder.build();
-			HttpPost httpRequest = new HttpPost("http://18.188.75.184/authentication");
-			httpRequest.setHeader("Content-Type", "application/json");
+			//HttpPost httpRequest = new HttpPost("http://18.188.75.184/authentication");
+			HttpPost httpRequest = new HttpPost("http://192.168.56.101:8080/authentication");
+			
+			//HttpPost httpRequest = new HttpPost("https://mms.openmbee.org/alfresco/mms/swagger-ui/index.html#/authentication");
+			//HttpPost httpRequest = new HttpPost("https://mms.openmbee.org/alfresco/service/api/login");
+						httpRequest.setHeader("Content-Type", "application/json");
 			httpRequest.setHeader("accept", "application/json");
 			StringEntity body = new StringEntity(
 					"{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}");
@@ -90,6 +95,7 @@ public class Communication {
 			String jsonToken = EntityUtils.toString(response.getEntity());
 			JSONObject token = new JSONObject(jsonToken);
 			HttpGet httpGet = new HttpGet(url + IdElement);
+			
 			httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token.get("token"));
 			response = httpClient.execute(httpGet);
 			JSONObject JSON = new JSONObject(EntityUtils.toString(response.getEntity()));
@@ -158,7 +164,7 @@ public class Communication {
 				
 				////////////////////////////////////////////////////////////////// parte dos nós
 				for (int i = 0; i < act.getNodeIds().size(); i++) {
-					JSONObject node = elementRequest(url, httpClient, token, act.getNodeIds().get(i));
+ 					JSONObject node = elementRequest(url, httpClient, token, act.getNodeIds().get(i));
 					type = node.getString("type");
 					
 					ActivityNode newNode = null;
@@ -222,13 +228,27 @@ public class Communication {
 											JSONArray valueAux;
 											jsonObject = elementRequest(url, httpClient, token, slot);
 											valueAux = jsonObject.getJSONArray("value");
-											for(Object valueObject: valueAux) {//se o valor for um int (descobrir maneira de deixar generico)
-												Integer value = new Integer(((JSONObject)valueObject).getInt("value"));
-												slots.add(value.toString());
+											if(((ValueSpecificationAction)newNode).getValueDefinition().equals("")) {
+												for(Object valueObject: valueAux) {//se o valor for um int (descobrir maneira de deixar generico)
+													Integer value = new Integer(((JSONObject)valueObject).getInt("value"));
+													slots.add(value.toString());
+												}
+											}else {
+												((ValueSpecificationAction)newNode).setDefinition(((ValueSpecificationAction)newNode).getValueDefinition());
 											}
-											
 										}
 										((ValueSpecificationAction)newNode).setValue(slots);
+									}
+									if(((ValueSpecificationAction)newNode).getValue().size() > 0) {//TODO ver se é pra ficar assim mesmo
+										if(((ValueSpecificationAction)newNode).getValueDefinition().equals("")) {
+											String defAux = "value = "+ ((ValueSpecificationAction)newNode).getValue().get(0);
+											for(int j = 1; j < ((ValueSpecificationAction)newNode).getValue().size(); j++) {
+												defAux += "."+((ValueSpecificationAction)newNode).getValue().get(j);
+											}
+											((ValueSpecificationAction)newNode).setDefinition(defAux);
+										}else {
+											((ValueSpecificationAction)newNode).setDefinition(((ValueSpecificationAction)newNode).getValueDefinition());
+										}
 									}
 								}
 					
@@ -293,13 +313,18 @@ public class Communication {
 					}
 				}
 				
+				//////////////////////////////////////////////////////////////////
+								
+				
 				designateFlowsToNodes(act);
 				designateObjectFlowBaseType();
 				getDefinitionOfObjects(act);
+				AdapterUtils.addDiagramUsedTypesToDiagramDefinition(act);
+				AdapterUtils.generateDiagramPrimitives(act);
 				doneActivitys.add(act);
-				if(mostExternalDiagram.equals(act.getId())) {
+				/*if(mostExternalDiagram.equals(act.getId())) {
 					defineMostExternalDiagramDefinition(act);
-				}
+				}*/
 				return act;
 			}else {
 				throw new ParsingException("something went wrong with the if of diagram/activity type");
@@ -422,33 +447,6 @@ public class Communication {
 		return false;
 	}
 	
-	private static void defineMostExternalDiagramDefinition(Activity act) {
-		String definition = "";
-		Set<String> AllActivitysKeys = activityDiagramTypes.keySet();
-		HashMap<String,String> hashMapAux= new HashMap<>();
-		for(String ActivityKey: AllActivitysKeys) {
-			HashMap<String,String> activityValue = activityDiagramTypes.get(ActivityKey);
-			Set<String> ActivityKeys = activityValue.keySet();
-			for(String key: ActivityKeys) {
-				if(!hashMapAux.containsKey(key)) {
-					hashMapAux.put(key, activityValue.get(key));
-				}
-			}
-		}
-		
-		/*
-		 * generate the original expression again
-		*/
-		
-		Set<String> hashMapAuxKeys = hashMapAux.keySet();
-		for(String hashMapAuxKey : hashMapAuxKeys) {
-			definition += hashMapAuxKey + " = " + hashMapAux.get(hashMapAuxKey);
-		}
-		
-		act.setDefinition(definition);
-		
-	}
-
 	private static void defineMostExternalDiagramId(String idElement) {
 		if(mostExternalDiagram.equals("")) {
 			mostExternalDiagram = idElement;
@@ -491,7 +489,7 @@ public class Communication {
 				source = (ObjectNode) objectFlow.getSource();
 				baseType = ((ObjectNode)source).getBaseType();
 				objectFlow.setBaseType(baseType);
-				objectFlow.setBaseTypeId(baseType.getTypeId());
+				objectFlow.setBaseTypeId(baseType.getTypeId());// ta dando erro aqui porque o pino result ta sem tipo no TMT(Check for existing reference beam map <- Retrieve Reference Beam Map <- Setup APS, Acquire and Start Guiding)
 			}else if(objectFlow.getSource() instanceof ControlNode) {
 				source = controlNodeFlowSearch((ControlNode) objectFlow.getSource());
 				baseType = ((ObjectNode)source).getBaseType();
@@ -571,16 +569,28 @@ public class Communication {
 	
 	private static Type generateType(String url, TypeBuilder typeBuilder, HttpClient httpClient, JSONObject token,
 			JSONObject object, Activity act) throws IOException, ClientProtocolException, JSONException, HttpException {
-		ArrayList<String> ownedElements = new ArrayList<>();
+		List<String> ownedElements = new ArrayList<>();
 		String definition = "";
 		JSONObject jsonObjectAux;
 		if(AdapterUtils.primitives.containsKey(object.getString("typeId"))) {
-			Type base = typeBuilder.buildElement(object.getString("typeId"), AdapterUtils.primitives.get(object.getString("typeId")),
+			String name = AdapterUtils.primitives.get(object.getString("typeId"))+"_"+AdapterUtils.nameResolver(act.getName());	
+			Type base = typeBuilder.buildElement(object.getString("typeId"), /*AdapterUtils.primitives.get(object.getString("typeId"))*/name,
 					definition, new String[0], object.getString("typeId"));
+			String activityOwnerId = searchOwnerActivity(url,httpClient,token,object.getString("ownerId"));		
+			String types = "";
+			if(createdTypes.containsKey(activityOwnerId)) {
+				types = createdTypes.get(activityOwnerId);
+				types += ","+name;
+				createdTypes.put(activityOwnerId, types);
+			}else {
+				createdTypes.put(activityOwnerId,name);
+			}	
 			return base;
-		}else {
+		}else{
 			JSONObject element = elementRequest(url, httpClient, token, object.getString("typeId"));
+			
 			Type base = (Type) typeBuilder.BuildElement(element);
+			base.setName("type_"+base.getName()+"_"+AdapterUtils.nameResolver(act.getName()));
 			ArrayList<String> dataTypeTypes = new ArrayList<String>();
 			
 			if(element.getString("type").equals("Enumeration")) {
@@ -589,11 +599,22 @@ public class Communication {
 			}else if(element.getString("type").equals("DataType")) {
 				ownedElements = AdapterUtils.JSONArrayToArrayList(element.getJSONArray("ownedAttributeIds"));
 				//base.setName("datatype " + AdapterUtils.nameResolver(base.getName()));
+			}else if(!element.has("typeId") && element.getJSONArray("_appliedStereotypeIds") != null){//pegar tipo pelo stereotype
+				ownedElements = AdapterUtils.JSONArrayToArrayList(element.getJSONArray("_appliedStereotypeIds"));
+				List<String> stereotypesOwnedElements = new ArrayList<>();
+				for(String ownedElement:ownedElements) {
+					JSONObject stereotypes = elementRequest(url, httpClient, token, ownedElement);
+					//element = elementRequest(url, httpClient, token, ownedElement);
+					AdapterUtils.JSONArrayToArrayList(stereotypes.getJSONArray("ownedAttributeIds"));
+					stereotypesOwnedElements.addAll(AdapterUtils.JSONArrayToArrayList(stereotypes.getJSONArray("ownedAttributeIds")));
+				}
+				ownedElements = stereotypesOwnedElements;
+				
 			}
 			ArrayList<String> typeNames = new ArrayList<>();
 			for(String ownedElementId: ownedElements) {
 				jsonObjectAux = elementRequest(url, httpClient, token, ownedElementId);
-				typeNames.add(jsonObjectAux.getString("name"));
+				typeNames.add(jsonObjectAux.getString("name")+"_"+AdapterUtils.nameResolver(act.getName()));
 				if(element.getString("type").equals("DataType")) {
 					dataTypeTypes.add(jsonObjectAux.getString("typeId"));//metodo provisorio ate descobrir como é o certo
 				}
@@ -601,7 +622,7 @@ public class Communication {
 			
 			if (typeNames.size()>0) {
 				if(element.getString("type").equals("Enumeration")) {
-					definition += "enum "+ AdapterUtils.nameResolver(element.getString("name")) + " = {" + AdapterUtils.nameResolver(typeNames.get(0));
+					definition += "enum "+ AdapterUtils.nameResolver(base.getName()) + " = {" + AdapterUtils.nameResolver(typeNames.get(0));
 					for (int i = 1; i < typeNames.size(); i++) {
 						definition += "," + AdapterUtils.nameResolver(typeNames.get(i));
 					}
@@ -610,19 +631,19 @@ public class Communication {
 				}else if(element.getString("type").equals("DataType")) {
 					
 					if(AdapterUtils.primitives.containsKey(AdapterUtils.nameResolver(dataTypeTypes.get(0)))) {
-						definition += "datatype " + AdapterUtils.nameResolver(element.getString("name")) + " = {" 
+						definition += "datatype " + AdapterUtils.nameResolver(base.getName() /*element.getString("name")*/) + " = {" 
 								+ AdapterUtils.nameResolver(typeNames.get(0)) + ":"+
-								AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(0)));
+								AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(0)))+"_"+AdapterUtils.nameResolver(act.getName());
 					}else {
-						definition += "datatype " + AdapterUtils.nameResolver(element.getString("name")) + " = {" 
-								+ AdapterUtils.nameResolver(typeNames.get(0)) + ":" + AdapterUtils.nameResolver(dataTypeTypes.get(0));
+						definition += "datatype " + AdapterUtils.nameResolver(element.getString("name")) + "_" + AdapterUtils.nameResolver(act.getName()) + " = {" 
+								+ AdapterUtils.nameResolver(typeNames.get(0)) + ":" + AdapterUtils.nameResolver(dataTypeTypes.get(0))+"_"+AdapterUtils.nameResolver(act.getName());
 					}
 					for (int i = 1; i < typeNames.size(); i++) {
 						definition += "; " + AdapterUtils.nameResolver(typeNames.get(i)) + ":" ;
 						if(AdapterUtils.primitives.containsKey(AdapterUtils.nameResolver(dataTypeTypes.get(i)))) {
-							definition += AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(i)));
+							definition += AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(i)))+"_"+AdapterUtils.nameResolver(act.getName());
 						}else {
-							definition += AdapterUtils.nameResolver(dataTypeTypes.get(i));
+							definition += AdapterUtils.nameResolver(dataTypeTypes.get(i))+"_"+AdapterUtils.nameResolver(act.getName());
 						}
 					}
 					definition += "}\n";
@@ -632,9 +653,9 @@ public class Communication {
 						String activityOwnerId = searchOwnerActivity(url,httpClient,token,object.getString("ownerId"));
 						String name = "";
 						if(AdapterUtils.primitives.containsKey(AdapterUtils.nameResolver(dataTypeTypes.get(i)))) {
-							name = AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(i)));
+							name = AdapterUtils.primitives.get(AdapterUtils.nameResolver(dataTypeTypes.get(i)))+"_"+AdapterUtils.nameResolver(act.getName());
 						}else {
-							name = AdapterUtils.nameResolver(dataTypeTypes.get(i));
+							name = AdapterUtils.nameResolver(dataTypeTypes.get(i))+"_"+AdapterUtils.nameResolver(act.getName());
 						}
 						String types = "";
 						if(createdTypes.containsKey(activityOwnerId)) {
@@ -655,10 +676,12 @@ public class Communication {
 					actDefinition.put(type[0], type[1]);
 				}
 			}else {
-				HashMap<String,String> actDefinition = new HashMap<>();
-				String[] type = definition.split(" = ");
-				actDefinition.put(type[0], type[1]);
-				activityDiagramTypes.put(act.getId(), actDefinition);
+				if(definition.length() > 0) {
+					HashMap<String,String> actDefinition = new HashMap<>();
+					String[] type = definition.split(" = ");
+					actDefinition.put(type[0], type[1]);
+					activityDiagramTypes.put(act.getId(), actDefinition);
+				}
 			}
 			base.setDefinition(definition);
 			return base;

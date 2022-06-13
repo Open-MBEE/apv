@@ -1,9 +1,14 @@
 package com.ref.openmbee;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
+
+import com.ref.openmbee.adapter.Activity;
 
 public class AdapterUtils {
 
@@ -52,8 +57,119 @@ public class AdapterUtils {
 			primitives.put("_16_6beta_17530432_1249976300015_220785_665", "UnlimitedNatural");
 			primitives.put("_18_0_5_c0402fd_1465851733888_531785_151013", "Float");
 			primitives.put("_16_5_1_12c903cb_1245415335546_799389_4090", "Rational");
+			primitives.put("_18_0_4_baa02e2_1441307939187_553193_205904", "LiteralReal");
 			//primitives.put("_18_0_5_c0402fd_1467061244795_711510_185960", "LiteralBoolean");//errado
 			
 		}
 	}
+
+	public static void generateDiagramPrimitives(Activity act) {
+
+		String createdDiagramTypes = Communication.createdTypes.get(act.getId());
+			if(createdDiagramTypes != null) {
+			String[] diagramTypes = createdDiagramTypes.split(",");
+			String typesDefinition = "";
+			ArrayList<String> typesCreated = new ArrayList<>();
+			for(String type : diagramTypes) {
+				if (!typesCreated.contains(type)) {
+					String[] typeSplited = type.split("_");
+					switch (typeSplited[0]) {
+					case "Bool":
+						typesDefinition += "Bool";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Complex":
+						typesDefinition += "Complex";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Int":
+						typesDefinition += "Int";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Real":
+						typesDefinition += "Real";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "String":
+						typesDefinition += "String";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Number":
+						typesDefinition += "Number";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "UnlimitedNatural":
+						typesDefinition += "UnlimitedNatural";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Float":
+						typesDefinition += "Float";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+	
+					case "Rational":
+						typesDefinition += "Rational";
+						for(int i = 1; i<typeSplited.length; i++) {
+							typesDefinition += "_"+typeSplited[i];						
+						}
+						typesDefinition += " = {0..1}\n";
+						break;
+					}
+					typesCreated.add(type);
+				}
+			
+			}
+			
+			act.setDefinition(act.getDefinition()+typesDefinition);
+		}
+	}
+	
+	
+	public static void addDiagramUsedTypesToDiagramDefinition(Activity act) {
+		HashMap<String,String> diagramTypes = Communication.activityDiagramTypes.get(act.getId());
+		if(diagramTypes != null) {
+			Set<String> keysSet = diagramTypes.keySet();
+			List<String> keys = new ArrayList<>(keysSet);
+			Collection<String> valuesSet =  diagramTypes.values();
+			List<String> values = new ArrayList<>(valuesSet);
+			String definition = "";
+			
+			for (int i = 0; i < keys.size(); i++) {
+				definition += keys.get(i)+" = "+values.get(i)+"\n";
+			}
+			act.setDefinition(act.getDefinition()+definition);
+		}
+	}
+	
 }

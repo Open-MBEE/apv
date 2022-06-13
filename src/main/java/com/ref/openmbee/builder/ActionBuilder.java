@@ -92,8 +92,8 @@ public class ActionBuilder implements ActivityElementBuilder{
 			
 		case "ValueSpecificationAction":
 			JSONObject value = jsonObject.getJSONObject("value");
-			boolean primitive = AdapterUtils.primitives.containsKey(value.get("id")) || value.getString("type").equals("LiteralBoolean");//não ta 100%
-			
+			boolean primitive = AdapterUtils.primitives.containsKey(value.get("id")) || AdapterUtils.primitives.containsKey(value.get("typeId")) || value.getString("type").equals("LiteralBoolean");//não ta 100%
+			String valueDefinition = !value.isNull("definition")?value.getString("definition"):"";
 			//TODO ajeitar
 			if (!value.isNull("type") && !value.isNull("ownerId")) { 
 				if(!value.isNull("instanceId") || !value.isNull("typeId") || primitive) {
@@ -102,13 +102,13 @@ public class ActionBuilder implements ActivityElementBuilder{
 					valueInstanceId = (value.isNull("instanceId")?"":value.getString("instanceId"));
 					valueTypeId = (value.isNull("typeId")?"":value.getString("typeId"));
 					newAction = new ValueSpecificationAction(id, type, ownerId, activityId, outgoingIds,
-							incomingIds, valueType, valueOwnerId, valueInstanceId, valueTypeId,
+							incomingIds, valueType, valueOwnerId, valueInstanceId, valueTypeId,valueDefinition,
 							name, stereotypes, definition);
 					if(primitive) {
 						ArrayList<String> valueAux = new ArrayList<>();
 						valueAux.add(value.get("value").toString());
 						((ValueSpecificationAction)newAction).setValue(valueAux);
-						((ValueSpecificationAction)newAction).setValueTypeId(value.getString("id"));
+						((ValueSpecificationAction)newAction).setValueTypeId(value.getString("typeId"));
 						if(AdapterUtils.primitives.containsKey(((ValueSpecificationAction)newAction).getValueTypeId())) {
 							((ValueSpecificationAction)newAction).setValueName(AdapterUtils.primitives.get(((ValueSpecificationAction)newAction).getValueTypeId()));	
 						}else if(value.getString("type").equals("LiteralBoolean")) {

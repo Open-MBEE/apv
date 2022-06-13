@@ -113,7 +113,6 @@ public class ADDefineTypes {
 	            String[] definition = ADParser.getDefinitionReplaced();
 	            
 	            
-	            String typeName = null;
 	            for (String def : definition) {
 	                
 	                boolean enumeration = false;
@@ -123,13 +122,14 @@ public class ADDefineTypes {
 	                if (def.startsWith("enum")) {
 	                	enumeration = true;
 	                	definitionAux= def.split("enum");
+	                	
 	    			}
 	                if (def.startsWith("datatype")) {
 	                	datatype = true;
 	    				definitionAux = def.split("datatype");
+	    				
 	    			}
-	                String[] aux = definitionAux[1].split("=");
-	                typeName = aux[0];
+	                
 	                if(definitionAux != null) {
 	                	if(enumeration) {
 	                		def = "enum "; 
@@ -170,7 +170,7 @@ public class ADDefineTypes {
 	
 	            for (String definitionName : typesParameter.keySet()) {
 	            	if(!(definitionName.startsWith("enum") || definitionName.startsWith("datatype"))) {
-	            		types.append(definitionName + /*"_" + nameDiagram +*/ " = " + typesParameter.get(definitionName) + "\n");
+	            		types.append(/*"type_" +*/ definitionName + /*"_" + nameDiagram +*/ " = " + typesParameter.get(definitionName) + "\n");
 	            	}
 	                String typesParameterAux = typesParameter.get(definitionName);
 	                if(definitionName.startsWith("enum ")) {
@@ -193,14 +193,15 @@ public class ADDefineTypes {
 	                    String[] datatypeAtributesAux = datatypeAtributes.split(";");
 	                    for(String dtAtribute: datatypeAtributesAux) {
 	                    	String[] atributeSplited = dtAtribute.split(":");
-	                    	types.append(atributeSplited[0]+" = "+atributeSplited[1]+"\n");
+	                    	types.append(atributeSplited[0]+" = "/*type_"*/+atributeSplited[1]+"\n");
 	                    	atributeNames.add(atributeSplited[0]);
-	                    	if(ADParser.primitives.contains(ADUtils.nameResolver(atributeSplited[1]))) {
-	                    		adParser.primitivesUsed.add(atributeSplited[1]);
-	                    	}
+	                    	
 	                    }
 	                    String[] dtName = definitionName.split(" ");
-	                    types.append(dtName[0]+" type_"+dtName[1]+" = " +dtName[1]);
+	                    types.append(dtName[0]+" "+dtName[1]+" = ");
+	                    String secondPart = dtName[1];
+	                    secondPart = secondPart.startsWith("type_")?secondPart.split("type_")[1]:secondPart;
+	                    types.append(secondPart);
 	                    for(String atributeName: atributeNames) {
 	                    	types.append("."+atributeName);
 	                    }

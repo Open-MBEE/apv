@@ -64,8 +64,10 @@ public class ADDefineNodesActionAndControl {
     private ADDefineObjectNode dObjectNode;
     private ADDefineSignal dSignal;
     private ADDefineAccept dAccept;
+    private ADDefineValueSpecification dValueSpecification;
     private HashMap<String, Pair<String, String>> parameterSignal;
 	private HashMap<String, List<String>> signalPins;
+	
 
     public ADDefineNodesActionAndControl(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
                                          HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
@@ -126,7 +128,9 @@ public class ADDefineNodesActionAndControl {
                      nodes.append(defineSignal(activityNode));
                  } else if (((IAction) activityNode).isAcceptEventAction()) {
                      nodes.append(defineAccept(activityNode));
-                 } else {//TODO else if value specification(new class)
+                 } else if(((IAction) activityNode).getName().startsWith("ValueSpecificationAction")){//TODO ver se essa é a melhor forma
+                	 nodes.append(defineValueSpecification(activityNode));
+                 } else {
                      nodes.append(defineAction(activityNode));    // create action node and set next action node
                  }
              } else if (activityNode instanceof IControlNode) {
@@ -166,7 +170,17 @@ public class ADDefineNodesActionAndControl {
     	return nodes.toString();
     }
 
-    private String defineAction(IActivityNode activityNode) throws ParsingException {
+    private Object defineValueSpecification(IActivityNode activityNode) throws ParsingException{
+    	ADUtils adUtils = defineADUtils();
+
+        dValueSpecification = new ADDefineValueSpecification(ad, alphabetNode, adUtils);
+
+        return dValueSpecification.defineValueSpecification(activityNode);
+	}
+
+
+
+	private String defineAction(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dAction = new ADDefineAction(ad, alphabetNode, adUtils);

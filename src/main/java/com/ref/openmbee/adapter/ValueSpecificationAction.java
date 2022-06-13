@@ -11,21 +11,33 @@ public class ValueSpecificationAction extends Action{
 	private String ValueTypeId;
 	private ArrayList<String> Value;
 	private String ValueName;
+	private String ValueDefinition;
 	
 	public ValueSpecificationAction(String id, String type, String ownerId, String activityId,
 			ArrayList<String> outgoingsIds, ArrayList<String> incomingIds, String valueType, String valueOwnerId,
-			String valueInstanceId, String valueTypeId, String name, String[] stereotypes, String definition) {
+			String valueInstanceId, String valueTypeId,String ValueDefinition, String name, String[] stereotypes, String definition) {
 		super(id, type, ownerId, activityId, outgoingsIds, incomingIds, name, stereotypes, definition);
 		ValueType = valueType;
 		ValueOwnerId = valueOwnerId;
 		ValueInstanceId = valueInstanceId;
 		ValueTypeId = valueTypeId;
+		this.ValueDefinition = ValueDefinition;
 		//Value = "20";
 	}
 	
 	
 	public String getValueType() {
 		return ValueType;
+	}
+
+
+	public String getValueDefinition() {
+		return ValueDefinition;
+	}
+
+
+	public void setValueDefinition(String valueDefinition) {
+		ValueDefinition = valueDefinition;
 	}
 
 

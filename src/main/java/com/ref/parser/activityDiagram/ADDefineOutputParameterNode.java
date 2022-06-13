@@ -42,10 +42,13 @@ public class ADDefineOutputParameterNode {
 		String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
 		IFlow[] inFlows = activityNode.getIncomings();
 		String nameObjectUnique = "outParam";
+		//String parameterType = ((IActivityParameterNode) activityNode).getBase().getDefinition().startsWith("datatype")?"type_"+((IActivityParameterNode) activityNode).getBase().getName():((IActivityParameterNode) activityNode).getBase().getName();
 		String parameterType = ((IActivityParameterNode) activityNode).getBase().getName();
-
+						
 		try {
-			parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+			((IActivityParameterNode) activityNode).getBase();
+			//String baseName = ((IActivityParameterNode) activityNode).getBase().getDefinition().startsWith("datatype")?"type_"+((IActivityParameterNode) activityNode).getBase().getName():((IActivityParameterNode) activityNode).getBase().getName();
+			parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), parameterType);
 		} catch (Exception e) {
 			throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
 		}
@@ -58,6 +61,7 @@ public class ADDefineOutputParameterNode {
 			Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
 			String typeObject;
 			try {
+				//typeObject = ((IObjectFlow) inFlows[i]).getBase().getDefinition().startsWith("datatype")?"type_"+((IObjectFlow) inFlows[i]).getBase().getName():((IObjectFlow) inFlows[i]).getBase().getName();
 				typeObject = ((IObjectFlow) inFlows[i]).getBase().getName();
 			} catch (NullPointerException e) {
 				throw new ParsingException("Object flow does not have a type.");

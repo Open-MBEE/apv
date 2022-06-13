@@ -388,6 +388,41 @@ public class ADUtils {
         }
     }
 
+    public void valueSpecification(ArrayList<String> alphabet, String nameValueSpecification, StringBuilder valueSpecification, IActivityNode activityNode, String nodeName, IInputPin[] inPins, IOutputPin[] outPins, IActivity ad2) {
+        //eventChannel.add("event_" + nameAction);
+        //eventChannel.add("event_" + nodeName);
+    	//if(activityNode.getIncomings().length > 0 || inPins.length > 0) {
+	    	if (outPins.length > 0) {
+	        	//valueSpecification.append(adUtils.nameDiagramResolver(activityNode.getName()) + ".id" + "?" + nameValueSpecification + "_" + outPins[0].getName() + " -> ");
+	        	valueSpecification.append(nodeName + ".id" + "?" + nameValueSpecification + "_" + outPins[0].getName() + " -> ");
+	        	/*valueSpecification.append(nodeName + ".id");
+	        	for (int i = 0; i < outPins.length; i++) {
+	        		String[] values = activityNode.getDefinition().replace(" ", "").split("=");
+	        		
+					valueSpecification.append("!" + outPins[i].getBase().getName() + "." + values[1]);
+				}
+	        	valueSpecification.append(" -> ");*/
+	        } else {
+	        	valueSpecification.append(nameDiagramResolver(activityNode.getName()) + ".id" + " -> ");
+	        }
+	    	alphabet.add(nodeName + ".id");
+    	//}
+        String types = "";
+        for(IOutputPin pin: outPins) {
+        	if(pin.getBase().getDefinition().startsWith("datatype") || pin.getBase().getDefinition().startsWith("enum")) {
+        		types += ".type_" + pin.getBase().getName();
+        	}
+        	objectEdges.put(nodeName + ".id", pin.getBase().getName());
+    	}
+        
+        alphabet.add(nodeName + ".id");
+        //eventChannel.add(nodeName);
+        
+        Pair<IActivity, String> key = new Pair<IActivity, String>(ad, nodeName);
+		syncObjectsEdge.put(key , nodeName + ".id");
+
+    }
+    
     public String nameDiagramResolver(String name) {
         return name.replace(" ", "").replace("!", "_").replace("@", "_")
                 .replace("%", "_").replace("&", "_").replace("*", "_")
@@ -435,46 +470,47 @@ public class ADUtils {
 
     public String getDefaultValue(String type) {
         HashMap<String, String> typesParameter = getParameterValueDiagram(type);
-
-        String defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+        String defaultValue = ""; 
+        /*if(type.startsWith("type_")) {
+        	if(typesParameter.containsKey(type)) {
+        		defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                        .replace(")", "").split(",")[0];
+        	}else{
+        		type = type.replace("type_", "");
+        		defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                        .replace(")", "").split(",")[0];
+        	}
+        }else {
+        	defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                    .replace(")", "").split(",")[0];
+        }*/
+        defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
                 .replace(")", "").split(",")[0];
         String defaultValueFinal = defaultValue.split("\\.\\.")[0];
         /*if(defaultValueFinal.contains(":")) {//se for datatype
         	String[] dtValues = defaultValueFinal.split(":");
         	defaultValueFinal = dtValues[0];
         }*/
+        type = type.startsWith("type_")?type.split("type_")[1]:type;
         if(defaultValueFinal.contains(":")) {
     		String defaultValueDT = type;
         	if(defaultValueFinal.contains(";")) {//se tem mais de 1 atributo
         		String[] atributes = defaultValueFinal.split(";");
         		for(String atribute :atributes) {
-        			String[] nameAndType = atribute.split(":");
-        			if(ADParser.primitives.contains(nameAndType[1])) {
-        				defaultValueDT +="."+primitiveDefaultValue(nameAndType[1]);
-        			}else {
-        				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
-        			}
+        			String[] nameAndType = atribute.split(":");        		
+    				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
+        			
         		}
         	}else {
-        		String[] nameAndType = defaultValueFinal.split(":");
-    			if(ADParser.primitives.contains(nameAndType[1])) {
-    				defaultValueDT +="."+primitiveDefaultValue(nameAndType[1]);
-    			}else {
-    				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
-    			}
+        		String[] nameAndType = defaultValueFinal.split(":");    			
+				defaultValueDT +="."+getDefaultValue(nameAndType[1]);//TODO testar futuramente quando existir tipos compostos
+    			
         	}
         	defaultValueFinal = defaultValueDT;
         }
         return defaultValueFinal;
     }
 
-    private String primitiveDefaultValue(String primitive) {//TODO ver se é pra ser assim mesmo
-    	if(primitive.equals("Bool")) {
-    		return "true";
-    	}else {
-    		return "1";
-    	}
-	}
 
 	public Pair<String, String> getInitialAndFinalParameterValue(String type) {
         Pair<String, String> initialAndFinalParameterValue;
@@ -721,7 +757,7 @@ public class ADUtils {
 
 	                if (!namesMemoryLocal.contains(nameObject)) {
 	                    namesMemoryLocal.add(nameObject);
-	                    typeMemoryLocal.put(nameObject, inPins[i].getBase().getName());
+	                    typeMemoryLocal.put(nameObject,inPins[i].getBase().getName());
 	                }
 	            }
 	        }
@@ -769,7 +805,8 @@ public class ADUtils {
             	String nameObject;
                 String type;
             	try {
-					nameObject = outPins[i].getBase().getName();
+					//nameObject = outPins[i].getBase().getDefinition().startsWith("datatype")?"type_"+outPins[i].getBase().getName():outPins[i].getBase().getName();
+            		nameObject = outPins[i].getBase().getName();
 					type = ((IObjectFlow)outFlowPin[x]).getBase().getName();
 	            	
 	            	if (!type.equals(outPins[i].getBase().getName())) {
@@ -828,11 +865,14 @@ public class ADUtils {
     	                    } else {
     	                        oe(alphabet, action, oe, "!" + nodeFullName + "_" + outPins[i].getName(), " -> SKIP)");
     	                    }
+                    		
                     	} else if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
     	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP) ||| ");
-    	                    } else {
-    	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP)");
-    	                    }
+    	                        
+	                    } else {
+	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP)");
+	                    }
+                    	
                     }
 
 				} else {// node is a call behavior

@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.http.client.ClientProtocolException;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.omg.sysml.xtext.sysml.Namespace;
 
 import com.change_vision.jude.api.inf.model.IDiagram;
@@ -78,10 +80,38 @@ public class ActivityController {
 		Communication.resetStatics();
 		System.out.println(activity); 
 		HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activity.getActivityDiagram(),type,progressBar);
+		if(counterExample != null) {
+			JSONObject JSONReply = generateJSONCounterExample(counterExample);
+		}
+		
 	}
 
 	
 	
+	private JSONObject generateJSONCounterExample(HashMap<IActivity, List<String>> counterExample) {
+		JSONObject counterExampleJSON = new JSONObject();
+		JSONArray diagramJSONs = new JSONArray();
+		HashMap<IActivity,Integer> diagramIds = new HashMap<>();
+		for(IActivity diagrams: counterExample.keySet()) {
+			JSONObject JSONAux = new JSONObject();
+			if(!counterExample.get(diagrams).isEmpty()) {
+				if(!diagramIds.containsKey(diagrams)){
+					JSONAux.put("Id", 1);
+					diagramIds.put(diagrams, 1);
+				}else {
+					diagramIds.put(diagrams, diagramIds.get(diagrams)+1);
+					JSONAux.put("Id",diagramIds.get(diagrams));
+				}
+				JSONAux.put(diagrams.getName(), counterExample.get(diagrams));	
+				diagramJSONs.put(JSONAux);
+			}
+			
+		}
+		
+		counterExampleJSON.put("CounterExampleIds", diagramJSONs);
+		return counterExampleJSON;
+	}
+
 	public void SysmlInvocation(Namespace diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
 			com.ref.sysml.adapter.ActivityDiagram activityDiagram = new com.ref.sysml.adapter.ActivityDiagram(diagram);
 			
