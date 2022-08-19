@@ -27,8 +27,7 @@ public class SMDefineMemory {
 		StringBuilder stringMemory = new StringBuilder();
 		StringBuilder stringSyncMemory = new StringBuilder();
 		String guard;
-		if(smDiagram.getDefinition() != "") {
-			System.out.println("ENTRE");
+		if(!smDiagram.getDefinition().equals("")) {
 			String memoryParameters = "";
 			String[] splitedString = smDiagram.getDefinition().split(";");
 			String[] auxSplit;
@@ -42,7 +41,7 @@ public class SMDefineMemory {
 				auxSplitedString = splitedString[i].replace(" ", "");
 				auxSplit = auxSplitedString.split("/");
 				nameMemory = SMUtils.nameResolver(auxSplit[0]);
-				if(memoryInit.isEmpty()) {
+				if(memoryInit.length() == 0) {
 					memoryInit.append(auxSplit[2]);
 				}else {
 					memoryInit.append(", " + auxSplit[2]);
@@ -63,14 +62,14 @@ public class SMDefineMemory {
 
 				smu.addChannelMemory("channel get_" + nameMemory + "_" + SMUtils.nameResolver(smDiagram.getName()) + ", set_" + nameMemory + "_"  + SMUtils.nameResolver(smDiagram.getName()) + ": " + memoryValues);
 
-				if(stringSyncMemory.isEmpty()) {
+				if(stringSyncMemory.length() == 0) {
 					stringSyncMemory.append("[|{|get_" + nameMemory  + "_" + SMUtils.nameResolver(smDiagram.getName()) + ", set_" + nameMemory + "_"  + SMUtils.nameResolver(smDiagram.getName()));
 				}else {
 					stringSyncMemory.append(", get_" + nameMemory  + "_" + SMUtils.nameResolver(smDiagram.getName()) + ", set_" + nameMemory + "_"  + SMUtils.nameResolver(smDiagram.getName()));
 				}
 
-				if(stringMemory.isEmpty()) {
-					stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryParameters + ") = "
+				if(stringMemory.length() == 0) {
+					stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryParameters + ") = (end -> SKIP) []\n"
 							+ "get_" + nameMemory  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "!" + nameMemory +" -> MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryParameters + ") [] " 
 							+ "set_" + nameMemory  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?x -> MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryParameters.replace(nameMemory, "x") +")");
 
@@ -85,7 +84,7 @@ public class SMDefineMemory {
 							guard = guard.replace(auxSplit[0], nameMemory);
 						}
 						if(guard.equals("else")) {
-							//substituir o guard por not guard and ...
+							//replace guard for not guard and ...
 							for(ITransition tra : tr.getSource().getOutgoings()) {
 								if(tra.getGuard() != "") {
 									if(tra.getId() != tr.getId()) {
@@ -113,12 +112,11 @@ public class SMDefineMemory {
 					}
 				}
 			}
-			//Adicionar o FOR ITransition para o caso so stringMemory estar nulo
-			stringSyncMemory.append("|}|] MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryInit +"))");
+			stringSyncMemory.append(", end|}|] MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryInit +"))");
 			smu.addSyncMemory(stringSyncMemory.toString());
 			return stringMemory.toString();
 		}else {
-			//Caso não haja Definition de memoria
+			//If there is no Memory Definition
 			for(ITransition tr : this.transitions) {
 				if(!tr.getGuard().isEmpty()) {
 					guard = tr.getGuard();
@@ -134,15 +132,15 @@ public class SMDefineMemory {
 								}
 							}
 						}
-						if(stringMemory.isEmpty()) {
-							stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + " = ");
+						if(stringMemory.length() == 0) {
+							stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + " = (end -> SKIP) [] \n");
 							stringMemory.append("("+ guard +") & ");
 						}else {
 							stringMemory.append(" [] (" + guard + ") & ");	
 						}
 					}else{
-						if(stringMemory.isEmpty()) {
-							stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + " = ");
+						if(stringMemory.length() == 0) {
+							stringMemory.append("\nMEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + " = (end -> SKIP) [] \n");
 							stringMemory.append("("+ guard +") & ");
 						}else {
 							stringMemory.append(" [] (" + guard + ") & ");	
@@ -151,26 +149,26 @@ public class SMDefineMemory {
 
 					if(tr.getTrigger() != "") {
 						stringMemory.append(SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-						if(stringSyncMemory.isEmpty()) {
+						if(stringSyncMemory.length() == 0) {
 							stringSyncMemory.append("[|{|" + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
 							stringSyncMemory.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 					}else {
 						stringMemory.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-						if(stringSyncMemory.isEmpty()) {
+						if(stringSyncMemory.length() == 0) {
 							stringSyncMemory.append("[|{|" + "internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
 							stringSyncMemory.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 					}
 					stringMemory.append(" -> MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
-					//}
+					
 				}
 			}
-			//Adicionar o FOR ITransition para o caso so stringMemory estar nulo
-			if(!stringSyncMemory.isEmpty()) {
-				stringSyncMemory.append("|}|] MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + ")");
+			
+			if(stringSyncMemory.length() != 0) {
+				stringSyncMemory.append(", end|}|] MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + ")");
 				smu.addSyncMemory(stringSyncMemory.toString());
 			}
 			return stringMemory.toString();

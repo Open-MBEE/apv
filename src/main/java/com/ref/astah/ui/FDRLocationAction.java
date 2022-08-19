@@ -18,8 +18,7 @@ public class FDRLocationAction implements IPluginActionDelegate {
 	public Object run(IWindow window){
 
 		try {
-			FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);			
-			
+			FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);		
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(window.getParent(), "Plugin Property file not found!","File Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();

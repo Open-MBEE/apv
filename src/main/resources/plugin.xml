@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
+    <extension point="com.change_vision.astah.ui.view">
+        <view
+            id="com.ref.astah.ui.CounterView"
+            type="extraTab"
+            class="com.ref.astah.ui.CounterView" />
+   </extension>
    <extension point="com.change_vision.astah.ui.actionSets">
       <actionSet
             label="%action_set_label"
@@ -11,7 +17,7 @@
                path="tool/ref">
          </menu>
          <action
-			   label="%menu_label"
+            label="%menu_label"
                icon="icons/sample.gif"
                class="com.ref.astah.ui.FDRLocationAction"
                tooltip="%menu_tooltip"
@@ -35,8 +41,13 @@
                label="%AD2_menu_group"
                path="tool/AD/verification">
          </menu>
+         <menu
+               id="verificationSM"
+               label="%SM_menu_group"
+               path="tool/AD/verificationSM">
+         </menu>
          <action
-			   label="%AD_menu_label"
+            label="%AD_menu_label"
                icon="icons/sample.gif"
                class="com.ref.astah.ui.TemplateDeadlockActionAD"
                tooltip="%menu_tooltip"
@@ -51,7 +62,22 @@
                  menubarPath="tool/AD/verification/"
                  id="verificationDeterminism">
          </action>
+         <action
+               label="%SM_menu_label"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.TemplateDeadlockActionSM"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/AD/verificationSM/"
+               id="verificationSMDeadlock">
+         </action>
+         <action
+                 label="%SM_menu_label2"
+                 icon="icons/sample.gif"
+                 class="com.ref.astah.ui.TemplateDeterminismActionSM"
+                 tooltip="%menu_tooltip"
+                 menubarPath="tool/AD/verificationSM/"
+                 id="verificationSMDeterminism">
+         </action>
      </actionSet>
    </extension>
-   
 </plugin>

@@ -32,7 +32,6 @@ public class SMDefineTransition {
 		String splited[];
 		
 		for(ITransition tr : this.transitions) {
-			//Adicionar um for que percorra os outgoings do source e adicioneo-s num array list para serem verificados depois
 			if(!(tr.getSource() instanceof IPseudostate)) {
 				String nameSource = "st_" + SMUtils.nameResolver(tr.getSource().getName());
 				String nameTarget = "";
@@ -53,7 +52,7 @@ public class SMDefineTransition {
 				String trId = "tr_" + SMUtils.nameResolver(tr.getId());
 
 				stringTr.append("\nTr_Turn_" + nameActivateTr + 
-						" = activateTr." + trId + " -> (" );
+						" = (" );
 
 				if(nameTrigger != "") {
 					stringTr.append("(" + nameTrigger + ".tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
@@ -83,39 +82,24 @@ public class SMDefineTransition {
 				}
 
 				if(!(tr.getTarget() instanceof IPseudostate)) {
-					stringTr.append("enter." + nameTargetDiagram + " -> Tr_Turn_" + nameActivateTr + ")");
+					stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
 				}else {
 					IPseudostate pseudo = (IPseudostate) tr.getTarget();
-					if(pseudo.isFinalState()) {
-						stringTr.append("final_" + SMUtils.nameResolver(smDiagram.getName()) +"-> Tr_Turn_" + nameActivateTr + ")");
-					}else if(pseudo.isChoicePseudostate() || pseudo.isJunctionPseudostate()) {
-						stringTr.append("enter." + nameTargetDiagram + " -> Tr_Turn_" + nameActivateTr + ")");
-					}else {
-						stringTr.append("enter." + nameTargetDiagram + " -> Tr_Turn_" + nameActivateTr + ")");
+					if(pseudo.isFinalState() && pseudo.getSuperiorState() == null) {
+						stringTr.append("final_" + SMUtils.nameResolver(smDiagram.getName()) +"-> SKIP)");
+					}else if(pseudo.isFinalState() && pseudo.getSuperiorState() != null) {
+						stringTr.append("final_Compound_st_" + SMUtils.nameResolver(pseudo.getSuperiorState().getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()) +" -> interrupt.st_" + SMUtils.nameResolver(pseudo.getSuperiorState().getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()) + "-> SKIP)");
 					}
-				}
-
-				if(tr.getSource().getOutgoings().length > 1) {
-					for(ITransition t : tr.getSource().getOutgoings()) {
-						if(t.getId() != tr.getId()) {
-							stringTr.append(" [] (");
-							if(t.getTrigger() != "") {
-								stringTr.append(SMUtils.nameResolver(t.getTrigger()) + ".tr_" + SMUtils.nameResolver(t.getId()) + " -> ");
-							}else{
-								stringTr.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(t.getId()) + " -> ");
-							}
-							stringTr.append("Tr_Turn_" + nameActivateTr + ")");
-						}
-
-
+					else if(pseudo.isChoicePseudostate() || pseudo.isJunctionPseudostate()) {
+						stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
+					}else {
+						stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
 					}
 				}
 				stringTr.append(")\n");
 			}else {
 				IPseudostate initialPseudo = (IPseudostate) tr.getSource();
 				if(!(initialPseudo.isInitialPseudostate())) {
-					//MUDANÇA
-					//FAZER OUTROS PSEUDOS
 					String nameSource = "st_" + SMUtils.nameResolver(tr.getSource().getName());
 					String nameTarget = "";
 					String nameSourceDiagram = nameSource + "_" + SMUtils.nameResolver(smDiagram.getName());
@@ -135,16 +119,16 @@ public class SMDefineTransition {
 					String trId = "tr_" + SMUtils.nameResolver(tr.getId());
 
 					stringTr.append("\nTr_Turn_" + nameActivateTr + 
-							" = activateTr." + trId + " -> (" );
+							" = (" );
 
 					if(nameTrigger != "") {
-						stringTr.append("(" + nameTrigger + ".tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> "); 
+						stringTr.append("(" + nameTrigger + ".tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
 					}else {
 						if(!(smu.getArrayAuxTurn().contains("internal"))) {
 							smu.addAuxTurn("internal_" + SMUtils.nameResolver(smDiagram.getName()));
 						}
 						stringTr.append("(internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-						stringTr.append(" -> exit." + nameSourceDiagram +  " -> ");
+						stringTr.append(" -> exit." + nameSourceDiagram + " -> exited." + nameSourceDiagram + " -> ");
 					} 
 					if(tr.getAction() != "") {
 						set = "";
@@ -163,35 +147,17 @@ public class SMDefineTransition {
 						stringTr.append(set);
 						stringTr.append(" -> ");
 					}
-//Adicionar a Opção de qualquer pseudoestado junction -> decision
+
 					if(!(tr.getTarget() instanceof IPseudostate)) {
-						stringTr.append("enter." + nameTargetDiagram + " -> Tr_Turn_" + nameActivateTr + ")");
+						stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
 					}else {
 						IPseudostate pseudo = (IPseudostate) tr.getTarget();
 						if(pseudo.isFinalState()) {
-							stringTr.append("final_" + SMUtils.nameResolver(smDiagram.getName()) +"-> Tr_Turn_" + nameActivateTr + ")");
+							stringTr.append("final_" + SMUtils.nameResolver(smDiagram.getName()) +"-> SKIP)");
 						}else if(pseudo.isChoicePseudostate() || pseudo.isJunctionPseudostate()) {
-							stringTr.append("enter." + nameTargetDiagram + " -> Tr_Turn_" + nameActivateTr + ")");
-						}
-						//AINDA PRECISA SER ALTERADO PARA ADICIONAR O ENTER DO PSEUDO
-						else {
-							stringTr.append(" Tr_Turn_" + nameActivateTr + ")");
-						}
-					}
-
-					if(tr.getSource().getOutgoings().length > 1) {
-						for(ITransition t : tr.getSource().getOutgoings()) {
-							if(t.getId() != tr.getId()) {
-								stringTr.append(" [] (");
-								if(t.getTrigger() != "") {
-									stringTr.append(SMUtils.nameResolver(t.getTrigger()) + ".tr_" + SMUtils.nameResolver(t.getId()) + " -> ");
-								}else{
-									stringTr.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(t.getId()) + " -> ");
-								}
-								stringTr.append("Tr_Turn_" + nameActivateTr + ")");
-							}
-
-
+							stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
+						}else {
+							stringTr.append("enter." + nameTargetDiagram + " -> SKIP)");
 						}
 					}
 					stringTr.append(")\n");

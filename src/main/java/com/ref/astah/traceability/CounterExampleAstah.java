@@ -1,5 +1,6 @@
 package com.ref.astah.traceability;
 
+import java.awt.geom.Point2D;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,12 +10,20 @@ import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.ActivityDiagramEditor;
 import com.change_vision.jude.api.inf.editor.BasicModelEditor;
 import com.change_vision.jude.api.inf.editor.ModelEditorFactory;
+import com.change_vision.jude.api.inf.editor.StateMachineDiagramEditor;
 import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.IAction;
+import com.change_vision.jude.api.inf.model.IVertex;
+import com.change_vision.jude.api.inf.model.IState;
+import com.change_vision.jude.api.inf.model.IPseudostate;
+import com.change_vision.jude.api.inf.model.ITransition;
+import com.change_vision.jude.api.inf.model.IFinalState;
 import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IStateMachine;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IStateMachineDiagram;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.change_vision.jude.api.inf.model.IControlNode;
@@ -31,15 +40,21 @@ import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.ActivityController.VerificationType;
+//import com.ref.StateMachineController.VerificationType;
+import com.ref.astah.ui.CounterView;
+import com.ref.parser.stateMachine.SMUtils;
 
 public class CounterExampleAstah {
     private static HashMap<String, INodePresentation> nodeAdded;
+    private static HashMap<String, ILinkPresentation> transitionAdded;
     private static HashMap<String, INodePresentation> objPresent;
+    private static HashMap<String, String> typeAdded;
 	private static IPackage packageCounterExample;
 	private static IActivityDiagram ad;
+	private static IStateMachineDiagram smd;
     
 	public static void createCounterExample(HashMap<com.ref.interfaces.activityDiagram.IActivity, List<String>> counterExample, IDiagram diagrama,
-			VerificationType type) {
+			com.ref.ActivityController.VerificationType type) {
 		
 		 try {
 	            Date hoje = new Date();
@@ -85,7 +100,74 @@ public class CounterExampleAstah {
 	            TransactionManager.abortTransaction();
 	        }		
 	}
+	
+	public static void createCounterExampleSM(HashMap<com.ref.interfaces.stateMachine.IStateMachine, List<String>> counterExample, IDiagram diagrama,
+			com.ref.StateMachineController.VerificationType type) {
+		
+		 try {
+	            Date hoje = new Date();
+	            SimpleDateFormat df;
+	            df = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
+	            String data = df.format(hoje);
 
+	            nodeAdded = new HashMap<>();
+	            transitionAdded = new HashMap<>();
+	            typeAdded = new HashMap<>(); 
+	            
+	            IDiagram[] diagrams = AstahAPI.getAstahAPI().getProjectAccessor().getProject().getDiagrams();	            
+	            IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
+	            
+	            ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+	            IModel project = prjAccessor.getProject();
+	            BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
+
+	            TransactionManager.beginTransaction();
+	            createPackage(basicModelEditor, project,type);
+	            StateMachineDiagramEditor smEditor = prjAccessor.getDiagramEditorFactory().getStateMachineDiagramEditor();
+	            for(IDiagram SMdiagrams: diagrams) {//For each diagram
+	            	if(SMdiagrams instanceof IStateMachineDiagram) {
+	            		com.ref.interfaces.stateMachine.IStateMachine aux = null;
+		            	boolean contains = false;
+		            	for(com.ref.interfaces.stateMachine.IStateMachine act: counterExample.keySet()) {
+		            		if(act.getId().equals(((IStateMachineDiagram)SMdiagrams).getStateMachine().getId())) {
+		            			contains = true;
+		            			aux = act;
+		            		}
+		            	}
+		            	if(SMdiagrams == diagram || contains) {//If is related to the counterExample
+		            		IStateMachine diagrama1 = getStateMachineDiagram(SMdiagrams,diagrams);
+			            	smd = smEditor.createStatemachineDiagram(packageCounterExample, SMdiagrams.getName()+ "#" + data);
+			            	for (IVertex vertex : ((IStateMachineDiagram) SMdiagrams).getStateMachine().getVertexes()) {
+			                    createVertex(vertex, smEditor,diagrama1,counterExample.get(aux),null);
+			                    createSubstates(vertex, smEditor,diagrama1,counterExample.get(aux));
+			                }
+			            	for(ITransition transition : ((IStateMachineDiagram) SMdiagrams).getStateMachine().getTransitions()) {
+			            		createTransitions(transition, smEditor,diagrama1,counterExample.get(aux));
+			            	}
+			            	
+			            	CounterView.setCouterView(smd,nodeAdded,transitionAdded,typeAdded);
+		            	}
+	            	}
+	            }
+	            TransactionManager.endTransaction();
+	        } catch (Exception e) {
+	            TransactionManager.abortTransaction();
+	        }		 
+	}
+	
+	private static void createSubstates(IVertex vertex, StateMachineDiagramEditor smEditor,IStateMachine diagram, List<String> trace) {
+		if(vertex instanceof IState) {
+        	if(((IState) vertex).getSubvertexes() != null) {
+        		if(((IState) vertex).getSubvertexes().length > 0) {
+        			for (IVertex vtx : ((IState) vertex).getSubvertexes()) {
+	            		INodePresentation parent = nodeAdded.get(SMUtils.nameResolver(vertex.getName() + "_" + diagram));
+	                    createVertex(vtx, smEditor,diagram,trace,parent);
+	                    createSubstates(vtx, smEditor, diagram, trace);
+	                }
+        		}
+        	}
+        }
+	}
 	private static IActivity getDiagram(IDiagram aDdiagrams,IDiagram[] diagrams) {
 		for(IDiagram diagram : diagrams) {
 			if(aDdiagrams.getId().equals(diagram.getId())) {
@@ -95,11 +177,39 @@ public class CounterExampleAstah {
 		return null;
 	}
 	
-	private static void createPackage(BasicModelEditor basicModelEditor, IModel project,VerificationType cet) {
+	private static IStateMachine getStateMachineDiagram(IDiagram smDiagrams,IDiagram[] diagrams) {
+		for(IDiagram diagram : diagrams) {
+			if(smDiagrams.getId().equals(diagram.getId())) {
+				return ((IStateMachineDiagram) diagram).getStateMachine();
+			}
+		}
+		return null;
+	}
+	
+	private static void createPackage(BasicModelEditor basicModelEditor, IModel project,com.ref.StateMachineController.VerificationType cet) {
         try {
-        	if(cet == VerificationType.DEADLOCK) {
+        	if(cet == com.ref.StateMachineController.VerificationType.DEADLOCK) {
         		packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");	
-        	}else if(cet == VerificationType.DETERMINISM) {
+        	}else if(cet == com.ref.StateMachineController.VerificationType.DETERMINISM) {
+        		packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
+        	}
+            
+        } catch (InvalidEditingException e) {
+            INamedElement[] objects = project.getOwnedElements();
+
+            for (INamedElement object : objects) {
+                if (object.getName().equals("DeadlockCounterExample")) {
+                    packageCounterExample = (IPackage) object;
+                }
+            }
+        }
+    }
+	
+	private static void createPackage(BasicModelEditor basicModelEditor, IModel project,com.ref.ActivityController.VerificationType cet) {
+        try {
+        	if(cet == com.ref.ActivityController.VerificationType.DEADLOCK) {
+        		packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");	
+        	}else if(cet == com.ref.ActivityController.VerificationType.DETERMINISM) {
         		packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
         	}
             
@@ -208,6 +318,44 @@ public class CounterExampleAstah {
             }
         } else {
             nodePresent = nodeAdded.get(node.getId());
+        }
+
+        return nodePresent;
+    }
+	
+	private static INodePresentation createVertex(IVertex vertex, StateMachineDiagramEditor smEditor,IStateMachine diagram, List<String> trace, INodePresentation parent) {
+        INodePresentation nodePresent = null;
+
+        if (!nodeAdded.containsKey(vertex.getId())) {
+            if (vertex instanceof IFinalState) {
+            	nodePresent = createFinal(vertex, smEditor,diagram,trace,parent);
+            } else if (vertex instanceof IPseudostate) {
+                if (((IPseudostate) vertex).isJunctionPseudostate()) {
+                    nodePresent = createJunctionPseudostate(vertex, smEditor,diagram,trace,parent);
+                } else if (((IPseudostate) vertex).isChoicePseudostate()) {
+                    nodePresent = createChoicePseudostate(vertex, smEditor,diagram,trace,parent);
+                } else if (((IPseudostate) vertex).isInitialPseudostate()) {
+                    nodePresent = createInitialPseudostate(vertex, smEditor,diagram,trace,parent);
+                }
+            } else if (vertex instanceof IState) {
+                nodePresent = createState(vertex, smEditor,diagram,trace,parent);
+            } 
+        } else {
+            nodePresent = nodeAdded.get(vertex.getId());
+        }
+
+        return nodePresent;
+    }
+	
+	private static ILinkPresentation createTransitions(ITransition transition, StateMachineDiagramEditor smEditor,IStateMachine diagram, List<String> trace) throws InvalidUsingException {
+        ILinkPresentation nodePresent = null;
+
+        if (!nodeAdded.containsKey(transition.getId())) {
+            if (transition instanceof ITransition) {
+            	nodePresent = createTransition(transition, smEditor,diagram,trace);
+            } 
+        } else {
+            nodePresent = (ILinkPresentation) nodeAdded.get(transition.getId());
         }
 
         return nodePresent;
@@ -601,6 +749,8 @@ public class CounterExampleAstah {
 	        return FinalNode;
 	    }
 
+	    
+	    
 	    private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram, List<String> trace) {
 	        INodePresentation flowFinalNode = null;
 
@@ -710,5 +860,144 @@ public class CounterExampleAstah {
 	        }
 
 	        return objectNode;
+	    }
+	    
+	    //StateMachine Methods
+	    private static INodePresentation createFinal(IVertex vertex, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace, INodePresentation parent) {
+	        INodePresentation FinalState = null;
+
+	        try {
+	        	FinalState = smEditor.createFinalState(parent, ((INodePresentation) vertex.getPresentations()[0]).getLocation());
+	        	double h = ((INodePresentation) vertex.getPresentations()[0]).getHeight();
+	        	double w = ((INodePresentation) vertex.getPresentations()[0]).getWidth();
+	        	FinalState.setHeight(h);
+	        	FinalState.setWidth(w);
+	            nodeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), FinalState);
+	            typeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), "FinalState");
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return FinalState;
+	    }
+	    
+	    private static INodePresentation createJunctionPseudostate(IVertex vertex, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace, INodePresentation parent) {
+	        INodePresentation Junction = null;
+
+	        try {
+	        	Junction = smEditor.createJunctionPseudostate(parent, ((INodePresentation) vertex.getPresentations()[0]).getLocation());
+	        	double h = ((INodePresentation) vertex.getPresentations()[0]).getHeight();
+	        	double w = ((INodePresentation) vertex.getPresentations()[0]).getWidth();
+	        	Junction.setHeight(h);
+	        	Junction.setWidth(w);
+	            nodeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), Junction);
+	            typeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), "Junction");
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return Junction;
+	    }
+	    
+	    private static INodePresentation createChoicePseudostate(IVertex vertex, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace, INodePresentation parent) {
+	        INodePresentation Choice = null;
+
+	        try {
+	        	Choice = smEditor.createChoicePseudostate(parent, ((INodePresentation) vertex.getPresentations()[0]).getLocation());
+	        	double h = ((INodePresentation) vertex.getPresentations()[0]).getHeight();
+	        	double w = ((INodePresentation) vertex.getPresentations()[0]).getWidth();
+	        	Choice.setHeight(h);
+	        	Choice.setWidth(w);
+	            nodeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), Choice);
+	            typeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), "Choice");
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return Choice;
+	    }
+	    
+	    private static INodePresentation createInitialPseudostate(IVertex vertex, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace, INodePresentation parent) {
+	        INodePresentation Initial = null;
+
+	        try {
+	        	Initial = smEditor.createInitialPseudostate(parent, ((INodePresentation) vertex.getPresentations()[0]).getLocation());
+	        	double h = ((INodePresentation) vertex.getPresentations()[0]).getHeight();
+	        	double w = ((INodePresentation) vertex.getPresentations()[0]).getWidth();
+	        	Initial.setHeight(h);
+	        	Initial.setWidth(w);
+	            nodeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), Initial);
+	            typeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), "Initial");
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return Initial;
+	    }
+	    
+	    private static INodePresentation createState(IVertex vertex, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace, INodePresentation parent) {
+	        INodePresentation State = null;
+	        try {
+	        	State = smEditor.createState(vertex.getName(), parent, ((INodePresentation) vertex.getPresentations()[0]).getLocation());
+	        	double h = ((INodePresentation) vertex.getPresentations()[0]).getHeight();
+	        	double w = ((INodePresentation) vertex.getPresentations()[0]).getWidth();
+	        	
+	        	State.setLabel(vertex.getName());
+        		State.setWidth(w);
+	        	State.setHeight(h);
+	        	
+	        	if(vertex instanceof IState) {
+	        		if(((IState) vertex).getEntry() != "") {
+	        			((IState) State.getModel()).setEntry(((IState) vertex).getEntry());
+	        		}
+	        		if(((IState) vertex).getDoActivity() != "") {
+	        			((IState) State.getModel()).setDoActivity(((IState) vertex).getDoActivity());
+	        		}
+	        		if(((IState) vertex).getExit() != "") {
+	        			((IState) State.getModel()).setExit(((IState) vertex).getExit());
+	        		}
+	        	}
+	            nodeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), State);
+	            typeAdded.put(SMUtils.nameResolver(vertex.getName() + "_" + diagram.getName()), "State");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return State;
+	    }
+	    
+	    @SuppressWarnings("deprecation")
+		private static ILinkPresentation createTransition(ITransition transition, StateMachineDiagramEditor smEditor, IStateMachine diagram, List<String> trace) throws InvalidUsingException {
+	    	ILinkPresentation Transition = null;
+	    	INodePresentation State1 = null;
+	    	INodePresentation State2 = null; 
+	    	
+	    	String label = transition.getEvent();
+	    	if(transition.getGuard() != "") {
+	    		label += " [" + transition.getGuard() + "]";
+	    	}
+	    	if(transition.getAction() != "") {
+	    		label += "/" + transition.getAction();
+	    	}
+	    	Point2D[] allPoints = ((ILinkPresentation) transition.getPresentations()[0]).getAllPoints();
+	        try {
+	        	State1 = nodeAdded.get(SMUtils.nameResolver(transition.getSource().getName() + "_" + diagram.getName()));
+	        	State2 = nodeAdded.get(SMUtils.nameResolver(transition.getTarget().getName() + "_" + diagram.getName()));
+	        	Transition = smEditor.createTransition(State1,State2);
+	        	if(allPoints.length > 2) {
+	        		Transition.setAllPoints(allPoints);
+	        	}
+	        	Transition.setLabel(label);
+	        	transitionAdded.put(SMUtils.nameResolver(transition.getId()), Transition);
+	        	typeAdded.put(SMUtils.nameResolver(transition.getId()), "Transition");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return Transition;
 	    }
 }

@@ -33,8 +33,11 @@ public class SMDefineChannel {
 	public String defineChannel() {
 		StringBuilder stringChannel = new StringBuilder();
 		StringBuilder trigger = new StringBuilder();
-
+		
 		boolean flag = true;
+		
+		stringChannel.append("transparent wbisim\n\n");
+		
 		for(IState st : this.states) {
 			if(flag) {
 				stringChannel.append("datatype STATES_ID_" + SMUtils.nameResolver(smDiagram.getName()) + " = ");
@@ -43,8 +46,12 @@ public class SMDefineChannel {
 			}else {
 				stringChannel.append(" | st_" + SMUtils.nameResolver(st.getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()));
 			}
+			
+			if(st.isCompound()) {
+				stringChannel.append(defineDatatypeStateCompound(st));
+			}
 		}
-		//MODIFICAÇÃO
+		
 		for(IPseudostate pst : this.sm.getPseudostates()) {
 			if(!(pst.isInitialPseudostate() || pst.isFinalState())) {
 				if(flag) {
@@ -56,7 +63,7 @@ public class SMDefineChannel {
 				}
 			}
 		}
-		//^^
+		
 		flag = true;
 		for(ITransition tr : this.transitions) {
 			if(!(tr.getSource() instanceof IPseudostate)) {
@@ -67,7 +74,7 @@ public class SMDefineChannel {
 				}else {
 					stringChannel.append(" | tr_" + SMUtils.nameResolver(tr.getId()));
 				} 
-			}//MODIFICAÇÃO
+			}
 			else {
 				IPseudostate p =  (IPseudostate) tr.getSource();
 
@@ -81,7 +88,7 @@ public class SMDefineChannel {
 					}
 				}
 			}
-			//^^
+			
 		}
 
 		stringChannel.append("\n\nchannel activateTr: TR_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n"
@@ -128,7 +135,66 @@ public class SMDefineChannel {
 				stringChannel.append("\n");
 			}
 		}
+		
+		//Add end, loop and interrupt
+		stringChannel.append("channel end, loop" + finalCompounds() + "\n");
+		stringChannel.append("channel interrupt: STATES_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
 
 		return stringChannel.toString();
 	}
+	
+	private String defineDatatypeStateCompound(IState state) {
+		StringBuilder stringDatatypeCompound = new StringBuilder();
+		if(state.getSubstates() != null) {
+			if(state.getSubstates().length > 0) {
+				for(IState st : state.getSubstates()) {
+					stringDatatypeCompound.append(" | st_" + SMUtils.nameResolver(st.getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()));
+					
+					if(st.isCompound()) {
+						stringDatatypeCompound.append(defineDatatypeStateCompound(st));
+					}
+				}
+			}
+		}
+		
+		
+		if(state.getSubpseudostates() != null) {
+			if(state.getSubpseudostates().length > 0) {
+				for(IPseudostate pst : state.getSubpseudostates()) {
+					if(!(pst.isInitialPseudostate() || pst.isFinalState())) {
+						stringDatatypeCompound.append(" | st_" + SMUtils.nameResolver(pst.getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()));
+					}
+				}
+			}
+		}
+		
+		return stringDatatypeCompound.toString();
+	}
+	
+	private String finalCompounds() {
+		StringBuilder strFinalCompounds = new StringBuilder();
+		for(IState state : this.states) {
+			if(state.isCompound()) {
+				strFinalCompounds.append(", final_Compound_st_" + SMUtils.nameResolver(state.getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()));
+			}
+			if(state.isCompound()) {
+				strFinalCompounds.append(finalCompounds(state));
+			}
+		}
+		return strFinalCompounds.toString();
+	}
+	
+	private String finalCompounds(IState st) {
+		StringBuilder strFinalCompounds = new StringBuilder();
+		for(IState state : st.getSubstates()) {
+			if(state.isCompound()) {
+				strFinalCompounds.append(", final_Compound_st_" + SMUtils.nameResolver(state.getName()) + "_" + SMUtils.nameResolver(smDiagram.getName()));
+			}
+			if(state.isCompound()) {
+				strFinalCompounds.append(finalCompounds(state));
+			}
+		}
+		return strFinalCompounds.toString();
+	}
+	
 }

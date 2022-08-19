@@ -12,19 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
 import com.ref.astah.adapter.Activity;
@@ -36,7 +23,6 @@ import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IActivity;
-import com.ref.openmbee.Communication;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.ADUtils;
 import com.ref.traceability.activityDiagram.CounterExampleBuilder;
@@ -80,19 +66,19 @@ public class ActivityController {
 		return controller;
 	}
 	
-	public void OpenMBEEInvocation(String url, String login, String password, String idActivity, String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
-		
-		//fazer estilo ADDefineNodesActionAndControl 
-		/*String url = "http://18.188.75.184/projects/tmt/refs/master/elements/";
-		String login = "ufrpe";
-		String password = "thisisapassword";
-		String idActivity = "_17_0_2_3_41e01aa_1386574999817_391486_76808";*/
-		com.ref.openmbee.adapter.Activity activity = Communication.buildActivity(url,login,password,idActivity);
-		Communication.resetStatics();
-		System.out.println(activity); 
-		//HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
-		//TODO resolver oque fazer com o activityDiagram
-	}
+//	public void OpenMBEEInvocation(String url, String login, String password, String idActivity, String activityId,VerificationType type, CheckingProgressBar progressBar) throws ClientProtocolException, IOException{
+//		
+//		//fazer estilo ADDefineNodesActionAndControl 
+//		/*String url = "http://18.188.75.184/projects/tmt/refs/master/elements/";
+//		String login = "ufrpe";
+//		String password = "thisisapassword";
+//		String idActivity = "_17_0_2_3_41e01aa_1386574999817_391486_76808";*/
+//		com.ref.openmbee.adapter.Activity activity = Communication.buildActivity(url,login,password,idActivity);
+//		Communication.resetStatics();
+//		System.out.println(activity); 
+//		//HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
+//		//TODO resolver oque fazer com o activityDiagram
+//	}
 	
 	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
@@ -101,9 +87,9 @@ public class ActivityController {
 			activity.setActivityDiagram(activityDiagram);
 			
 			HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
-			if(counterExample != null) {
-				CounterExampleAstah.createCounterExample(counterExample, diagram, type);//"our copy", astah original, counter example type
-			}
+			//if(counterExample != null) {
+			//	CounterExampleAstah.createCounterExample(counterExample, diagram, type);//"our copy", astah original, counter example type
+			//}
 	}
 	
 	public HashMap<IActivity, List<String>> checkProperty(IActivity activity,

@@ -1,6 +1,7 @@
 package com.ref.astah.statemachine.adapter;
 
 import com.ref.interfaces.stateMachine.IPseudostate;
+import com.ref.interfaces.stateMachine.IState;
 import com.ref.interfaces.stateMachine.ITransition;
 import com.ref.interfaces.stateMachine.IVertex;
 
@@ -11,16 +12,19 @@ public class Pseudostate implements IPseudostate, IVertex{
 	private ITransition[] incomings;
 	private ITransition[] outgoings;
 	private boolean isFirstState;
+	private IState superiorState;
 			
 	
 	public Pseudostate(com.change_vision.jude.api.inf.model.IPseudostate pst) {
 		this.pseudoState = pst;
 		this.isFirstState = false;
+		this.superiorState = null;
 	}
 	
 	public Pseudostate(com.change_vision.jude.api.inf.model.IFinalState fs) {
 		this.finalState = fs;
 		this.isFirstState = false;
+		this.superiorState = null;
 	}
 
 	@Override
@@ -168,6 +172,16 @@ public class Pseudostate implements IPseudostate, IVertex{
 	@Override
 	public void setIsFirstState(boolean bool) {
 		this.isFirstState = bool;
+	}
+
+	@Override
+	public IState getSuperiorState() {
+		return this.superiorState;
+	}
+
+	@Override
+	public void setSuperiorState(IState s) {
+		this.superiorState = s;
 	}
 	
 	

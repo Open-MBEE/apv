@@ -2,6 +2,7 @@ package com.ref.astah.statemachine.adapter;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.exceptions.WellFormedException;
+import com.ref.interfaces.stateMachine.IPseudostate;
 import com.ref.interfaces.stateMachine.IState;
 import com.ref.interfaces.stateMachine.IStateMachine;
 import com.ref.interfaces.stateMachine.ITransition;
@@ -14,6 +15,12 @@ public class State implements IState, IVertex{
 	private ITransition[] outgoings;
 	private IStateMachine submachine;
 	private boolean isFirstState;
+	private boolean isSubmachineState;
+	private IState[] substates;
+	private IPseudostate[] subpseudostates;
+	private ITransition[] internalTransitions;
+	private boolean isCompound;
+	private IState superiorState;
 	
 	public State(com.change_vision.jude.api.inf.model.IState st) throws WellFormedException {
 		this.state = st;
@@ -21,6 +28,8 @@ public class State implements IState, IVertex{
 			this.submachine = new StateMachine(st.getSubmachine());
 		}
 		this.isFirstState = false;
+		this.isCompound = false;
+		this.superiorState = null;
 	}
 	
 	@Override
@@ -117,10 +126,57 @@ public class State implements IState, IVertex{
 
 	@Override
 	public boolean isFirstState() {
-		
 		return this.isFirstState;
 	}
-	
+
+	@Override
+	public boolean isSubmachineState() {
+		return this.state.isSubmachineState();
+	}
+
+	@Override
+	public IVertex[] getSubvertexes(int regionIndex) {
+		//return this.getSubvertexes(regionIndex);
+		return null;
+	}
+
+	@Override
+	public IState[] getSubstates() {
+		return this.substates;
+	}
+
+	@Override
+	public IPseudostate[] getSubpseudostates() {
+		return this.subpseudostates;
+	}
+
+	@Override
+	public void setSubstates(IState[] substate) {
+		// TODO Auto-generated method stub
+		this.substates = substate;
+	}
+
+	@Override
+	public void setSubpseudostates(IPseudostate[] subpseudostates) {
+		// TODO Auto-generated method stub
+		this.subpseudostates = subpseudostates;
+	}
+	@Override
+	public boolean isCompound() {
+		return this.isCompound;
+	}
+	@Override
+	public void setIsCompound(boolean b) {
+		this.isCompound = b;
+	}
+	@Override
+	public IState getSuperiorState() {
+		return this.superiorState;
+	}
+	@Override
+	public void setSuperiorState(IState s) {
+		this.superiorState = s;
+	}
 	
 
 }

@@ -20,6 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import com.ref.ActivityController;
+import com.ref.StateMachineController;
 import com.ref.exceptions.FDRException;
 
 public class FDR3LocationDialog extends JDialog {
@@ -104,6 +105,7 @@ public class FDR3LocationDialog extends JDialog {
 					
 					try {
 						ActivityController.getInstance().setFDRLocation(tf.getText());
+						StateMachineController.getInstance().setFDRLocation(tf.getText());
 						FDR3LocationDialog.this.setVisible(false);
 						FDR3LocationDialog.this
 								.dispatchEvent(new WindowEvent(FDR3LocationDialog.this, WindowEvent.WINDOW_CLOSING));

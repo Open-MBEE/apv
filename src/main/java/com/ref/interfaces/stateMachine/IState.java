@@ -3,7 +3,7 @@ package com.ref.interfaces.stateMachine;
 public interface IState extends IVertex{
 	IStateMachine getSubmachine();
 	
-	//boolean isSubmachineState();
+	boolean isSubmachineState();
 	
 	String getEntry();
 	
@@ -13,15 +13,27 @@ public interface IState extends IVertex{
 	
 	//ITransition[] getInternalTransitions();
 	
-	//IVertex[] getSubvertexes();
+	IState[] getSubstates();
 	
-	//IVertex[] getSubvertexes(int regionIndex);
+	IPseudostate[] getSubpseudostates();
+	
+	IVertex[] getSubvertexes(int regionIndex);
 	
 	void setEntry(String entry);
 	
 	void setDoActivity(String doActivity);
 	
 	void setExit(String exit);
+	
+	void setSubstates(IState[] substate);
+	
+	void setSubpseudostates(IPseudostate[] subpseudostates);
+	
+	boolean isCompound();
+	
+	void setIsCompound(boolean b);
+
+	//void setInternalTransitions(ITransition[] internal);
 	
 	//void addInternalTransition(String event, String guard, String action);
 	

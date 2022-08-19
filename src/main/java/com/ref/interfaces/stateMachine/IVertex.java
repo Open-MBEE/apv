@@ -14,4 +14,8 @@ public interface IVertex extends INamedElement{
 	boolean isFirstState();
 	
 	void setIsFirstState(boolean bool);
+	
+	IState getSuperiorState();
+
+	void setSuperiorState(IState s);
 }
