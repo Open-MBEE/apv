@@ -178,13 +178,17 @@ public class CounterView extends JPanel implements IPluginExtraTabView, ProjectE
 				}
 				setLastIndexColor(index);
 			}else {
-				flag = true;
-				setIndex(getIndex() + 1);
-				setLastIndexColor(index);
-				index = getIndex();
-				lastIndexColor = getLastIndexColor();
-				TransactionManager.endTransaction();
-				color(index,lastIndexColor, finalIndex);
+				if(index == finalIndex) {
+					setLastIndexColor(index);
+				}else {
+					flag = true;
+					setIndex(getIndex() + 1);
+					setLastIndexColor(index);
+					index = getIndex();
+					lastIndexColor = getLastIndexColor();
+					TransactionManager.endTransaction();
+					color(index,lastIndexColor, finalIndex);
+				}
 			}
 		}
 		if(!flag) {

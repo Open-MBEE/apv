@@ -23,6 +23,7 @@ public class SMParser {
 	public ArrayList<String> arrayMemorySync;
 	public ArrayList<String> arrayMemoryChannel;
 	public ArrayList<String> arrayNameMemory;
+	public ArrayList<String> arrayRenamedTrigger;
 	public SMDefineState dState;
 	public SMDefineTransition dTurnTr;
 	public SMDefineEntry dEntry;
@@ -47,11 +48,6 @@ public class SMParser {
 	public String parserStateMachine() {
 		String check = "";
 
-			
-		check = "\nMAIN = wbisim((StartSync_" + SMUtils.nameResolver(smDiagram.getName()) + "); LOOP\\ {loop})\n" +
-				"\nassert MAIN :[deadlock free[F]]" +
-				"\nassert MAIN :[divergence free]" +
-				"\nassert MAIN :[deterministic[F]]";
 		defineStateList();
 		definePseudostateList();
 		defineTransitionList();
@@ -67,6 +63,20 @@ public class SMParser {
 		String startSync = defineStartSyncProcess();
 		String controlCompound = defineControlCompoundProcess();
 		String defaultFunctions = defineDefaultFunctions();
+		
+		if(arrayRenamedTrigger != null) {
+			if(arrayRenamedTrigger.size() == 0) {
+				check = "\nMAIN = wbisim((StartSync_" + SMUtils.nameResolver(smDiagram.getName()) + "); LOOP\\  {|loop,exit,exited,do,entry,end,interrupt|})\n" +
+						"\nassert MAIN :[deadlock free[F]]" +
+						"\nassert MAIN :[divergence free]" +
+						"\nassert MAIN :[deterministic[F]]";
+			}else {
+				check = "\nMAIN = wbisim((StartSync_" + SMUtils.nameResolver(smDiagram.getName()) + "[[" + addRenamedTriggers() + "]]" + "); LOOP\\ {|loop,exit,exited,do,entry,end,interrupt|})\n" +
+						"\nassert MAIN :[deadlock free[F]]" +
+						"\nassert MAIN :[divergence free]" +
+						"\nassert MAIN :[deterministic[F]]";
+			}
+		}
 
 		String result = channel + defaultFunctions + memory + state +  trans + entry + doString + exit + startSync + controlCompound + check;
 		return result;
@@ -122,6 +132,7 @@ public class SMParser {
 		dTurnTr = new SMDefineTransition(smu, sm, smDiagram, states, transitions, arrayNameMemory);
 		arrayTurn = smu.getArrayTurnName();
 		auxTurnList = smu.getArrayAuxTurn();
+		arrayRenamedTrigger = smu.getArrayRenamedTriggers();
 		return dTurnTr.defineTransition();
 	}
 
@@ -173,5 +184,19 @@ public class SMParser {
 	public String defineDefaultFunctions() {
 		dDefaultFunctions = new SMDefineDefaultFunctions();
 		return dDefaultFunctions.getDefaultFunctions();
+	}
+	
+	public String addRenamedTriggers() {
+		StringBuilder renamedTriggers = new StringBuilder();
+		boolean flag = true;
+		for(String s : arrayRenamedTrigger) {
+			if(flag) {
+				renamedTriggers.append(s);
+				flag = false;
+			}else {
+				renamedTriggers.append(", " + s);
+			}
+		}
+		return renamedTriggers.toString();
 	}
 }

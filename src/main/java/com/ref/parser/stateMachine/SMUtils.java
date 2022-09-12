@@ -13,6 +13,7 @@ public class SMUtils {
 	private ArrayList<String> arrayChannelMemory;
 	private ArrayList<String> arraySyncMemory;
 	private ArrayList<String> arrayNameMemory;
+	private ArrayList<String> arrayRenamedTriggers;
 	
 	public SMUtils(IStateMachine sm, IStateMachineDiagram smd) {
 		this.sm = sm;
@@ -22,6 +23,7 @@ public class SMUtils {
 		this.arrayChannelMemory = new ArrayList<String>();
 		this.arraySyncMemory = new ArrayList<String>();
 		this.arrayNameMemory = new ArrayList<String>();
+		this.setArrayRenamedTriggers(new ArrayList<String>());
 	}
 	
 	public static String nameResolver(String name) {
@@ -46,6 +48,10 @@ public class SMUtils {
 	
 	public void addChannelMemory(String cMem) {
 		this.arrayChannelMemory.add(cMem);
+	}
+	
+	public void addRenamedTriggers(String triggerRenamed) {
+		this.arrayRenamedTriggers.add(triggerRenamed);
 	}
 	
 	public ArrayList<String> getArrayChannelMemory() {
@@ -81,6 +87,14 @@ public class SMUtils {
 
 	public void setArrayTurnName(ArrayList<String> arrayTurnName) {
 		this.arrayTurnName = arrayTurnName;
+	}
+
+	public ArrayList<String> getArrayRenamedTriggers() {
+		return arrayRenamedTriggers;
+	}
+
+	public void setArrayRenamedTriggers(ArrayList<String> arrayRenamedTriggers) {
+		this.arrayRenamedTriggers = arrayRenamedTriggers;
 	}	
 	
 }

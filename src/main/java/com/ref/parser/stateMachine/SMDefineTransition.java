@@ -16,6 +16,7 @@ public class SMDefineTransition {
 	private IState[] states;
 	private ITransition[] transitions;
 	private ArrayList<String> arrayNameMemory;
+	private ArrayList<String> renamedTriggers;
 
 	public SMDefineTransition(SMUtils smu, IStateMachine sm, IStateMachineDiagram smDiagram, IState[] states, ITransition[] transitions, ArrayList<String> arrayNameMemory) {
 		this.smu = smu;
@@ -27,6 +28,7 @@ public class SMDefineTransition {
 	}
 
 	public String defineTransition() {
+		this.renamedTriggers = new ArrayList<String>();
 		StringBuilder stringTr = new StringBuilder();
 		String set = "",get = "";
 		String splited[];
@@ -55,13 +57,15 @@ public class SMDefineTransition {
 						" = (" );
 
 				if(nameTrigger != "") {
-					stringTr.append("(" + nameTrigger + ".tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
+					stringTr.append("(" + nameTrigger + "_tr_" + SMUtils.nameResolver(tr.getId()) + " -> tr_" + SMUtils.nameResolver(tr.getId()) +  " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
+					smu.addRenamedTriggers(nameTrigger + "_tr_" + SMUtils.nameResolver(tr.getId()) + " <- " + nameTrigger);
 				}else {
 					if(!(smu.getArrayAuxTurn().contains("internal"))) {
 						smu.addAuxTurn("internal_" + SMUtils.nameResolver(smDiagram.getName()));
 					}
-					stringTr.append("(internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-					stringTr.append(" -> exit." + nameSourceDiagram + " -> exited." + nameSourceDiagram + " -> ");
+					stringTr.append("(internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+					stringTr.append(" -> tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram + " -> exited." + nameSourceDiagram + " -> ");
+					smu.addRenamedTriggers("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()) + " <- internal");
 				} 
 				if(tr.getAction() != "") {
 					set = "";
@@ -122,13 +126,15 @@ public class SMDefineTransition {
 							" = (" );
 
 					if(nameTrigger != "") {
-						stringTr.append("(" + nameTrigger + ".tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
+						stringTr.append("(" + nameTrigger + "_tr_" + SMUtils.nameResolver(tr.getId()) + " -> tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram  + " -> exited." + nameSourceDiagram + " -> "); 
+						smu.addRenamedTriggers(nameTrigger + "_tr_" + SMUtils.nameResolver(tr.getId()) + " <- " + nameTrigger);
 					}else {
 						if(!(smu.getArrayAuxTurn().contains("internal"))) {
 							smu.addAuxTurn("internal_" + SMUtils.nameResolver(smDiagram.getName()));
 						}
-						stringTr.append("(internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-						stringTr.append(" -> exit." + nameSourceDiagram + " -> exited." + nameSourceDiagram + " -> ");
+						stringTr.append("(internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+						stringTr.append(" -> tr_" + SMUtils.nameResolver(tr.getId()) + " -> exit." + nameSourceDiagram + " -> exited." + nameSourceDiagram + " -> ");
+						smu.addRenamedTriggers("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()) + " <- internal");
 					} 
 					if(tr.getAction() != "") {
 						set = "";
@@ -165,5 +171,13 @@ public class SMDefineTransition {
 			}
 		}
 		return stringTr.toString();
+	}
+
+	public ArrayList<String> getRenamedTriggers() {
+		return renamedTriggers;
+	}
+
+	public void setRenamedTriggers(ArrayList<String> renamedTriggers) {
+		this.renamedTriggers = renamedTriggers;
 	}
 }

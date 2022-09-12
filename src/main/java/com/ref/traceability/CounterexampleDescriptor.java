@@ -215,22 +215,4 @@ public class CounterexampleDescriptor {
         return null;
     }
 
-//    private IPresentation findPresentationByType(ISequenceDiagram dgm, String type) throws InvalidUsingException {
-//        for (IPresentation ps : dgm.getPresentations()) {
-//            if (ps.getType().equals(type)) {
-//                return ps;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
-//        INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {
-//            public boolean isTarget(INamedElement namedElement) {
-//                return namedElement instanceof ISequenceDiagram;
-//            }
-//        });
-//        return foundElements;
-//    }
-
 }

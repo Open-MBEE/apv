@@ -24,7 +24,7 @@ public class TemplateDeterminismActionSM implements IPluginActionDelegate{
 			if (diagram instanceof IStateMachineDiagram) {
 				CheckingProgressBar progressBar = new CheckingProgressBar();
 				progressBar.setNewTitle("Checking Non-determinism");
-				progressBar.setAssertion(0);
+				progressBar.setAssertion(1);
 
 				new Thread(new Runnable() {
 					@Override

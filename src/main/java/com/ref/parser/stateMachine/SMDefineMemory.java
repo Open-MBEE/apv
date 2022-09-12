@@ -102,11 +102,11 @@ public class SMDefineMemory {
 							stringMemory.append(" [] (" + guard + ") & ");
 						}
 						if(tr.getTrigger() != "") {
-							stringMemory.append(SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-							stringSyncMemory.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringMemory.append(SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
-							stringMemory.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
-							stringSyncMemory.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringMemory.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 						stringMemory.append(" -> MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "(" + memoryParameters + ")\n");
 					}
@@ -148,18 +148,18 @@ public class SMDefineMemory {
 					}
 
 					if(tr.getTrigger() != "") {
-						stringMemory.append(SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+						stringMemory.append(SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						if(stringSyncMemory.length() == 0) {
-							stringSyncMemory.append("[|{|" + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append("[|{|" + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
-							stringSyncMemory.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 					}else {
-						stringMemory.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+						stringMemory.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						if(stringSyncMemory.length() == 0) {
-							stringSyncMemory.append("[|{|" + "internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append("[|{|" + "internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
-							stringSyncMemory.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSyncMemory.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 					}
 					stringMemory.append(" -> MEMORY_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");

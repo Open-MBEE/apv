@@ -68,11 +68,11 @@ public class SMDefineChannel {
 		for(ITransition tr : this.transitions) {
 			if(!(tr.getSource() instanceof IPseudostate)) {
 				if(flag) {
-					stringChannel.append("\ndatatype TR_ID_" + SMUtils.nameResolver(smDiagram.getName()) + " = ");
-					stringChannel.append("tr_" + SMUtils.nameResolver(tr.getId()));
+					stringChannel.append("\n\nchannel");
+					stringChannel.append(" tr_" + SMUtils.nameResolver(tr.getId()));
 					flag = false;
 				}else {
-					stringChannel.append(" | tr_" + SMUtils.nameResolver(tr.getId()));
+					stringChannel.append(", tr_" + SMUtils.nameResolver(tr.getId()));
 				} 
 			}
 			else {
@@ -80,54 +80,97 @@ public class SMDefineChannel {
 
 				if(!(p.isInitialPseudostate() || p.isFinalState())) {
 					if(flag) {
-						stringChannel.append("\ndatatype TR_ID_" + SMUtils.nameResolver(smDiagram.getName()) + " = ");
-						stringChannel.append("tr_" + SMUtils.nameResolver(tr.getId()));
+						stringChannel.append("\n\nchannel ");
+						stringChannel.append(" tr_" + SMUtils.nameResolver(tr.getId()));
 						flag = false;
 					}else {
-						stringChannel.append(" | tr_" + SMUtils.nameResolver(tr.getId()));
+						stringChannel.append(", tr_" + SMUtils.nameResolver(tr.getId()));
 					}
 				}
 			}
 			
 		}
 
-		stringChannel.append("\n\nchannel activateTr: TR_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n"
-				+ "channel enter, do, entry, exit, exited: STATES_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
+		//stringChannel.append("\n\nchannel activateTr: TR_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n"
+		stringChannel.append("\nchannel enter, do, entry, exit, exited: STATES_ID_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
 
-		stringChannel.append("channel final_" + SMUtils.nameResolver(smDiagram.getName()) + ", finalState_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
+		stringChannel.append("channel final_" + SMUtils.nameResolver(smDiagram.getName()) + "\n");
 
 		flag = true;
 		for(ITransition tr : this.transitions) {
-			if(!arrayTriggers.contains(tr.getTrigger())) {
-				arrayTriggers.add(tr.getTrigger());
+			if(!(tr.getSource() instanceof IPseudostate)) {
+				if(!arrayTriggers.contains(tr.getTrigger())) {
+					arrayTriggers.add(tr.getTrigger());
+				}
 				if(SMUtils.nameResolver(tr.getTrigger()) != "") {
 					if(flag) {
 						trigger.append("channel ");
-						trigger.append(SMUtils.nameResolver(tr.getTrigger()));
+						trigger.append(SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						flag = false;
 					}else {
-						trigger.append(", " + SMUtils.nameResolver(tr.getTrigger()));
+						trigger.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 					}
-				}
-			}
-		}
-		
-		for(String aux : auxTurnList) {
-			if(!arrayTriggers.contains(SMUtils.nameResolver(aux))) {
-				arrayTriggers.add(SMUtils.nameResolver(aux));
-				if(SMUtils.nameResolver(aux) != "") {
+				}else {
 					if(flag) {
 						trigger.append("channel ");
-						trigger.append(SMUtils.nameResolver(aux));
+						trigger.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						flag = false;
 					}else {
-						trigger.append(", " + SMUtils.nameResolver(aux));
+						trigger.append(", " + "internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+					}
+				}
+			}else {
+				IPseudostate p =  (IPseudostate) tr.getSource();
+				if(!(p.isInitialPseudostate() || p.isFinalState())) {
+					if(!arrayTriggers.contains(tr.getTrigger())) {
+						arrayTriggers.add(tr.getTrigger());
+					}
+					if(SMUtils.nameResolver(tr.getTrigger()) != "") {
+						if(flag) {
+							trigger.append("channel ");
+							trigger.append(SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+							flag = false;
+						}else {
+							trigger.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+						}
+					}else {
+						if(flag) {
+							trigger.append("channel ");
+							trigger.append("internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+							flag = false;
+						}else {
+							trigger.append(", " + "internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
+						}
 					}
 				}
 			}
 		}
 		
-		stringChannel.append(trigger + " : TR_ID_" + SMUtils.nameResolver(smDiagram.getName()));
+//		for(String aux : auxTurnList) {
+//			if(!arrayTriggers.contains(SMUtils.nameResolver(aux))) {
+//				arrayTriggers.add(SMUtils.nameResolver(aux));
+//				if(SMUtils.nameResolver(aux) != "") {
+//					if(flag) {
+//						trigger.append("channel ");
+//						trigger.append(SMUtils.nameResolver(aux));
+//						flag = false;
+//					}else {
+//						trigger.append(", " + SMUtils.nameResolver(aux));
+//					}
+//				}
+//			}
+//		}
+		
+		if(arrayTriggers != null) {
+			stringChannel.append("channel internal");
+			for(String t : arrayTriggers) {
+				if(t != "") {
+					stringChannel.append(", " + SMUtils.nameResolver(t));
+				}
+			}
+			stringChannel.append("\n");
+		}
+		stringChannel.append(trigger);
 		stringChannel.append("\n");
 		if(arrayMemoryChannel.size() > 0) {
 			for(String memChan : arrayMemoryChannel) {

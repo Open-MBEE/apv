@@ -358,17 +358,17 @@ public class SMDefineStartSync {
 						stateNameDiagram = stateName + "_" + SMUtils.nameResolver(smDiagram.getName());
 						if(flag) {
 							if(tr.getTrigger() != "") {
-								stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								flag = false;
 							}else {
-								stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								flag = false;
 							}
 						}else {
 							if(tr.getTrigger() != "") {
-								stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 							}else {
-								stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 							}
 						}
 					}
@@ -385,17 +385,17 @@ public class SMDefineStartSync {
 							stateNameDiagram = stateName + "_" + SMUtils.nameResolver(smDiagram.getName());
 							if(flag) {
 								if(tr.getTrigger() != "") {
-									stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									flag = false;
 								}else {
-									stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									flag = false;
 								}
 							}else {
 								if(tr.getTrigger() != "") {
-									stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								}else {
-									stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								}
 							}
 						}
@@ -427,17 +427,17 @@ public class SMDefineStartSync {
 								stateNameDiagram = stateName + "_" + SMUtils.nameResolver(smDiagram.getName());
 								if(flag) {
 									if(tr.getTrigger() != "") {
-										stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 										flag = false;
 									}else {
-										stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 										flag = false;
 									}
 								}else {
 									if(tr.getTrigger() != "") {
-										stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									}else {
-										stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									}
 								}
 							}
@@ -474,17 +474,17 @@ public class SMDefineStartSync {
 									stateNameDiagram = stateName + "_" + SMUtils.nameResolver(smDiagram.getName());
 									if(flag) {
 										if(tr.getTrigger() != "") {
-											stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+											stringRename.append("interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 											flag = false;
 										}else {
-											stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+											stringRename.append("interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 											flag = false;
 										}
 									}else {
 										if(tr.getTrigger() != "") {
-											stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+											stringRename.append(", interrupt." + stateNameDiagram + " <- " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 										}else {
-											stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+											stringRename.append(", interrupt." + stateNameDiagram + " <- internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 										}
 									}
 								}
@@ -585,9 +585,9 @@ public class SMDefineStartSync {
 				if(st.getOutgoings().length > 0) {
 					for(ITransition tr : st.getOutgoings()) {
 						if(tr.getTrigger() != "") {
-							stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}else {
-							stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+							stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 						}
 					}
 				}
@@ -611,9 +611,9 @@ public class SMDefineStartSync {
 					if(st.getOutgoings().length > 0) {
 						for(ITransition tr : st.getOutgoings()) {
 							if(tr.getTrigger() != "") {
-								stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 							}else {
-								stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+								stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 							}
 						}
 					}
@@ -651,9 +651,9 @@ public class SMDefineStartSync {
 						if(st.getOutgoings().length > 0) {
 							for(ITransition tr : st.getOutgoings()) {
 								if(tr.getTrigger() != "") {
-									stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								}else {
-									stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+									stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 								}
 							}
 						}
@@ -681,9 +681,9 @@ public class SMDefineStartSync {
 							if(st.getOutgoings().length > 0) {
 								for(ITransition tr : st.getOutgoings()) {
 									if(tr.getTrigger() != "") {
-										stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringSync.append(", " + SMUtils.nameResolver(tr.getTrigger()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									}else {
-										stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + ".tr_" + SMUtils.nameResolver(tr.getId()));
+										stringSync.append(", internal_" + SMUtils.nameResolver(smDiagram.getName()) + "_tr_" + SMUtils.nameResolver(tr.getId()));
 									}
 								}
 							}
