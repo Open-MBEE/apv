@@ -14,10 +14,12 @@ public class ADDefinePool {
     private String firstDiagram;
     private List<Pair<String, Integer>> countAccept;
     private ADUtils adUtils;
+	private HashMap<String, List<String>> signalPins;//<Signal,tipos dos pinos dele>
 
-    public ADDefinePool(IActivity ad, HashMap<String, List<IActivity>> signalChannels2, String firstDiagram, List<Pair<String, Integer>> countAccept, ADUtils adUtils) {
+    public ADDefinePool(IActivity ad, HashMap<String, List<IActivity>> signalChannels2, HashMap<String, List<String>> signalPins, String firstDiagram, List<Pair<String, Integer>> countAccept, ADUtils adUtils) {
         this.ad = ad;
         this.signalChannels = signalChannels2;
+        this.signalPins = signalPins;//(por enquanto não serve pra nada, mas pode ser necessário em alterações futuras)
         this.firstDiagram = firstDiagram;
         this.countAccept = countAccept;
         this.adUtils = adUtils;

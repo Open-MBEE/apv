@@ -1,6 +1,7 @@
 package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,13 +60,14 @@ public class ADParser {
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
     private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
+    private static HashMap<String,List<String>> signalPins = new HashMap<>();
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
-    private static HashMap<String, String> parameterSignal = new HashMap<>();
+    private static HashMap<String, Pair<String, String>> parameterSignal = new HashMap<>();//TODO ADUtils alimentar isso
     
     private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;
@@ -76,6 +78,9 @@ public class ADParser {
     public ADDefineTokenManager dTokenManager;
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
+
+    public static HashMap<String,String> Definitions = new HashMap<>();
+    public static String GlobalDefinition = "";
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
@@ -181,7 +186,10 @@ public class ADParser {
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
         signalChannels = new HashMap<>();
+        signalPins = new HashMap<>();
         alphabetPool = new HashSet<String>();
+        Definitions = new HashMap<>();
+        GlobalDefinition = "";
     }
 
     private void setName(String nameAD) {
@@ -204,6 +212,8 @@ public class ADParser {
                     "\nassert MAIN :[deterministic]";
             reset = true;
         }
+        
+        addDefinitionToGlobalDefinition();
         
         defineCallBehaviourList();
         
@@ -248,6 +258,9 @@ public class ADParser {
 
         //reset the static values
         if (reset) {
+        	//generate primitives used
+        	//parser += generatePrimitives();
+        	
             resetStatic();
         }
 
@@ -259,10 +272,57 @@ public class ADParser {
         alphabetAD.setSyncChannelsEdge(syncChannelsEdge);
         alphabetAD.setSyncObjectsEdge(syncObjectsEdge);
         alphabetAD.setParameterAlphabetNode(parameterAlphabetNode);
-        
-        return parser;
+        String replacedParser = parser.replaceAll("type_type_", "type_");
+        return replacedParser;
     }
 
+
+	private void addDefinitionToGlobalDefinition() {
+		String adDefinition = this.ad.getDefinition();
+		if(!adDefinition.equals("")) {
+			String[] defSplit = adDefinition.split("\n");
+			for(String lineSplit : defSplit) {
+				if(lineSplit.length() > 0) {
+					String[] lineSplited = lineSplit.split("=");
+					if(!ADParser.Definitions.containsKey(lineSplited[0])) {
+						ADParser.Definitions.put(lineSplited[0], lineSplited[1]);
+						ADParser.GlobalDefinition += lineSplited[0] +"="+ lineSplited[1] +"\n";
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public static String[] getDefinitionReplaced() {
+		String globalDef = ADParser.GlobalDefinition;
+		String[] globalDefLines = globalDef.split("\n");
+		String[] globalDefReplaced = new String [0];
+		ArrayList<String> lines = new ArrayList<>();
+		//StringBuilder lines = new StringBuilder("");
+		for(String globalDefLine : globalDefLines) {
+			if(!globalDefLine.startsWith("datatype")) {
+				//.replace("\n", "").replace(" ", "").split(";");
+				
+				lines.add(globalDefLine.replace("\n", "").replace(" ", "").replace(";",""));
+			}else {
+				StringBuilder line = new StringBuilder(globalDefLine);
+				//int index = globalDefLine.lastIndexOf(";");
+				//line.replace(0, 9, "datatype type_");
+				int index = line.lastIndexOf(";");
+				if(line.length()-1 == index) {
+					line.deleteCharAt(index);
+					lines.add(line.toString().replace("\n", "").replace(" ", ""));
+				}else {
+					lines.add(line.toString().replace("\n", "").replace(" ", ""));
+				}
+				
+			}
+		}
+		globalDefReplaced = lines.toArray(new String[0]);
+		//globalDefReplaced = lines.toString().split("");
+		return globalDefReplaced;
+	}
 
 	public ADAlphabet getAlphabetAD() {
 		return this.alphabetAD;
@@ -402,7 +462,7 @@ public class ADParser {
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
-                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
+                signalChannels,signalPins, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
                 signalChannelsLocal, parameterSignal, this);
         return adUtils;
     }
@@ -412,7 +472,7 @@ public class ADParser {
 
         dChannels = new ADDefineChannels(allGuards, ad, parameterNodesInput, parameterNodesOutput,
                 memoryLocal, parameterNodesOutputObject, syncObjectsEdge, objectEdges,
-                eventChannel, lockChannel, firstDiagram, signalChannels, parameterSignal, adUtils, this);
+                eventChannel, lockChannel, firstDiagram, signalChannels,signalPins, parameterSignal, adUtils, this);
 
         return dChannels.defineChannels();
     }
@@ -441,7 +501,7 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal,
+                countSignal, countAccept, signalChannels,signalPins, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal,
                 parameterSignal, adUtils, this);
 
         return dNodesActionAndControl.defineNodes();
@@ -458,7 +518,7 @@ public class ADParser {
     public String definePool() {
         ADUtils adUtils = defineADUtils();
 
-        dPool = new ADDefinePool(ad, signalChannels, firstDiagram, countAccept, adUtils);
+        dPool = new ADDefinePool(ad, signalChannels,signalPins, firstDiagram, countAccept, adUtils);
 
         return dPool.definePool();
     }
@@ -479,4 +539,6 @@ public class ADParser {
 
         return dMainNodes.defineMainNodes();
     }
+
+	
 }

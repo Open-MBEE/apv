@@ -108,6 +108,7 @@ public class ADDefineMemories {
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
             
             if(callBehaviors.containsKey(pair.getKey())) {
+            	System.out.println();
             	List<Pair<String,String>> memories = new ArrayList<>();
             	memories = callBehaviors.get(pair.getKey());
             	memories.add(pair);
@@ -121,11 +122,17 @@ public class ADDefineMemories {
     	Set<String> keys = callBehaviors.keySet();
     	for(String CBAs : keys) {
     		memory.append("AlphabetMem"+CBAs+"_"+nameDiagram+"(id) = {|"+alphabetMemory+"endDiagram_"+nameDiagram+".id|}\n");
-    		List<Pair<String,String>> memories = callBehaviors.get(CBAs);
+    		List<Pair<String,String>> aux = callBehaviors.get(CBAs);
+    		List<Pair<String,Pair<String,String>>> memories = new ArrayList<>();
+    		for (Pair<String,String> pair:aux) {
+				Pair<String, String> newPair = new Pair<String, String>(pair.getValue(), memoryLocal.get(pair));
+				memories.add(new Pair<String,Pair<String,String>>(CBAs,newPair));
+			}
+			//List<Pair<String,Pair<String,String>>> memories = callBehaviors.get(CBAs);
     		StringBuilder CSPCode = new StringBuilder();
     		CSPCode.append("Mem_"+CBAs+"_"+nameDiagram+"(id) =");
-    		for(Pair<String,String> memoria : memories) {
-    			CSPCode.append(" Mem_" + memoria.getKey() + "_" + nameDiagram+ "_" + memoria.getValue() +"_t(id,0) |||");
+    		for(Pair<String,Pair<String,String>> memoria : memories) {
+    			CSPCode.append(" Mem_" + memoria.getKey() + "_" + nameDiagram+ "_" + memoria.getValue().getKey() +"_t(id,"+adUtils.getDefaultValue(memoria.getValue().getValue())+") |||");//TODO mexer aqui
     		}
     		if(!(CSPCode.toString().equals("Mem_"+CBAs+"_"+nameDiagram+"(id) ="))) {
 	    		CSPCode.replace(CSPCode.lastIndexOf("|||"), CSPCode.lastIndexOf("|||")+3, "\n");

@@ -96,7 +96,6 @@ public class ADDefineJoin {
 			} else {
 				String ceIn;
 				joinNode.append("(");
-				
 				if (syncChannelsEdge.containsKey(key)) {
 					ceIn = syncChannelsEdge.get(key);
 				} else {

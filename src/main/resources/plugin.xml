@@ -55,12 +55,12 @@
                id="verificationDeadlock">
          </action>
          <action
-                 label="%AD_menu_label2"
-                 icon="icons/sample.gif"
-                 class="com.ref.astah.ui.TemplateDeterminismActionAD"
-                 tooltip="%menu_tooltip"
-                 menubarPath="tool/AD/verification/"
-                 id="verificationDeterminism">
+               label="%AD_menu_label2"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.TemplateDeterminismActionAD"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/AD/verification/"
+               id="verificationDeterminism">
          </action>
          <action
                label="%SM_menu_label"

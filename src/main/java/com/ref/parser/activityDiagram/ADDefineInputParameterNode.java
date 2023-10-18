@@ -48,7 +48,7 @@ public class ADDefineInputParameterNode {
         IFlow[] inFlows = activityNode.getIncomings();
 
         try {
-			parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+			parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()),((IActivityParameterNode) activityNode).getBase().getName());
 		} catch (Exception e) {
 			throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
 		}

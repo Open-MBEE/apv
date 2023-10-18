@@ -10,6 +10,14 @@ import java.util.Properties;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.ref.ActivityController.VerificationType;
+import com.ref.exceptions.FDRException;
+import com.ref.exceptions.HttpException;
+import com.ref.exceptions.ParsingException;
+import com.ref.exceptions.WellFormedException;
+
+import com.ref.ui.CheckingProgressBar;
+
 import com.ref.fdr.FdrWrapper;
 
 public class Activator implements BundleActivator {
