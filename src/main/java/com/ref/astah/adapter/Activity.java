@@ -99,7 +99,7 @@ public class Activity implements IActivity{
 
 	@Override
 	public String getDefinition() {
-		return activity.getDefinition();
+		return activity.getActivityDiagram().getDefinition();
 	}
 
 	@Override

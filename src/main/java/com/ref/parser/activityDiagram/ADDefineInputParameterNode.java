@@ -46,7 +46,7 @@ public class ADDefineInputParameterNode {
         String nameParameterNode = "parameter_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
-
+        
         try {
 			parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()),((IActivityParameterNode) activityNode).getBase().getName());
 		} catch (Exception e) {
