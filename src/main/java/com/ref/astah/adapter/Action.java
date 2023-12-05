@@ -19,11 +19,13 @@ public class Action extends ActivityNode implements IAction {
 		this.inputs = new IInputPin[action.getInputs().length];
 		for (int i = 0; i < inputs.length; i++) {
 			this.inputs[i] = new InputPin(action.getInputs()[i]);
+			this.inputs[i].setOwner(this);
 		}
 		
 		this.outputs = new IOutputPin[action.getOutputs().length];
 		for (int i = 0; i < outputs.length; i++) {
 			this.outputs[i] = new OutputPin(action.getOutputs()[i]);
+			this.outputs[i].setOwner(this);
 		}
 		
 		if (isCallBehaviorAction()) {

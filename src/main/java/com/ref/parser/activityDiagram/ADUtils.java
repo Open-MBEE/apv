@@ -716,7 +716,6 @@ public class ADUtils {
 	            for (int x = 0; x < inFlowPin.length; x++) {
 	            	String type = ((IObjectFlow)inFlowPin[x]).getBase().getName();
 	            	
-	            	String aux = inPins[i].getBase().getName();
 	            	if (!type.equals(inPins[i].getBase().getName())) {
 	            		throw new ParsingException("Pin "+ inPins[i].getName() + " and object flow have incompatible types!");
 					}
