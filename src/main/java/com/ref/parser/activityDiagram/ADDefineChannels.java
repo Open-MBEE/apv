@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ref.SubActivity;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IActivity;
 
@@ -51,7 +52,7 @@ public class ADDefineChannels {
         
     }
 
-    public String defineChannels() throws ParsingException {
+    public String defineChannels(boolean isSubActivity) throws ParsingException {
         StringBuilder channels = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
 
@@ -213,9 +214,14 @@ public class ADDefineChannels {
                 channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +".countSignal_" + signalChannel + pinType + parameterType + "\n");
                 channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +".countAccept_" + signalChannel + ".countSignal_" + signalChannel + pinType + parameterType +"\n");
             }
-
-            channels.append("channel loop\n");
-            channels.append("channel dc\n");
+            if(!isSubActivity) {
+                channels.append("channel loop\n");
+                channels.append("channel dc\n");
+            }else {
+            	if(SubActivity.getInstance().getCspFile().equals("")) {
+                    channels.append("channel dc\n");
+            	}
+            }
         }
 
         return channels.toString();

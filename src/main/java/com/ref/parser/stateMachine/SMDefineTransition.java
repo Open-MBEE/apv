@@ -2,11 +2,13 @@ package com.ref.parser.stateMachine;
 
 import java.util.ArrayList;
 
+import com.ref.SubActivity;
 import com.ref.interfaces.stateMachine.IPseudostate;
 import com.ref.interfaces.stateMachine.IState;
 import com.ref.interfaces.stateMachine.IStateMachine;
 import com.ref.interfaces.stateMachine.IStateMachineDiagram;
 import com.ref.interfaces.stateMachine.ITransition;
+import com.ref.parser.activityDiagram.ADUtils;
 
 public class SMDefineTransition {
 
@@ -70,19 +72,69 @@ public class SMDefineTransition {
 				if(tr.getAction() != "") {
 					set = "";
 					get = "";
-					splited = tr.getAction().split("=");
-					set = "set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
-					if(arrayNameMemory != null) {
-						for(String nameMem : arrayNameMemory) {
-							if(splited[1].contains(nameMem)) {
-								get = "get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+					if(tr.getAction().contains("invActivity")) {
+						if (tr.getAction().split(";").length > 1) {
+							String getSubActivity = "";
+							String[] splitSubActivity = tr.getAction().replace(" ", "").split(";");
+
+							int startIndex = splitSubActivity[0].indexOf("[");
+							int endIndex = splitSubActivity[0].indexOf("]");
+							String insideParentheses = splitSubActivity[0].substring(startIndex + 1, endIndex);
+
+							String[] elements = insideParentheses.split(",");
+
+							for (int i = 0; i < elements.length; i++) {
+								elements[i] = elements[i].trim();
+							}
+
+							String activityName = ADUtils.nameResolver(elements[0]);
+							SubActivity.getInstance().setSubActivityDiagram(activityName);
+							String parametroEntrada = elements[1];
+							String quemRecebeSaida = elements[2];
+							
+							if(arrayNameMemory != null) {
+								for(String nameMem : arrayNameMemory) {
+									if(parametroEntrada.equals(nameMem)) {
+										getSubActivity = " get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem);
+									}
+								}
+							}
+
+							// After result
+							splited = splitSubActivity[1].split("=");
+							set = " -> set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
+							if(arrayNameMemory != null) {
+								for(String nameMem : arrayNameMemory) {
+									if(splited[1].contains(nameMem)) {
+										get = " -> get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+									}
+								}
+							}
+
+							//Sync
+							String sync = " -> (" + activityName + "(1) [|{|startActivity_" + activityName + ", endActivity_" + activityName + "|}|] "
+									+ "(startActivity_"+activityName+".1!"+parametroEntrada+" ->  endActivity_"+activityName+".1?"+quemRecebeSaida+
+									get + set + " -> SKIP))";
+
+							stringTr.append(getSubActivity);
+							stringTr.append(sync);
+							stringTr.append("; ");
+						}
+					}else {
+						splited = tr.getAction().split("=");
+						set = "set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
+						if(arrayNameMemory != null) {
+							for(String nameMem : arrayNameMemory) {
+								if(splited[1].contains(nameMem)) {
+									get = "get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+								}
 							}
 						}
+						
+						stringTr.append(get);
+						stringTr.append(set);
+						stringTr.append(" -> ");
 					}
-					
-					stringTr.append(get);
-					stringTr.append(set);
-					stringTr.append(" -> ");
 				}
 
 				if(!(tr.getTarget() instanceof IPseudostate)) {
@@ -139,19 +191,69 @@ public class SMDefineTransition {
 					if(tr.getAction() != "") {
 						set = "";
 						get = "";
-						splited = tr.getAction().split("=");
-						set = "set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
-						if(arrayNameMemory != null) {
-							for(String nameMem : arrayNameMemory) {
-								if(splited[1].contains(nameMem)) {
-									get = "get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+						if(tr.getAction().contains("invActivity")) {
+							if (tr.getAction().split(";").length > 1) {
+								String getSubActivity = "";
+								String[] splitSubActivity = tr.getAction().replace(" ", "").split(";");
+
+								int startIndex = splitSubActivity[0].indexOf("[");
+								int endIndex = splitSubActivity[0].indexOf("]");
+								String insideParentheses = splitSubActivity[0].substring(startIndex + 1, endIndex);
+
+								String[] elements = insideParentheses.split(",");
+
+								for (int i = 0; i < elements.length; i++) {
+									elements[i] = elements[i].trim();
+								}
+
+								String activityName = ADUtils.nameResolver(elements[0]);
+								SubActivity.getInstance().setSubActivityDiagram(activityName);
+								String parametroEntrada = elements[1];
+								String quemRecebeSaida = elements[2];
+								
+								if(arrayNameMemory != null) {
+									for(String nameMem : arrayNameMemory) {
+										if(parametroEntrada.equals(nameMem)) {
+											getSubActivity = " get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem);
+										}
+									}
+								}
+
+								// After result
+								splited = splitSubActivity[1].split("=");
+								set = " -> set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
+								if(arrayNameMemory != null) {
+									for(String nameMem : arrayNameMemory) {
+										if(splited[1].contains(nameMem)) {
+											get = " -> get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+										}
+									}
+								}
+
+								//Sync
+								String sync = " -> (" + activityName + "(1) [|{|startActivity_" + activityName + ", endActivity_" + activityName + "|}|] "
+										+ "(startActivity_"+activityName+".1!"+parametroEntrada+" ->  endActivity_"+activityName+".1?"+quemRecebeSaida+
+										get + set + " -> SKIP))";
+
+								stringTr.append(getSubActivity);
+								stringTr.append(sync);
+								stringTr.append("; ");
+							}
+						}else {
+							splited = tr.getAction().split("=");
+							set = "set_" + SMUtils.nameResolver(splited[0]) + "_" + SMUtils.nameResolver(smDiagram.getName()) +"!(" + splited[1].replace(" ", "") + ")";
+							if(arrayNameMemory != null) {
+								for(String nameMem : arrayNameMemory) {
+									if(splited[1].contains(nameMem)) {
+										get = "get_" + SMUtils.nameResolver(nameMem)  + "_" + SMUtils.nameResolver(smDiagram.getName()) + "?" + SMUtils.nameResolver(nameMem) + " -> ";
+									}
 								}
 							}
+							
+							stringTr.append(get);
+							stringTr.append(set);
+							stringTr.append(" -> ");
 						}
-						
-						stringTr.append(get);
-						stringTr.append(set);
-						stringTr.append(" -> ");
 					}
 
 					if(!(tr.getTarget() instanceof IPseudostate)) {

@@ -101,6 +101,8 @@ public class StateMachineController {
 		if (wellformed) {
 			SMParser parser = new SMParser(sm, smDiagram.getName(),smDiagram);
 			String diagramCSP = parser.parserStateMachine();
+			SubActivity a = SubActivity.getInstance();
+			diagramCSP = diagramCSP + "\n" + a.getCspFile();
 			
 			String fs = System.getProperty("file.separator");
 			String uh = System.getProperty("user.home");
@@ -131,6 +133,8 @@ public class StateMachineController {
 					throw new FDRException("An error occurred during checking non-determinism.");
 				}
 			} 
+			
+			SubActivity.getInstance().reset();
 			
 			if (traceCounterExample!=null && !traceCounterExample.isEmpty()) {//If there is a trace
             	CounterView.setTrace(traceCounterExample);

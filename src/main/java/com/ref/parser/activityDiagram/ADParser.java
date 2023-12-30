@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.ref.SubActivity;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
@@ -200,17 +201,19 @@ public class ADParser {
      * Master Function
      * */
 
-    public String parserDiagram() throws ParsingException {
+    public String parserDiagram(boolean isSubActivity) throws ParsingException {
     	
         boolean reset = false;
         String check = "";
         String callBehaviour = "";
-
-        if (countCall.size() == 0) { //If first occurrence
-            check = "\nassert MAIN :[deadlock free]" +
-                    "\nassert MAIN :[divergence free]" +
-                    "\nassert MAIN :[deterministic]";
-            reset = true;
+        
+        if(!isSubActivity) {
+            if (countCall.size() == 0) { //If first occurrence
+                check = "\nassert MAIN :[deadlock free]" +
+                        "\nassert MAIN :[divergence free]" +
+                        "\nassert MAIN :[deterministic]";
+                reset = true;
+            }
         }
         
         addDefinitionToGlobalDefinition();
@@ -228,21 +231,26 @@ public class ADParser {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
                 ADParser adParser = new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram());
-                callBehaviour += "\n" + (adParser.parserDiagram());
+                callBehaviour += "\n" + (adParser.parserDiagram(isSubActivity));
                 alphabetAD = new ADCompositeAlphabet(ad);
                 this.alphabetAD.add(adParser.getAlphabetAD());
             }
         }
 
-        String channel = defineChannels();
-        String main = defineMainNodes();
+        String channel = defineChannels(isSubActivity);
+        String main = defineMainNodes(isSubActivity);
         String type = defineTypes();
         String tokenManager = defineTokenManager();
         String memory = defineMemories();
         String processSync = defineProcessSync();
         String pool = definePool();
+        String transparent = "";
+        
+        if(SubActivity.getInstance().getCspFile().equals("") && firstDiagram.equals(ad.getId())) {
+            transparent = "transparent normal\n";
+    	}
 
-        String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+ 
+        String parser = transparent + 
         		type +
                 channel +
                 main +
@@ -252,7 +260,7 @@ public class ADParser {
                 tokenManager +
                 /*lock +*/
                 pool +            
-                (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
+                (firstDiagram.equals(ad.getId())?"\nAlphabetPool_"+ADUtils.nameResolver(ad.getName())+" = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
                 callBehaviour +
                 check;
 
@@ -467,14 +475,14 @@ public class ADParser {
         return adUtils;
     }
 
-    public String defineChannels() throws ParsingException {
+    public String defineChannels(boolean isSubActivity) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dChannels = new ADDefineChannels(allGuards, ad, parameterNodesInput, parameterNodesOutput,
                 memoryLocal, parameterNodesOutputObject, syncObjectsEdge, objectEdges,
                 eventChannel, lockChannel, firstDiagram, signalChannels,signalPins, parameterSignal, adUtils, this);
 
-        return dChannels.defineChannels();
+        return dChannels.defineChannels(isSubActivity);
     }
 
     public String defineTypes() {
@@ -531,13 +539,13 @@ public class ADParser {
         return dProcessSync.defineProcessSync();
     }
 
-    public String defineMainNodes() {
+    public String defineMainNodes(boolean isSubActivity) {
         ADUtils adUtils = defineADUtils();
 
         dMainNodes = new ADDefineMainNodes(ad, firstDiagram, lockChannel, parameterNodesInput, parameterNodesOutput, callBehaviourNumber,
                 callBehaviourInputs, localSignalChannelsSync, signalChannelsLocal, adUtils, this);
 
-        return dMainNodes.defineMainNodes();
+        return dMainNodes.defineMainNodes(isSubActivity);
     }
 
 	

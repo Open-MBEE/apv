@@ -110,7 +110,7 @@ public class ActivityController {
 		
 		if (wellformed) {
 			ADParser parser = new ADParser(activity, activityDiagram.getName(),activityDiagram);
-			String diagramCSP = parser.parserDiagram();
+			String diagramCSP = parser.parserDiagram(false);
 			
 			String fs = System.getProperty("file.separator");
 			String uh = System.getProperty("user.home");

@@ -32,12 +32,12 @@ public class ADDefineMainNodes {
         this.adParser = adParser;
     }
 
-    public String defineMainNodes() {
+    public String defineMainNodes(boolean isSubActivity) {
         StringBuilder mainNode = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
         ArrayList<String> alphabet = new ArrayList<>();
 
-        if (firstDiagram.equals(ad.getId())) {
+        if (firstDiagram.equals(ad.getId()) && !isSubActivity) {
             mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
             mainNode.append("LOOP = loop -> LOOP\n");
         }
@@ -66,7 +66,7 @@ public class ADDefineMainNodes {
         mainNode.append("TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
         
         if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//If is the first diagram
-        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
+        	mainNode.append("[|AlphabetPool_"+nameDiagram+"|]pools(ID_"+nameDiagram+"))");
         }       
 
         if (lockChannel.size() > 0) {
